@@ -13,7 +13,7 @@
 ## Быстрый запуск модели
 
 ```powershell
-cd "Unified Whole Theory\modeling"
+cd "UnifiedWholeTheory\modeling"
 python -m pip install -e .[test]
 pytest
 uwt-model --steps 200 --parts 24 --out results/run.json
