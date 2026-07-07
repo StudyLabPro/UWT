@@ -1,0 +1,39 @@
+{
+  "config": {
+    "n_parts": 24,
+    "dim": 3,
+    "modulus": 64,
+    "ell0": 1.0,
+    "dt": 1.0,
+    "max_step": 1,
+    "m0": 0.1,
+    "mscale": 10.0,
+    "beta": 0.02,
+    "seed": 42,
+    "steps": 200
+  },
+  "metric_check": {
+    "nonnegative": true,
+    "identity_of_indiscernibles": true,
+    "symmetry": true,
+    "triangle": true,
+    "max_triangle_violation": 0.0,
+    "sample_min_nonzero_distance": 4.898979485566356,
+    "sample_max_distance": 50.28916384272063
+  },
+  "dynamics_check": {
+    "min_nonzero_velocity_quantum": 1.0,
+    "max_observed_velocity": 3.4641016151377544,
+    "local_speed_bound": 3.4641016151377544,
+    "global_structural_speed_bound": 55.42562584220407,
+    "local_speed_bound_respected": true,
+    "mean_mass": 0.3320012663935134,
+    "min_mass": 0.26456933042604713,
+    "max_mass": 0.4593541923600146
+  },
+  "energy_check": {
+    "true_beta": 0.02,
+    "estimated_beta": 0.02000000000000004,
+    "absolute_error": 3.8163916471489756e-17
+  }
+}
