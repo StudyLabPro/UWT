@@ -71,6 +71,7 @@ button:focus-visible, input:focus-visible { outline: none; box-shadow: var(--foc
 
 main { position: relative; z-index: 1; }
 .page { width: min(1440px, calc(100% - 48px)); margin: 0 auto; padding: 38px 0 76px; }
+.pageLoader { margin-top: 38px; border-radius: var(--radius-lg); color: var(--amber); font-weight: 800; text-align: center; }
 .kicker { text-transform: uppercase; letter-spacing: .2em; font-size: 11px; font-weight: 800; margin: 0 0 12px; }
 h1, h2, h3 { font-family: Literata, serif; margin: 0; line-height: .98; text-wrap: balance; }
 h1 { font-size: clamp(46px, 7vw, 106px); letter-spacing: -.065em; }
@@ -235,14 +236,21 @@ input[type='range'] { width: 100%; accent-color: var(--amber); height: 18px; cur
 .codeModeTabs { display: flex; gap: 8px; margin: 18px 0 10px; }
 .codeBlock { margin: 0; padding: 16px; max-height: 520px; overflow: auto; border: 1px solid rgba(244,241,232,.1); border-radius: 20px; background: linear-gradient(180deg, rgba(0,0,0,.38), rgba(0,0,0,.22)); box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
 .codeBlock code { color: #e9edf6; font-family: 'IBM Plex Sans', monospace; font-size: 12px; line-height: 1.5; white-space: pre; }
-.browserRunner { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px 14px; margin-top: 14px; padding: 14px; border: 1px solid rgba(255,179,71,.2); border-radius: 20px; background: rgba(255,179,71,.055); }
+.browserRunner { display: grid; gap: 10px; margin-top: 14px; padding: 14px; border: 1px solid rgba(255,179,71,.2); border-radius: 20px; background: rgba(255,179,71,.055); }
+.runnerActions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .browserRunner button { width: fit-content; border: 1px solid rgba(255,179,71,.62); border-radius: 999px; padding: 10px 16px; background: rgba(255,179,71,.15); color: var(--amber); font-weight: 800; transition: .2s ease; }
+.browserRunner .runnerGhostButton { border-color: rgba(244,241,232,.16); background: rgba(255,255,255,.045); color: rgba(244,241,232,.82); }
 .browserRunner button:hover:not(:disabled) { transform: translateY(-1px); background: rgba(255,179,71,.22); }
+.browserRunner .runnerGhostButton:hover:not(:disabled) { border-color: rgba(255,179,71,.42); }
 .browserRunner button:disabled { opacity: .62; cursor: wait; }
 .browserRunner small { color: rgba(215,220,231,.72); }
-.runnerOutput { grid-column: 1 / -1; margin: 0; padding: 12px; min-height: 72px; max-height: 260px; overflow: auto; border-radius: 14px; background: rgba(0,0,0,.34); color: #e9edf6; }
+.runnerStatusBar { display: flex; flex-wrap: wrap; gap: 7px; }
+.runnerStatusBar span { border: 1px solid rgba(244,241,232,.1); border-radius: 999px; padding: 6px 9px; background: rgba(8,10,15,.34); color: rgba(215,220,231,.78); font-size: 11px; font-weight: 700; }
+.runnerOutputGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.runnerOutput { margin: 0; padding: 12px; min-height: 92px; max-height: 260px; overflow: auto; border-radius: 14px; background: rgba(0,0,0,.34); color: #e9edf6; }
+.runnerOutput strong { display: block; margin-bottom: 8px; color: var(--amber); font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
 .runnerOutput.error { color: var(--danger); border: 1px solid rgba(255,107,107,.28); }
-.runnerOutput code { font-family: 'IBM Plex Sans', monospace; font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
+.runnerOutput code { display: block; font-family: 'IBM Plex Sans', monospace; font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
 
 .compensationStage { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 34px 0; }
 .calcBox { border-radius: 36px; padding: 30px; min-height: 260px; }
@@ -294,6 +302,23 @@ input[type='range'] { width: 100%; accent-color: var(--amber); height: 18px; cur
   .magicHero, .magicBrainLab, .matterLab, .brainLab, .dnaLab, .taskTabsPanel, .magicDemoLab { padding: 18px; border-radius: 28px; }
   .browserRunner { grid-template-columns: 1fr; }
   .browserRunner button { width: 100%; }
+  .runnerOutputGrid { grid-template-columns: 1fr; }
   .magicStack { min-height: 220px; }
   .magicStack span { font-size: 10.5px; padding: 7px 9px; transform: rotate(calc(var(--i) * 51deg)) translateX(62px) rotate(calc(var(--i) * -51deg)); }
 }
+
+.waveLab { margin-top: 28px; padding: 26px; border: 1px solid var(--line); border-radius: var(--radius-xl); background: rgba(217,119,6,.03); }
+.waveLab.embeddedVisualizer { margin-top: 0; }
+.waveStage { border: 1px solid var(--line); border-radius: 36px; padding: 18px; background: rgba(8,10,15,.36); min-width: 0; display: grid; gap: 12px; align-content: start; }
+.waveSvg { width: 100%; height: auto; display: block; filter: drop-shadow(0 0 18px rgba(217,119,6,.1)); }
+.waveRing { fill: none; stroke: rgba(244,241,232,.16); stroke-width: .35; }
+.wavePart { fill: rgba(174,183,199,.85); stroke: rgba(7,9,15,.6); stroke-width: .2; }
+.wavePart.center { fill: var(--amber); filter: drop-shadow(0 0 4px rgba(255,179,71,.7)); }
+.waveAxis { stroke: rgba(244,241,232,.22); stroke-width: .3; }
+.waveTick { stroke: rgba(174,183,199,.6); stroke-width: .35; }
+.waveTick.center { stroke: var(--amber); stroke-width: .6; }
+.waveCrosshair { stroke: rgba(244,241,232,.4); stroke-width: .25; stroke-dasharray: 1 .8; }
+.waveTooltipText, .waveAxisText { fill: var(--muted); font-size: 2.6px; font-family: inherit; }
+.waveChartTitle { margin: 0; color: var(--muted); font-size: 11px; }
+.waveLegend { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; color: var(--muted); font-size: 11px; }
+.waveLegend .chip { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: -1px; }

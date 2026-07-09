@@ -1,12 +1,4 @@
-type Tab = 'home' | 'examples' | 'act' | 'bridge' | 'magicbrain'
-
-const tabs: { id: Tab; label: string; caption: string }[] = [
-  { id: 'home', label: 'Главная', caption: '17 слайдов' },
-  { id: 'examples', label: 'Мини-вселенные', caption: 'задачи и модели' },
-  { id: 'act', label: 'АКТ / Balansis', caption: 'компенсация' },
-  { id: 'bridge', label: 'АКТ + UWT', caption: 'связь теорий' },
-  { id: 'magicbrain', label: 'MagicBrain', caption: 'MetaBrain' },
-]
+import { navigationTabs, type Tab } from '../data/navigation'
 
 export function TopNavigation({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void }) {
   return (
@@ -19,7 +11,7 @@ export function TopNavigation({ active, onChange }: { active: Tab; onChange: (ta
         </div>
       </div>
       <nav className="tabs" aria-label="Основные вкладки">
-        {tabs.map((tab) => (
+        {navigationTabs.map((tab) => (
           <button key={tab.id} className={active === tab.id ? 'tab active' : 'tab'} onClick={() => onChange(tab.id)}>
             <span>{tab.label}</span>
             <small>{tab.caption}</small>

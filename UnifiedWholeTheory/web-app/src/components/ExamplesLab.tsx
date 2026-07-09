@@ -6,10 +6,11 @@ import { NeuromorphicBrainSimulation } from './NeuromorphicBrainSimulation'
 import { ElectronInteractionSimulation } from './ElectronInteractionSimulation'
 import { DnaModelSimulation } from './DnaModelSimulation'
 import { MagicBrainSimulation } from './MagicBrainSimulation'
+import { WaveFunctionSimulation } from './WaveFunctionSimulation'
 import { BrowserPythonRunner } from './BrowserPythonRunner'
 import { RangeControl } from './RangeControl'
 
-type Visualizer = 'uwt' | 'matter' | 'brain' | 'electrons' | 'dna' | 'magicbrain'
+type Visualizer = 'uwt' | 'wave' | 'matter' | 'brain' | 'electrons' | 'dna' | 'magicbrain'
 
 export function ExamplesLab() {
   const [activeVisualizer, setActiveVisualizer] = useState<Visualizer>('uwt')
@@ -65,10 +66,11 @@ export function ExamplesLab() {
       <div className="visualizerTabs">
         {[
           ['uwt', 'UWT'],
-          ['matter', 'Вещество'],
-          ['brain', 'Мозг'],
+          ['wave', 'Волновая'],
           ['electrons', 'Электроны'],
+          ['matter', 'Вещество'],
           ['dna', 'ДНК'],
+          ['brain', 'Мозг'],
           ['magicbrain', 'MagicBrain'],
         ].map(([id, label]) => <button key={id} className={activeVisualizer === id ? 'visualizerTab active' : 'visualizerTab'} onClick={() => setActiveVisualizer(id as Visualizer)}>{label}</button>)}
       </div>
@@ -91,6 +93,7 @@ export function ExamplesLab() {
         </div>
       )}
 
+      {activeVisualizer === 'wave' && <WaveFunctionSimulation embedded />}
       {activeVisualizer === 'matter' && <MatterAtomsSimulation embedded />}
       {activeVisualizer === 'brain' && <NeuromorphicBrainSimulation embedded />}
       {activeVisualizer === 'electrons' && <ElectronInteractionSimulation embedded />}

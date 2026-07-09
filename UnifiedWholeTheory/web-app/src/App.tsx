@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { TopNavigation } from './components/TopNavigation'
-import { HomeSlides } from './components/HomeSlides'
-import { ExamplesLab } from './components/ExamplesLab'
-import { ActBalansisPage } from './components/ActBalansisPage'
-import { ActUwtBridgePage } from './components/ActUwtBridgePage'
-import { MagicBrainPage } from './components/MagicBrainPage'
+import type { Tab } from './data/navigation'
 
-type Tab = 'home' | 'examples' | 'act' | 'bridge' | 'magicbrain'
+const HomeSlides = lazy(() => import('./components/HomeSlides').then((module) => ({ default: module.HomeSlides })))
+const ExamplesLab = lazy(() => import('./components/ExamplesLab').then((module) => ({ default: module.ExamplesLab })))
+const ActBalansisPage = lazy(() => import('./components/ActBalansisPage').then((module) => ({ default: module.ActBalansisPage })))
+const ActUwtBridgePage = lazy(() => import('./components/ActUwtBridgePage').then((module) => ({ default: module.ActUwtBridgePage })))
+const MagicBrainPage = lazy(() => import('./components/MagicBrainPage').then((module) => ({ default: module.MagicBrainPage })))
 
 export default function App() {
   const [active, setActive] = useState<Tab>('home')
@@ -16,11 +16,13 @@ export default function App() {
       <div className="cosmicNoise" />
       <TopNavigation active={active} onChange={setActive} />
       <main>
-        {active === 'home' && <HomeSlides />}
-        {active === 'examples' && <ExamplesLab />}
-        {active === 'act' && <ActBalansisPage />}
-        {active === 'bridge' && <ActUwtBridgePage />}
-        {active === 'magicbrain' && <MagicBrainPage />}
+        <Suspense fallback={<div className="page pageLoader glass">Загрузка раздела…</div>}>
+          {active === 'home' && <HomeSlides />}
+          {active === 'examples' && <ExamplesLab />}
+          {active === 'act' && <ActBalansisPage />}
+          {active === 'bridge' && <ActUwtBridgePage />}
+          {active === 'magicbrain' && <MagicBrainPage />}
+        </Suspense>
       </main>
     </div>
   )

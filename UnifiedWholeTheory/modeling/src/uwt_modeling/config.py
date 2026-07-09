@@ -16,6 +16,30 @@ class UWTConfig:
     beta: float = 0.02
     potential_alpha: float = 0.002
     entropy_weight: float = 1.0
+    hbar_eff: float = 1.0
+    wave_sigma: float = 2.0
     seed: int = 42
     steps: int = 200
     forecast_horizon: int = 25
+
+    def __post_init__(self) -> None:
+        if self.n_parts <= 1:
+            raise ValueError("n_parts must be greater than 1")
+        if self.dim <= 0:
+            raise ValueError("dim must be greater than 0")
+        if self.modulus <= 0:
+            raise ValueError("modulus must be greater than 0")
+        if self.ell0 <= 0:
+            raise ValueError("ell0 must be greater than 0")
+        if self.dt <= 0:
+            raise ValueError("dt must be greater than 0")
+        if self.max_step < 0:
+            raise ValueError("max_step must be non-negative")
+        if self.steps < 0:
+            raise ValueError("steps must be non-negative")
+        if self.forecast_horizon < 0:
+            raise ValueError("forecast_horizon must be non-negative")
+        if self.hbar_eff <= 0:
+            raise ValueError("hbar_eff must be greater than 0")
+        if self.wave_sigma <= 0:
+            raise ValueError("wave_sigma must be greater than 0")
