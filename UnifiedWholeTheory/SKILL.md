@@ -1,11 +1,15 @@
 ---
-name: uwt-agentic-development-design
-description: Operational skill for Codex-style agents working on the UnifiedWholeTheory UWT site: monograph, research atlas, visualizers, React/Vite web app, Python modeling, Browser Python Runner, ACT/Balansis numerics, MagicBrain, QA, documentation, and design system.
+name: "uwt-agentic-development-design"
+description: >-
+  Operational skill for Codex-style agents working on the UnifiedWholeTheory
+  UWT platform, including the monograph, research atlas, visualizers,
+  React/Vite web app, Python modeling, Browser Python Runner, ACT/Balansis
+  numerics, MagicBrain, QA, documentation, and design system.
 ---
 
 # SKILL.md — UWT Agentic Development & Design Team Skill
 
-Версия: 1.1  
+Версия: 1.2  
 Область действия: весь каталог `UnifiedWholeTheory/` и все его подпроекты.  
 Цель: дать Codex-style агентной команде разработки, дизайна, научной редакции и QA единый операционный стандарт работы над сайтом и исследовательской платформой UWT.
 
@@ -13,7 +17,20 @@ description: Operational skill for Codex-style agents working on the UnifiedWhol
 
 ## 0. Назначение skill
 
-Этот файл должен быть машинно обнаруживаемым skill-файлом. Поэтому в самом начале обязательно находится YAML front matter с полями `name` и `description`. Без этого Codex-style агент может не обнаружить навык и проигнорировать правила ниже.
+Этот файл является машинно обнаруживаемым Codex-style skill. Поэтому он **обязательно** начинается с YAML front matter:
+
+```yaml
+---
+name: "uwt-agentic-development-design"
+description: >-
+  Operational skill for Codex-style agents working on the UnifiedWholeTheory
+  UWT platform, including the monograph, research atlas, visualizers,
+  React/Vite web app, Python modeling, Browser Python Runner, ACT/Balansis
+  numerics, MagicBrain, QA, documentation, and design system.
+---
+```
+
+Правило: YAML metadata нельзя начинать сразу с Markdown-заголовка и нельзя оставлять длинный `description` как plain string с двоеточиями внутри. Двоеточие в незакрытой YAML-строке может быть воспринято как mapping и сломать discovery skill-файла. Для длинного описания использовать `>-` или кавычки.
 
 UWT-платформа должна развиваться не как обычный лендинг, а как связанная исследовательская система, где одновременно существуют:
 
@@ -1110,7 +1127,7 @@ refactor(web): split visualizer model from view
 8. Есть тесты, если изменён modeling или вычислимая логика.
 9. Запущены релевантные проверки или явно указано, что они не запускались.
 10. README/docs обновлены, если изменилась архитектура, команда запуска или публичный API.
-11. Если изменён `SKILL.md`, YAML front matter с `name` и `description` сохранён.
+11. Если изменён `SKILL.md`, YAML front matter с `name` и `description` сохранён и остаётся валидным YAML.
 
 ---
 
@@ -1274,6 +1291,7 @@ UWT предлагает рассматривать части через сет
 Агентам запрещено:
 
 - удалять YAML front matter из `SKILL.md`;
+- оставлять `description` в YAML как незакавыченную строку с двоеточиями;
 - удалять теоретические материалы без явного решения;
 - переписывать UWT как обычный маркетинговый текст;
 - добавлять непроверенные громкие утверждения;
