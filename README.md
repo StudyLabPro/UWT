@@ -15,7 +15,7 @@
 ## Быстрый запуск модели
 
 ```powershell
-cd "UnifiedWholeTheory\modeling"
+cd "modeling"
 python -m pip install -e .[test]
 pytest
 uwt-model --steps 200 --parts 24 --out results/run.json
@@ -24,7 +24,7 @@ uwt-model --steps 200 --parts 24 --out results/run.json
 ## Быстрый запуск web-платформы
 
 ```powershell
-cd "UnifiedWholeTheory\web-app"
+cd "web-app"
 npm install
 npm run dev
 ```
@@ -32,7 +32,7 @@ npm run dev
 ## Полная проверка проекта
 
 ```powershell
-cd "UnifiedWholeTheory"
+cd "."
 .\check-all.ps1
 ```
 

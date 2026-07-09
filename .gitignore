@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Python / build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+modeling/results/
+
+# Legacy local shell left after repository root refactor.
+# This directory is no longer part of the project structure.
+UnifiedWholeTheory/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
