@@ -7,6 +7,7 @@ const ExamplesLab = lazy(() => import('./components/ExamplesLab').then((module) 
 const ActBalansisPage = lazy(() => import('./components/ActBalansisPage').then((module) => ({ default: module.ActBalansisPage })))
 const ActUwtBridgePage = lazy(() => import('./components/ActUwtBridgePage').then((module) => ({ default: module.ActUwtBridgePage })))
 const MagicBrainPage = lazy(() => import('./components/MagicBrainPage').then((module) => ({ default: module.MagicBrainPage })))
+const MonographPage = lazy(() => import('./components/MonographPage').then((module) => ({ default: module.MonographPage })))
 
 export default function App() {
   const [active, setActive] = useState<Tab>('home')
@@ -22,6 +23,7 @@ export default function App() {
           {active === 'act' && <ActBalansisPage />}
           {active === 'bridge' && <ActUwtBridgePage />}
           {active === 'magicbrain' && <MagicBrainPage />}
+          {active === 'monograph' && <MonographPage />}
         </Suspense>
       </main>
     </div>
