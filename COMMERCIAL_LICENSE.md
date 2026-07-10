@@ -241,7 +241,7 @@ for the licensed commercial use of UWT. If there is a conflict:
 
 Commercial licensing inquiries, quote requests, and enterprise contracting:
 
-- Email: `andrew@xteam.pro`
+- Email: `uwt@xteam.pro`
 - Website: [https://xteam.pro](https://xteam.pro)
 
 ## 26. Execution Requirement

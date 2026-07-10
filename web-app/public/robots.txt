@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://uwt.xteam.pro/sitemap.xml

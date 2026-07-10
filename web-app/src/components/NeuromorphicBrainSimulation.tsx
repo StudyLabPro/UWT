@@ -64,26 +64,26 @@ export function NeuromorphicBrainSimulation({ embedded = false }: { embedded?: b
   const signalEnergy = Math.round(activeSynapses * params.pulse + activeNeurons * activity * 0.08)
 
   return (
-    <section className={embedded ? 'brainLab embeddedVisualizer' : 'brainLab'}>
-      <div className="sectionHeader compact">
+    <section className={embedded ? 'brainLab embeddedVisualizer visualizerShell' : 'brainLab visualizerShell'}>
+      <div className="sectionHeader compact visualizerHeader">
         <p className="kicker">Третий визуализатор · нейроморфные сети</p>
         <h2>Связи в мозгу как реляционная система</h2>
         <p>Нейроны — части, синапсы — отношения, импульсы — изменение отношений, память — устойчивые структуры связей.</p>
       </div>
 
-      <div className="brainGrid">
-        <div className="brainControls glass">
+      <div className="visualizerGrid brainGrid">
+        <div className="brainControls glass visualizerControls">
           <label>Нейроны <strong>{neuronsCount}</strong><span>Количество узлов сети; больше нейронов — больше возможных синаптических отношений.</span><RangeControl min={8} max={96} value={neuronsCount} onChange={setNeuronsCount} /></label>
           <label>Активность <strong>{activity}</strong><span>Уровень возбуждения: чем выше, тем больше нейронов и связей переходят в импульсный режим.</span><RangeControl min={0} max={100} value={activity} onChange={setActivity} /></label>
           <label>Локальный центр <strong>N{viewCenter + 1}</strong><span>Нейрон, относительно которого подсвечиваются связи; аналог центра описания в UWT.</span><RangeControl min={0} max={Math.max(0, neuronsCount - 1)} value={Math.min(viewCenter, neuronsCount - 1)} onChange={setViewCenter} /></label>
           <label>Режим сети<span>Покой, фокус, память и перегрузка меняют порог возбуждения, пластичность и устойчивость связей.</span></label>
           <div className="phaseButtons">
-            {(['rest', 'focus', 'memory', 'overload'] as Mode[]).map((item) => <button key={item} className={mode === item ? 'active' : ''} onClick={() => setMode(item)}>{modeLabels[item]}</button>)}
+            {(['rest', 'focus', 'memory', 'overload'] as Mode[]).map((item) => <button key={item} type="button" className={mode === item ? 'active' : ''} onClick={() => setMode(item)}>{modeLabels[item]}</button>)}
           </div>
           <div className="formulaBox">нейронная мысль = устойчивый путь импульсов</div>
         </div>
 
-        <div className="brainStage">
+        <div className="brainStage visualizerStage">
           <svg viewBox="0 0 100 100" className="brainSvg" role="img" aria-label="Нейроморфная сеть мозга">
             <defs>
               <radialGradient id="neuronGlow"><stop offset="0" stopColor="#f4f1e8" /><stop offset="0.45" stopColor="#7ee0b8" /><stop offset="1" stopColor="#2f80ed" /></radialGradient>

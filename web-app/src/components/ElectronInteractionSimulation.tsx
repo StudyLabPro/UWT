@@ -65,26 +65,26 @@ export function ElectronInteractionSimulation({ embedded = false }: { embedded?:
   const meanDistance = interactions.length ? interactions.reduce((sum, interaction) => sum + interaction.distance, 0) / interactions.length : 0
 
   return (
-    <section className={embedded ? 'electronLab embeddedVisualizer' : 'electronLab'}>
-      <div className="sectionHeader compact">
+    <section className={embedded ? 'electronLab embeddedVisualizer visualizerShell' : 'electronLab visualizerShell'}>
+      <div className="sectionHeader compact visualizerHeader">
         <p className="kicker">Визуализация электронов</p>
         <h2>Электроны как система отталкивающихся отношений</h2>
         <p>Электроны моделируются как части с зарядом и спином: расстояние задаёт силу отталкивания, режим задаёт связанность, поле смещает облако.</p>
       </div>
 
-      <div className="electronGrid">
-        <div className="electronControls glass">
+      <div className="visualizerGrid electronGrid">
+        <div className="electronControls glass visualizerControls">
           <label>Электроны <strong>{electronsCount}</strong><span>Количество заряженных частей; больше электронов — больше парных кулоновских отношений.</span><RangeControl min={1} max={64} value={electronsCount} onChange={setElectronsCount} /></label>
           <label>Сила поля <strong>{fieldStrength}</strong><span>Внешнее поле смещает электронное облако и меняет распределение расстояний.</span><RangeControl min={0} max={100} value={fieldStrength} onChange={setFieldStrength} /></label>
           <label>Время состояния <strong>{time}</strong><span>Поворачивает фазу движения электронов; меняются расстояния и энергия взаимодействий.</span><RangeControl min={0} max={100} value={time} onChange={setTime} /></label>
           <label>Режим среды<span>Атом удерживает электроны, проводник ослабляет связь, плазма делает систему свободной и энергичной.</span></label>
           <div className="phaseButtons">
-            {(['atom', 'conductor', 'plasma'] as Regime[]).map((item) => <button key={item} className={regime === item ? 'active' : ''} onClick={() => setRegime(item)}>{regimeLabels[item]}</button>)}
+            {(['atom', 'conductor', 'plasma'] as Regime[]).map((item) => <button key={item} type="button" className={regime === item ? 'active' : ''} onClick={() => setRegime(item)}>{regimeLabels[item]}</button>)}
           </div>
           <div className="formulaBox">F ≈ q₁q₂ / r² · отношения задают поле</div>
         </div>
 
-        <div className="electronStage">
+        <div className="electronStage visualizerStage">
           <svg viewBox="0 0 100 100" className="electronSvg" role="img" aria-label="Взаимодействия электронов">
             <defs>
               <radialGradient id="electronGlow"><stop offset="0" stopColor="#f4f1e8" /><stop offset="0.42" stopColor="#2f80ed" /><stop offset="1" stopColor="#7ee0b8" /></radialGradient>

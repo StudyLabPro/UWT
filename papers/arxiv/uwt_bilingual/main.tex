@@ -1,0 +1,570 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{english}
+\setotherlanguage{russian}
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{microtype}
+
+\geometry{margin=2.5cm}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.35em}
+\sloppy
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue,
+  pdftitle={Unified Whole Theory: A Mereological and Relational Foundation for Space-Time},
+  pdfauthor={Andrey Tikhonov (Тихонов Андрей)}
+}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}{Axiom}[section]
+\newtheorem{postulate}{Postulate}[section]
+\newtheorem{definitionru}{Определение}[section]
+\newtheorem{axiomru}{Аксиома}[section]
+\newtheorem{postulateru}{Постулат}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{theoremru}{Теорема}[section]
+\newtheorem{propositionru}{Предложение}[section]
+\newtheorem{corollaryru}{Следствие}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem{remarkru}{Замечание}[section]
+
+\newcommand{\Whole}{U}
+\newcommand{\Parts}{\mathcal A}
+\newcommand{\Rel}{R}
+\newcommand{\Values}{V}
+\newcommand{\Vstruct}{\mathbf V}
+\newcommand{\State}{S}
+\newcommand{\States}{\mathcal S}
+\newcommand{\PartOf}{\sqsubseteq}
+\newcommand{\PropPart}{\sqsubset}
+\newcommand{\comp}{\circ}
+\newcommand{\Vord}{\preceq}
+\newcommand{\norm}{\rho}
+\newcommand{\Disc}{\mathsf{Disc}}
+\newcommand{\Space}{\mathsf{Space}}
+\newcommand{\Time}{\mathsf{Time}}
+\newcommand{\Motion}{\mathsf{Motion}}
+\newcommand{\Observer}{\mathsf{Obs}}
+\newcommand{\Struct}{\operatorname{Struct}}
+\newcommand{\Inv}{\operatorname{Inv}}
+\newcommand{\Stab}{\sigma}
+\newcommand{\Cost}{\mathcal C}
+
+\title{\textbf{Unified Whole Theory}\\
+\large A Mereological and Relational Foundation for Space-Time}
+\author{Andrey Tikhonov (Тихонов Андрей)\\\texttt{uwt@xteam.pro}}
+\date{July 10, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Unified Whole Theory (UWT) is proposed as a formal relational framework in which
+space, time, motion, distance, mass, and energy are not primitive notions but
+derived structures. The construction starts from a whole \(\Whole\), a
+mereological lattice of parts \(\Parts\), distinguishability, and relations
+valued in a normalized ordered group \(\Vstruct\). Relational distance is
+obtained from normalized relation values, the triangle inequality is derived
+from relation composition rather than postulated, time is introduced as a
+structure of changes between states, and elementary mechanical quantities are
+defined as invariants of relational change. The paper gives an explicit finite
+model establishing relative consistency of the basic axioms and lists research
+directions where this relations-first framework may differ from conventional
+space-time-first approaches. The Russian version follows the English version in
+full.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+Most physical theories begin with a stage: space, time, coordinates, distances,
+and often a differentiable or metric structure. Objects are then placed on that
+stage and their evolution is described. UWT reverses this order. Its guiding
+claim is
+\[
+\boxed{\text{relations are not in space and time; space and time arise from relations.}}
+\]
+The aim is not to deny the empirical usefulness of space-time models, but to
+reconstruct the conceptual order in which such models become derived structures.
+
+The English and Russian versions in this submission are intentionally contained
+in one document. This follows the arXiv rule that multilingual submissions must
+provide a complete English version first, followed by the non-English version.
+
+\section{Basic ontology: whole, parts, and distinguishability}
+
+\begin{postulate}[The whole is not externally placed]
+The whole \(\Whole\) is not an object inside a prior space or a prior time. If
+space and time occur, they occur as internal structures of \(\Whole\).
+\end{postulate}
+
+\begin{definition}[Parts]
+\(\Parts\) denotes the domain of distinguishable parts of \(\Whole\). A relation
+\(A\PartOf B\) reads ``\(A\) is part of \(B\)''.
+\end{definition}
+
+\begin{axiom}[Mereological bounded lattice]
+\((\Parts,\PartOf)\) is a bounded lattice with bottom \(0\) and top \(\Whole\).
+Thus every pair of parts has a meet and a join, and all parts are contained in
+\(\Whole\).
+\end{axiom}
+
+\begin{definition}[Distinguishability]
+\[
+\Disc(A_i,A_j) \iff A_i \neq A_j .
+\]
+Distinguishability is prior to metric distance. If parts are not
+distinguishable, no relation that could later be normalized as distance can be
+specified.
+\end{definition}
+
+\section{Relation values}
+
+\begin{definition}[Normalized ordered relation group]
+A relation-value structure is a tuple
+\[
+\Vstruct=(\Values,\comp,e,\preceq,\norm),
+\]
+where \((\Values,\comp,e)\) is a group, \(\preceq\) is an order compatible with
+composition, and \(\norm:\Values\to\mathbb R_{\ge 0}\) is a non-negative
+normalization satisfying \(\norm(e)=0\) and
+\[
+\norm(v\comp w)\leq \norm(v)+\norm(w).
+\]
+\end{definition}
+
+\begin{definition}[Relation]
+A relation is a map
+\[
+\Rel:\Parts\times\Parts\to\Values .
+\]
+The value \(\Rel(A_i,A_j)\) is not assumed to be a number. Numerical quantities
+appear only after applying the normalization \(\norm\).
+\end{definition}
+
+\begin{remark}
+This separation prevents hidden assumptions about coordinates or metric
+backgrounds. A relation can carry order, composition, orientation, or other
+structural content before any numerical projection is chosen.
+\end{remark}
+
+\section{Space as a derived metric structure}
+
+\begin{definition}[Relational distance]
+\[
+d(A_i,A_j)=\norm(\Rel(A_i,A_j)).
+\]
+\end{definition}
+
+\begin{theorem}[Triangle inequality]
+Assume relation composition satisfies
+\[
+\Rel(A_i,A_k)=\Rel(A_i,A_j)\comp\Rel(A_j,A_k)
+\]
+for composable triples and the normalization is subadditive. Then
+\[
+d(A_i,A_k)\leq d(A_i,A_j)+d(A_j,A_k).
+\]
+\end{theorem}
+
+\begin{proof}
+By definition and subadditivity,
+\[
+d(A_i,A_k)=\norm(\Rel(A_i,A_k))
+=\norm(\Rel(A_i,A_j)\comp\Rel(A_j,A_k))
+\leq \norm(\Rel(A_i,A_j))+\norm(\Rel(A_j,A_k)).
+\]
+The right hand side is \(d(A_i,A_j)+d(A_j,A_k)\).
+\end{proof}
+
+Thus a metric property normally postulated in geometric theories appears here as
+a theorem about relation composition and normalization. ``Space'' is the
+invariant structure generated by these distances, not a primitive container.
+
+\section{States, change, and relational time}
+
+\begin{definition}[State]
+A state \(\State\in\States\) is a complete relational configuration over the
+parts of \(\Whole\). Formally it may be represented as a map
+\[
+\State:\Parts\times\Parts\to\Values .
+\]
+\end{definition}
+
+\begin{definition}[Relational change]
+For two states \(S_1,S_2\), their change is the structured difference
+\[
+\Delta(S_1,S_2)=\{\Rel_{S_1}(A_i,A_j)^{-1}\comp \Rel_{S_2}(A_i,A_j)\}_{i,j}.
+\]
+\end{definition}
+
+\begin{definition}[Relational time]
+Time is a measure or order of changes between states:
+\[
+\Time(S_1,S_2)=T(\Delta(S_1,S_2)).
+\]
+There is no external clock at the foundational level; clocks are stable
+subsystems whose internal relational changes can be used as reference processes.
+\end{definition}
+
+\section{Observers and relative centers}
+
+An observer is not an entity outside the whole. It is a stable subsystem
+\(O\in\Parts\) whose relations to other parts define a relative center and a
+reference order. Observed space and observed time are therefore perspective
+structures built from relational invariants around \(O\), not absolute
+containers independent of all subsystems.
+
+\section{Relational mechanics}
+
+\begin{definition}[Velocity and acceleration]
+Given a relational path \(A(t)\), velocity and acceleration are defined by
+changes of relation values with respect to relational time:
+\[
+v=\frac{d}{dT}\Rel(A(t_1),A(t_2)),\qquad
+a=\frac{d v}{dT}.
+\]
+The notation is shorthand for a limit or discrete approximation inside a chosen
+state-transition structure.
+\end{definition}
+
+\begin{definition}[Stability and mass]
+The stability of a part is an invariant \(\Stab(A)\) of its relations under
+state changes. Mass is modeled as a monotone function of stability,
+\[
+m=M(\Stab(A)),
+\]
+or, equivalently in a local dynamical regime, as curvature of a cost functional.
+\end{definition}
+
+\begin{definition}[Cost of change]
+Let \(\Cost(v)\) be the cost of relational change. Around a stable state,
+\[
+\Cost(v)=\Cost(0)+\frac12\Cost''(0)v^2+O(v^3).
+\]
+Identifying \(m=\Cost''(0)\) gives the kinetic form
+\[
+E_k=\frac12 m v^2
+\]
+as a derived approximation rather than a primitive postulate.
+\end{definition}
+
+\section{Relative consistency}
+
+\begin{theorem}[Finite model]
+The basic axioms are relatively consistent.
+\end{theorem}
+
+\begin{proof}[Model sketch]
+Let \(\Parts\) be the finite powerset lattice of a non-empty finite set with
+inclusion as \(\PartOf\). Let \(\Values=(\mathbb R,+,0,\leq,|\cdot|)\). Define
+\(\Rel(A,B)=\mu(A\triangle B)\), where \(\mu\) is cardinality or a normalized
+finite measure and \(A\triangle B\) is symmetric difference. Composition is
+addition along composable transitions, and the norm is absolute value. The
+lattice axioms, identity, ordering, and subadditivity are satisfied in this
+model. Therefore the listed axioms do not entail contradiction relative to
+ordinary finite set theory and real arithmetic.
+\end{proof}
+
+\section{Empirical and mathematical program}
+
+UWT becomes physically useful only when it yields models that reproduce known
+limits and produce distinguishing predictions. The immediate program is:
+\begin{enumerate}[label=(\roman*)]
+  \item classify admissible relation-value structures \(\Vstruct\);
+  \item derive metric, curvature, and dimensionality from relation composition;
+  \item identify observer subsystems and clock subsystems;
+  \item recover classical mechanics and relativistic limits where appropriate;
+  \item compare relational wavefunction models with quantum-mechanical
+        dispersion, stability, and measurement behavior.
+\end{enumerate}
+
+\section{Conclusion}
+
+The central result of this formulation is an ordering of concepts:
+\[
+\Disc \Rightarrow \Rel \Rightarrow \State \Rightarrow \Space,\Time
+\Rightarrow \Motion \Rightarrow \text{physics}.
+\]
+Coordinates, distance, velocity, mass, and energy are not removed; they are
+reintroduced as derived relational structures. The approach is therefore a
+foundation program rather than a replacement of existing empirical theories at
+the first step.
+
+\newpage
+\begin{russian}
+
+\section*{Русская версия}
+\addcontentsline{toc}{section}{Русская версия}
+
+\begin{center}
+{\Large\textbf{Теория Единого Целого}}\\
+\large Мереологическое и реляционное основание пространства-времени
+\end{center}
+
+\begin{abstract}
+Теория Единого Целого (ТЕЦ) предлагается как формальный реляционный каркас, в
+котором пространство, время, движение, расстояние, масса и энергия не являются
+первичными понятиями, а выводятся как производные структуры. Построение
+начинается с целого \(\Whole\), мереологической решётки частей \(\Parts\),
+различимости и отношений со значениями в нормированной упорядоченной группе
+\(\Vstruct\). Реляционное расстояние получается из нормированных значений
+отношений, неравенство треугольника выводится из композиции отношений, время
+задаётся как структура изменений между состояниями, а механические величины
+определяются как инварианты реляционного изменения. Также приводится конечная
+модель, устанавливающая относительную непротиворечивость базовых аксиом.
+\end{abstract}
+
+\section{Введение}
+
+Большинство физических теорий начинают с готовой сцены: пространства, времени,
+координат, расстояний и часто дифференцируемой или метрической структуры. Затем
+на эту сцену помещаются объекты и описывается их эволюция. ТЕЦ меняет порядок:
+\[
+\boxed{\text{не отношения существуют в пространстве и времени,}}
+\]
+\[
+\boxed{\text{а пространство и время возникают из отношений.}}
+\]
+Задача теории не в отрицании практической ценности пространственно-временных
+моделей, а в восстановлении порядка вывода, при котором такие модели становятся
+производными структурами.
+
+\section{Базовая онтология: целое, части и различимость}
+
+\begin{postulateru}[Целое не помещено вовне]
+Целое \(\Whole\) не является объектом внутри заранее данного пространства или
+заранее данного времени. Если пространство и время возникают, они возникают как
+внутренние структуры \(\Whole\).
+\end{postulateru}
+
+\begin{definitionru}[Части]
+\(\Parts\) обозначает область различимых частей \(\Whole\). Запись
+\(A\PartOf B\) читается как «\(A\) является частью \(B\)».
+\end{definitionru}
+
+\begin{axiomru}[Ограниченная мереологическая решётка]
+\((\Parts,\PartOf)\) является ограниченной решёткой с нижним элементом \(0\) и
+верхним элементом \(\Whole\). Поэтому любая пара частей имеет пересечение и
+объединение, а все части содержатся в \(\Whole\).
+\end{axiomru}
+
+\begin{definitionru}[Различимость]
+\[
+\Disc(A_i,A_j)\iff A_i\neq A_j.
+\]
+Различимость предшествует метрическому расстоянию. Если части не различимы,
+нельзя задать отношение, которое позднее могло бы быть нормировано как
+расстояние.
+\end{definitionru}
+
+\section{Значения отношений}
+
+\begin{definitionru}[Нормированная упорядоченная группа значений]
+Структура значений отношений есть кортеж
+\[
+\Vstruct=(\Values,\comp,e,\preceq,\norm),
+\]
+где \((\Values,\comp,e)\) — группа, \(\preceq\) — порядок, совместимый с
+композицией, а \(\norm:\Values\to\mathbb R_{\ge0}\) — неотрицательная
+нормировка, удовлетворяющая \(\norm(e)=0\) и
+\[
+\norm(v\comp w)\leq \norm(v)+\norm(w).
+\]
+\end{definitionru}
+
+\begin{definitionru}[Отношение]
+Отношение есть отображение
+\[
+\Rel:\Parts\times\Parts\to\Values.
+\]
+Значение \(\Rel(A_i,A_j)\) не предполагается числом. Числовые величины
+появляются только после применения нормировки \(\norm\).
+\end{definitionru}
+
+\section{Пространство как производная метрическая структура}
+
+\begin{definitionru}[Реляционное расстояние]
+\[
+d(A_i,A_j)=\norm(\Rel(A_i,A_j)).
+\]
+\end{definitionru}
+
+\begin{theoremru}[Неравенство треугольника]
+Пусть композиция отношений удовлетворяет
+\[
+\Rel(A_i,A_k)=\Rel(A_i,A_j)\comp\Rel(A_j,A_k)
+\]
+для компонуемых троек, а нормировка субаддитивна. Тогда
+\[
+d(A_i,A_k)\leq d(A_i,A_j)+d(A_j,A_k).
+\]
+\end{theoremru}
+
+\begin{proof}
+По определению и субаддитивности,
+\[
+d(A_i,A_k)=\norm(\Rel(A_i,A_k))
+=\norm(\Rel(A_i,A_j)\comp\Rel(A_j,A_k))
+\leq \norm(\Rel(A_i,A_j))+\norm(\Rel(A_j,A_k)).
+\]
+Правая часть равна \(d(A_i,A_j)+d(A_j,A_k)\).
+\end{proof}
+
+Тем самым метрическое свойство, обычно постулируемое в геометрических теориях,
+становится теоремой о композиции и нормировке отношений.
+
+\section{Состояния, изменение и реляционное время}
+
+\begin{definitionru}[Состояние]
+Состояние \(\State\in\States\) — это полная реляционная конфигурация частей
+\(\Whole\). Формально его можно представить как отображение
+\[
+\State:\Parts\times\Parts\to\Values.
+\]
+\end{definitionru}
+
+\begin{definitionru}[Реляционное изменение]
+Для двух состояний \(S_1,S_2\) их изменение задаётся структурной разностью
+\[
+\Delta(S_1,S_2)=\{\Rel_{S_1}(A_i,A_j)^{-1}\comp \Rel_{S_2}(A_i,A_j)\}_{i,j}.
+\]
+\end{definitionru}
+
+\begin{definitionru}[Реляционное время]
+Время есть мера или порядок изменений между состояниями:
+\[
+\Time(S_1,S_2)=T(\Delta(S_1,S_2)).
+\]
+В основании нет внешних часов; часы — это устойчивые подсистемы, внутреннее
+реляционное изменение которых используется как опорный процесс.
+\end{definitionru}
+
+\section{Наблюдатели и относительные центры}
+
+Наблюдатель не находится вне целого. Это устойчивая подсистема \(O\in\Parts\),
+отношения которой с другими частями задают относительный центр и порядок
+отсчёта. Наблюдаемое пространство и наблюдаемое время являются перспективными
+структурами, построенными из реляционных инвариантов вокруг \(O\).
+
+\section{Реляционная механика}
+
+\begin{definitionru}[Скорость и ускорение]
+Для реляционного пути \(A(t)\) скорость и ускорение определяются изменениями
+значений отношений относительно реляционного времени:
+\[
+v=\frac{d}{dT}\Rel(A(t_1),A(t_2)),\qquad
+a=\frac{dv}{dT}.
+\]
+\end{definitionru}
+
+\begin{definitionru}[Устойчивость и масса]
+Устойчивость части — это инвариант \(\Stab(A)\) её отношений при изменениях
+состояния. Масса моделируется как монотонная функция устойчивости,
+\[
+m=M(\Stab(A)),
+\]
+или в локальном динамическом режиме как кривизна функционала стоимости.
+\end{definitionru}
+
+\begin{definitionru}[Стоимость изменения]
+Пусть \(\Cost(v)\) — стоимость реляционного изменения. Вблизи устойчивого
+состояния
+\[
+\Cost(v)=\Cost(0)+\frac12\Cost''(0)v^2+O(v^3).
+\]
+Отождествление \(m=\Cost''(0)\) даёт кинетическую форму
+\[
+E_k=\frac12mv^2
+\]
+как производное приближение, а не первичный постулат.
+\end{definitionru}
+
+\section{Относительная непротиворечивость}
+
+\begin{theoremru}[Конечная модель]
+Базовые аксиомы относительно непротиворечивы.
+\end{theoremru}
+
+\begin{proof}
+Пусть \(\Parts\) — конечная решётка подмножеств непустого конечного множества с
+включением как \(\PartOf\). Пусть
+\(\Values=(\mathbb R,+,0,\leq,|\cdot|)\). Определим
+\(\Rel(A,B)=\mu(A\triangle B)\), где \(\mu\) — мощность или нормированная
+конечная мера, а \(A\triangle B\) — симметрическая разность. Композиция
+задаётся сложением вдоль компонуемых переходов, нормировка — модулем. В этой
+модели выполняются аксиомы решётки, тождества, порядка и субаддитивности.
+\end{proof}
+
+\section{Программа применения}
+
+Физическая содержательность ТЕЦ требует воспроизведения известных пределов и
+получения различающих следствий. Ближайшая программа:
+\begin{enumerate}[label=(\roman*)]
+  \item классифицировать допустимые структуры значений \(\Vstruct\);
+  \item вывести метрику, кривизну и размерность из композиции отношений;
+  \item определить подсистемы-наблюдатели и подсистемы-часы;
+  \item восстановить классическую механику и релятивистские пределы;
+  \item сопоставить реляционные модели волновой функции с дисперсией,
+        устойчивостью и поведением измерения в квантовой механике.
+\end{enumerate}
+
+\section{Заключение}
+
+Ключевой порядок понятий:
+\[
+\Disc \Rightarrow \Rel \Rightarrow \State \Rightarrow \Space,\Time
+\Rightarrow \Motion \Rightarrow \text{физика}.
+\]
+Координаты, расстояние, скорость, масса и энергия не исчезают; они возвращаются
+как производные реляционные структуры.
+
+\end{russian}
+
+\begin{thebibliography}{9}
+
+\bibitem{rovelli1996}
+C. Rovelli,
+``Relational quantum mechanics,''
+\emph{International Journal of Theoretical Physics} 35, 1637--1678 (1996).
+
+\bibitem{barbour1999}
+J. Barbour,
+\emph{The End of Time: The Next Revolution in Physics},
+Oxford University Press, 1999.
+
+\bibitem{baez2006}
+J. C. Baez and J. Dolan,
+``From finite sets to Feynman diagrams,''
+in \emph{Mathematics Unlimited---2001 and Beyond}, Springer, 2001.
+
+\bibitem{szabo2015}
+M. E. Szabo,
+\emph{The Collected Papers of Gerhard Gentzen},
+North-Holland, 1969.
+
+\end{thebibliography}
+
+\end{document}

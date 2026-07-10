@@ -202,8 +202,8 @@ export function WaveFunctionSimulation({ embedded = false }: { embedded?: boolea
     values.map((value, u) => `${u === 0 ? 'M' : 'L'}${(4 + (u * 92) / (N - 1)).toFixed(2)},${(36 - value * densityScale * 2.2).toFixed(2)}`).join(' ')
 
   return (
-    <section className={embedded ? 'waveLab embeddedVisualizer' : 'waveLab'}>
-      <div className="sectionHeader compact">
+    <section className={embedded ? 'waveLab embeddedVisualizer visualizerShell' : 'waveLab visualizerShell'}>
+      <div className="sectionHeader compact visualizerHeader">
         <p className="kicker">Визуализация ψ · демо</p>
         <h2>Волновая функция из отношений</h2>
         <p>
@@ -212,8 +212,8 @@ export function WaveFunctionSimulation({ embedded = false }: { embedded?: boolea
         </p>
       </div>
 
-      <div className="labGrid">
-        <div className="controlPanel glass">
+      <div className="visualizerGrid labGrid">
+        <div className="controlPanel glass visualizerControls">
           <label>Части <strong>{parts}</strong><span>Сколько частей строит суперпозицию; каждая часть кроме центра даёт один волновой пакет.</span><RangeControl min={2} max={24} value={parts} onChange={setParts} /></label>
           <label>Шаги истории <strong>{steps}</strong><span>Длина истории отношений: действие S и устойчивость w накапливаются по шагам — фазы «закручиваются» со временем.</span><RangeControl min={1} max={200} value={steps} onChange={setSteps} /></label>
           <label>Центр описания <strong>A{center + 1}</strong><span>Часть, «глазами» которой строится ψ; все отношения считаются относительно неё.</span><RangeControl min={0} max={parts - 1} value={center} onChange={setCenterRaw} /></label>
@@ -223,105 +223,121 @@ export function WaveFunctionSimulation({ embedded = false }: { embedded?: boolea
           <div className="formulaBox">ψ(u) = Σⱼ √wⱼ · e^(iSⱼ/ħ) · K(u−xⱼ)</div>
         </div>
 
-        <div className="waveStage">
-          <p className="waveChartTitle">Кольцо Z₆₄: длина луча — вероятность |ψ(u)|², цвет луча — фаза arg ψ(u), точки — части</p>
-          <svg viewBox="0 0 100 92" className="waveSvg" role="img" aria-label="Плотность вероятности и фаза волновой функции на круговой решётке">
-            <circle cx="50" cy="46" r="26" className="waveRing" />
-            {model.probability.map((value, u) => {
-              const angle = (u / N) * 2 * Math.PI - Math.PI / 2
-              const inner = 26
-              const outer = 26 + Math.max(0.25, value * densityScale)
-              return (
-                <line
-                  key={u}
-                  x1={50 + Math.cos(angle) * inner}
-                  y1={46 + Math.sin(angle) * inner}
-                  x2={50 + Math.cos(angle) * outer}
-                  y2={46 + Math.sin(angle) * outer}
-                  stroke={phaseColor(model.phase[u])}
-                  strokeWidth="1.1"
-                  strokeLinecap="round"
-                >
-                  <title>{`u=${u} · |ψ|²=${value.toFixed(4)} · фаза=${model.phase[u].toFixed(2)} рад`}</title>
-                </line>
-              )
-            })}
-            {model.positions.map((position, j) => {
-              const angle = (position / N) * 2 * Math.PI - Math.PI / 2
-              const isCenter = j === center
-              return (
-                <g key={j}>
-                  <circle cx={50 + Math.cos(angle) * 22} cy={46 + Math.sin(angle) * 22} r={isCenter ? 2 : 1.3} className={isCenter ? 'wavePart center' : 'wavePart'}>
-                    <title>{isCenter ? `A${j + 1} — центр описания` : `часть A${j + 1}, узел ${position}`}</title>
-                  </circle>
+        <div className="waveStage visualizerStage">
+          <div className="waveViewport">
+            <article className="wavePrimaryPanel" aria-label="Главный экран волновой функции">
+              <div className="wavePanelHeader">
+                <span>ψ ENGINE</span>
+                <strong>Z₆₄ · phase ring</strong>
+                <small>{parts - 1} пакетов · пик u={model.peakSite}</small>
+              </div>
+              <svg viewBox="0 0 100 92" className="waveSvg waveOrbitalSvg" role="img" aria-label="Плотность вероятности и фаза волновой функции на круговой решётке">
+                <circle cx="50" cy="46" r="26" className="waveRing" />
+                {model.probability.map((value, u) => {
+                  const angle = (u / N) * 2 * Math.PI - Math.PI / 2
+                  const inner = 26
+                  const outer = 26 + Math.max(0.25, value * densityScale)
+                  return (
+                    <line
+                      key={u}
+                      x1={50 + Math.cos(angle) * inner}
+                      y1={46 + Math.sin(angle) * inner}
+                      x2={50 + Math.cos(angle) * outer}
+                      y2={46 + Math.sin(angle) * outer}
+                      stroke={phaseColor(model.phase[u])}
+                      strokeWidth="1.1"
+                      strokeLinecap="round"
+                    >
+                      <title>{`u=${u} · |ψ|²=${value.toFixed(4)} · фаза=${model.phase[u].toFixed(2)} рад`}</title>
+                    </line>
+                  )
+                })}
+                {model.positions.map((position, j) => {
+                  const angle = (position / N) * 2 * Math.PI - Math.PI / 2
+                  const isCenter = j === center
+                  return (
+                    <g key={j}>
+                      <circle cx={50 + Math.cos(angle) * 22} cy={46 + Math.sin(angle) * 22} r={isCenter ? 2 : 1.3} className={isCenter ? 'wavePart center' : 'wavePart'}>
+                        <title>{isCenter ? `A${j + 1} — центр описания` : `часть A${j + 1}, узел ${position}`}</title>
+                      </circle>
+                    </g>
+                  )
+                })}
+                <g aria-hidden="true">
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <rect key={i} x={38 + i * 1} y={88} width="1" height="2.4" fill={phaseColor(-Math.PI + (i / 23) * 2 * Math.PI)} />
+                  ))}
+                  <text x="36.4" y="90.4" textAnchor="end" className="waveAxisText">−π</text>
+                  <text x="63.6" y="90.4" className="waveAxisText">+π</text>
+                  <text x="50" y="86.4" textAnchor="middle" className="waveAxisText">фаза arg ψ</text>
                 </g>
-              )
-            })}
-            <g aria-hidden="true">
-              {Array.from({ length: 24 }).map((_, i) => (
-                <rect key={i} x={38 + i * 1} y={88} width="1" height="2.4" fill={phaseColor(-Math.PI + (i / 23) * 2 * Math.PI)} />
-              ))}
-              <text x="36.4" y="90.4" textAnchor="end" className="waveAxisText">−π</text>
-              <text x="63.6" y="90.4" className="waveAxisText">+π</text>
-              <text x="50" y="86.4" textAnchor="middle" className="waveAxisText">фаза arg ψ</text>
-            </g>
-          </svg>
+              </svg>
 
-          <div className="waveLegend" role="list">
-            <span role="listitem"><span className="chip" style={{ background: QUANTUM_COLOR }} />|ψ(u)|² — квантовая плотность</span>
-            <span role="listitem"><span className="chip" style={{ background: CLASSICAL_COLOR }} />Σw·K² — классическая смесь без фаз</span>
+              <div className="waveLegend" role="list">
+                <span role="listitem"><span className="chip" style={{ background: QUANTUM_COLOR }} />|ψ(u)|² — квантовая плотность</span>
+                <span role="listitem"><span className="chip" style={{ background: CLASSICAL_COLOR }} />Σw·K² — смесь без фаз</span>
+              </div>
+            </article>
+
+            <div className="waveAuxGrid">
+              <article className="waveAuxPanel">
+                <p className="waveChartTitle">Плотность / классическая смесь</p>
+                <svg
+                  viewBox="0 0 100 40"
+                  className="waveSvg waveDensitySvg"
+                  role="img"
+                  aria-label="Сравнение квантовой плотности вероятности с классической смесью пакетов"
+                  onMouseMove={(event) => {
+                    const box = event.currentTarget.getBoundingClientRect()
+                    const relative = ((event.clientX - box.left) / box.width) * 100
+                    setHoverSite(Math.max(0, Math.min(N - 1, Math.round(((relative - 4) / 92) * (N - 1)))))
+                  }}
+                  onMouseLeave={() => setHoverSite(null)}
+                >
+                  <line x1="4" y1="36" x2="96" y2="36" className="waveAxis" />
+                  {model.positions.map((position, j) => (
+                    <line key={j} x1={4 + (position * 92) / (N - 1)} y1="36" x2={4 + (position * 92) / (N - 1)} y2="37.6" className={j === center ? 'waveTick center' : 'waveTick'} />
+                  ))}
+                  <path d={`${linePath(model.probability)} L96,36 L4,36 Z`} fill={QUANTUM_COLOR} opacity="0.14" stroke="none" />
+                  <path d={linePath(model.classical)} fill="none" stroke={CLASSICAL_COLOR} strokeWidth="0.65" strokeDasharray="1.6 1.1" />
+                  <path d={linePath(model.probability)} fill="none" stroke={QUANTUM_COLOR} strokeWidth="0.7" />
+                  {hoverSite !== null && (
+                    <g>
+                      <line x1={4 + (hoverSite * 92) / (N - 1)} y1="4" x2={4 + (hoverSite * 92) / (N - 1)} y2="36" className="waveCrosshair" />
+                      <text x={hoverSite < N / 2 ? 4 + (hoverSite * 92) / (N - 1) + 2 : 4 + (hoverSite * 92) / (N - 1) - 2} y="7" textAnchor={hoverSite < N / 2 ? 'start' : 'end'} className="waveTooltipText">
+                        {`u=${hoverSite} · |ψ|²=${model.probability[hoverSite].toFixed(4)} · смесь=${model.classical[hoverSite].toFixed(4)}`}
+                      </text>
+                    </g>
+                  )}
+                </svg>
+              </article>
+
+              <article className="waveAuxPanel">
+                <p className="waveChartTitle">Импульс |ψ̃(k)|²</p>
+                <svg viewBox="0 0 100 26" className="waveSvg waveMomentumSvg" role="img" aria-label="Спектр импульсов волновой функции">
+                  <line x1="4" y1="22" x2="96" y2="22" className="waveAxis" />
+                  <line x1="50" y1="22" x2="50" y2="23.6" className="waveTick center" />
+                  <text x="50" y="25.8" textAnchor="middle" className="waveAxisText">k = 0</text>
+                  {model.momentum.map((value, index) => (
+                    <rect
+                      key={index}
+                      x={4 + index * (92 / N) + 0.2}
+                      y={22 - Math.max(0.15, value * momentumScale)}
+                      width={92 / N - 0.4}
+                      height={Math.max(0.15, value * momentumScale)}
+                      rx="0.3"
+                      fill={QUANTUM_COLOR}
+                      opacity="0.85"
+                    >
+                      <title>{`k=${index - N / 2} · |ψ̃|²=${value.toFixed(4)}`}</title>
+                    </rect>
+                  ))}
+                </svg>
+              </article>
+            </div>
           </div>
-          <svg
-            viewBox="0 0 100 40"
-            className="waveSvg"
-            role="img"
-            aria-label="Сравнение квантовой плотности вероятности с классической смесью пакетов"
-            onMouseMove={(event) => {
-              const box = event.currentTarget.getBoundingClientRect()
-              const relative = ((event.clientX - box.left) / box.width) * 100
-              setHoverSite(Math.max(0, Math.min(N - 1, Math.round(((relative - 4) / 92) * (N - 1)))))
-            }}
-            onMouseLeave={() => setHoverSite(null)}
-          >
-            <line x1="4" y1="36" x2="96" y2="36" className="waveAxis" />
-            {model.positions.map((position, j) => (
-              <line key={j} x1={4 + (position * 92) / (N - 1)} y1="36" x2={4 + (position * 92) / (N - 1)} y2="37.6" className={j === center ? 'waveTick center' : 'waveTick'} />
-            ))}
-            <path d={`${linePath(model.probability)} L96,36 L4,36 Z`} fill={QUANTUM_COLOR} opacity="0.14" stroke="none" />
-            <path d={linePath(model.classical)} fill="none" stroke={CLASSICAL_COLOR} strokeWidth="0.65" strokeDasharray="1.6 1.1" />
-            <path d={linePath(model.probability)} fill="none" stroke={QUANTUM_COLOR} strokeWidth="0.7" />
-            {hoverSite !== null && (
-              <g>
-                <line x1={4 + (hoverSite * 92) / (N - 1)} y1="4" x2={4 + (hoverSite * 92) / (N - 1)} y2="36" className="waveCrosshair" />
-                <text x={hoverSite < N / 2 ? 4 + (hoverSite * 92) / (N - 1) + 2 : 4 + (hoverSite * 92) / (N - 1) - 2} y="7" textAnchor={hoverSite < N / 2 ? 'start' : 'end'} className="waveTooltipText">
-                  {`u=${hoverSite} · |ψ|²=${model.probability[hoverSite].toFixed(4)} · смесь=${model.classical[hoverSite].toFixed(4)}`}
-                </text>
-              </g>
-            )}
-          </svg>
 
-          <p className="waveChartTitle">Импульсное представление |ψ̃(k)|² (ДПФ, k от −32 до 31)</p>
-          <svg viewBox="0 0 100 26" className="waveSvg" role="img" aria-label="Спектр импульсов волновой функции">
-            <line x1="4" y1="22" x2="96" y2="22" className="waveAxis" />
-            <line x1="50" y1="22" x2="50" y2="23.6" className="waveTick center" />
-            <text x="50" y="25.8" textAnchor="middle" className="waveAxisText">k = 0</text>
-            {model.momentum.map((value, index) => (
-              <rect
-                key={index}
-                x={4 + index * (92 / N) + 0.2}
-                y={22 - Math.max(0.15, value * momentumScale)}
-                width={92 / N - 0.4}
-                height={Math.max(0.15, value * momentumScale)}
-                rx="0.3"
-                fill={QUANTUM_COLOR}
-                opacity="0.85"
-              >
-                <title>{`k=${index - N / 2} · |ψ̃|²=${value.toFixed(4)}`}</title>
-              </rect>
-            ))}
-          </svg>
-
-          <div className="metricsGrid matterMetrics">
+          <div className="metricsGrid matterMetrics waveMetrics">
             <div title="Сумма вероятностей по всем узлам решётки — правило Борна."><small>Нормировка Σ|ψ|²</small><strong>{model.normalization.toFixed(3)}</strong><span>правило Борна</span></div>
             <div title="Полувариационное расстояние между |ψ|² и классической смесью пакетов."><small>Интерференция</small><strong>{(model.interference * 100).toFixed(1)}%</strong><span>отличие от смеси без фаз</span></div>
             <div title="Круговое стандартное отклонение позиции в узлах решётки."><small>Δx</small><strong>{model.deltaX.toFixed(2)}</strong><span>разброс позиции</span></div>

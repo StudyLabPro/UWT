@@ -1,0 +1,4 @@
+This submission is a bilingual English/Russian LaTeX source.
+Please process the top-level file `main.tex` with XeLaTeX.
+The English version appears first, followed by the Russian version.
+

@@ -40,11 +40,17 @@ class RelationalUniverse:
             return self.rng.integers(0, extent, size=(cfg.n_parts, cfg.dim), endpoint=False)
         return self.rng.integers(0, cfg.modulus, size=(cfg.n_parts, cfg.dim), endpoint=False)
 
-    def relations(self) -> np.ndarray:
-        return (self.x[None, :, :] - self.x[:, None, :]) % self.cfg.modulus
+    def relations(self, x: np.ndarray | None = None) -> np.ndarray:
+        pos = self.x if x is None else x
+        return (pos[None, :, :] - pos[:, None, :]) % self.cfg.modulus
 
     def distances(self, relations: np.ndarray | None = None) -> np.ndarray:
         return self.space.metric_projection(self.relations() if relations is None else relations)
+
+    def _potential_energy(self, d: np.ndarray) -> float:
+        """Configurational potential energy U = Σ_{i≠j} α·d_ij² (plain-numpy, fast)."""
+        offdiag = ~np.eye(self.cfg.n_parts, dtype=bool)
+        return float(np.sum(self.potential(d)[offdiag]))
 
     def metric_report(self) -> dict:
         return check_metric_axioms(self.distances())
@@ -63,7 +69,20 @@ class RelationalUniverse:
         old_r = self.relations()
         old_d = self.distances(old_r)
         dx = self.rng.integers(-self.cfg.max_step, self.cfg.max_step + 1, size=self.x.shape)
-        self.x = (self.x + dx) % self.cfg.modulus
+        candidate = (self.x + dx) % self.cfg.modulus
+        if self.cfg.dynamics == "annealed":
+            # Metropolis on the configurational potential energy: the dynamics
+            # descends its own energy landscape instead of diffusing blindly.
+            # Accept moves that lower U; accept uphill moves with Boltzmann
+            # probability exp(-ΔU/T). At T→0 the system relaxes into an energy
+            # basin (шов 1: L0 minimizes the energy it already measures).
+            cand_d = self.distances(self.relations(candidate))
+            delta_u = self._potential_energy(cand_d) - self._potential_energy(old_d)
+            if delta_u <= 0.0 or self.rng.random() < np.exp(-delta_u / self.cfg.temperature):
+                self.x = candidate
+            # else: reject — positions unchanged this step (no motion)
+        else:
+            self.x = candidate
         new_r = self.relations()
         new_d = self.distances(new_r)
         delta_r = (new_r - old_r) % self.cfg.modulus

@@ -12,6 +12,16 @@ import { RangeControl } from './RangeControl'
 
 type Visualizer = 'uwt' | 'wave' | 'matter' | 'brain' | 'electrons' | 'dna' | 'magicbrain'
 
+const visualizers: { id: Visualizer; label: string; short: string; description: string }[] = [
+  { id: 'uwt', label: 'UWT', short: 'REL', description: 'Мини-вселенная: части, отношения, центр описания и выводимые физические величины.' },
+  { id: 'wave', label: 'Волновая', short: 'PSI', description: 'ψ-модель: вероятность, фаза, интерференция и импульсный спектр из истории отношений.' },
+  { id: 'electrons', label: 'Электроны', short: 'ELC', description: 'Заряд, спин, поле и парные взаимодействия в одном реляционном облаке.' },
+  { id: 'matter', label: 'Вещество', short: 'MAT', description: 'Фазы вещества как разные режимы устойчивости атомных связей.' },
+  { id: 'dna', label: 'ДНК', short: 'DNA', description: 'Двойная спираль, комплементарность, локальный центр и повреждения структуры.' },
+  { id: 'brain', label: 'Мозг', short: 'SNN', description: 'Нейроны, синапсы, импульсы и память как устойчивые пути отношений.' },
+  { id: 'magicbrain', label: 'MagicBrain', short: 'MBR', description: 'Genome → SNN → stable memory плюс исполнимый пример MagicBrain-кода.' },
+]
+
 export function ExamplesLab() {
   const [activeVisualizer, setActiveVisualizer] = useState<Visualizer>('uwt')
   const [activeTask, setActiveTask] = useState(0)
@@ -54,6 +64,7 @@ export function ExamplesLab() {
 
   const task = practicalTasks[activeTask]
   const executableCode = activeCode === 'python' ? task.pythonSolution : task.actSolution
+  const activeVisualizerMeta = visualizers.find((item) => item.id === activeVisualizer) ?? visualizers[0]
 
   return (
     <section className="page labPage">
@@ -63,21 +74,33 @@ export function ExamplesLab() {
         <p>Переключайте тип системы: мини-вселенная UWT, вещество, мозг или электроны. В каждом режиме видны части, отношения и устойчивые структуры.</p>
       </div>
 
-      <div className="visualizerTabs">
-        {[
-          ['uwt', 'UWT'],
-          ['wave', 'Волновая'],
-          ['electrons', 'Электроны'],
-          ['matter', 'Вещество'],
-          ['dna', 'ДНК'],
-          ['brain', 'Мозг'],
-          ['magicbrain', 'MagicBrain'],
-        ].map(([id, label]) => <button key={id} className={activeVisualizer === id ? 'visualizerTab active' : 'visualizerTab'} onClick={() => setActiveVisualizer(id as Visualizer)}>{label}</button>)}
+      <div className="visualizerDeck" aria-label="Единая панель выбора визуализации">
+        <div className="visualizerTabs" role="group" aria-label="Тип визуализации">
+          {visualizers.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
+              className={activeVisualizer === item.id ? 'visualizerTab active' : 'visualizerTab'}
+              aria-pressed={activeVisualizer === item.id}
+              onClick={() => setActiveVisualizer(item.id)}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <b>{item.short}</b>
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <div className="visualizerModeReadout" aria-live="polite">
+          <span>ACTIVE VISUALIZER</span>
+          <strong>{activeVisualizerMeta.label}</strong>
+          <small>{activeVisualizerMeta.description}</small>
+        </div>
       </div>
 
-      {activeVisualizer === 'uwt' && (
-        <div className="labGrid unifiedVisualizer">
-          <div className="controlPanel glass">
+      <div className="visualizerPanelMount">
+        {activeVisualizer === 'uwt' && (
+          <div className="visualizerGrid labGrid unifiedVisualizer">
+            <div className="controlPanel glass visualizerControls">
             <label>Количество частей <strong>{parts}</strong><span>Сколько элементов существует в модели; при 0–1 части нет отношений, пространства, времени и скорости.</span><RangeControl min={0} max={128} value={parts} onChange={setParts} /></label>
             <label>Изменение отношений <strong>{motion}</strong><span>Параметр состояния S: меняет конфигурацию отношений и порождает реляционное время ΔS.</span><RangeControl min={0} max={1000} value={motion} onChange={setMotion} /></label>
             <label>Центр описания <strong>{parts > 0 ? `A${center + 1}` : 'нет частей'}</strong><span>Выбранная часть становится локальным началом координат (0,0,0); все величины считаются относительно неё.</span><RangeControl min={0} max={Math.max(0, parts - 1)} value={parts > 0 ? center : 0} onChange={setCenter} /></label>
@@ -88,17 +111,18 @@ export function ExamplesLab() {
             <label>Вращение Y <strong>{rotation.y}°</strong><span>Меняет только визуальную проекцию вокруг Y.</span><RangeControl min={-180} max={180} value={rotation.y} onChange={(y) => setRotation((r) => ({ ...r, y }))} /></label>
             <label>Вращение Z <strong>{rotation.z}°</strong><span>Поворачивает вид вокруг Z без изменения физики.</span><RangeControl min={-180} max={180} value={rotation.z} onChange={(z) => setRotation((r) => ({ ...r, z }))} /></label>
             <label>Рандом <strong>{randomizer}</strong><span>Создаёт новый сценарий параметров.</span><RangeControl min={0} max={1000} value={randomizer} onChange={randomizeAll} /></label>
+            </div>
+            <MiniUniverseCanvas parts={parts} motion={motion} center={center} centerOffset={centerOffset} rotation={rotation} onCenterOffsetChange={setCenterOffset} onRotationChange={setRotation} onCenterChange={setCenter} />
           </div>
-          <MiniUniverseCanvas parts={parts} motion={motion} center={center} centerOffset={centerOffset} rotation={rotation} onCenterOffsetChange={setCenterOffset} onRotationChange={setRotation} onCenterChange={setCenter} />
-        </div>
-      )}
+        )}
 
-      {activeVisualizer === 'wave' && <WaveFunctionSimulation embedded />}
-      {activeVisualizer === 'matter' && <MatterAtomsSimulation embedded />}
-      {activeVisualizer === 'brain' && <NeuromorphicBrainSimulation embedded />}
-      {activeVisualizer === 'electrons' && <ElectronInteractionSimulation embedded />}
-      {activeVisualizer === 'dna' && <DnaModelSimulation embedded />}
-      {activeVisualizer === 'magicbrain' && <MagicBrainSimulation embedded />}
+        {activeVisualizer === 'wave' && <WaveFunctionSimulation embedded />}
+        {activeVisualizer === 'matter' && <MatterAtomsSimulation embedded />}
+        {activeVisualizer === 'brain' && <NeuromorphicBrainSimulation embedded />}
+        {activeVisualizer === 'electrons' && <ElectronInteractionSimulation embedded />}
+        {activeVisualizer === 'dna' && <DnaModelSimulation embedded />}
+        {activeVisualizer === 'magicbrain' && <MagicBrainSimulation embedded />}
+      </div>
 
       <section className="taskTabsPanel glass">
         <div className="sectionHeader compact">

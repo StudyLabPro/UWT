@@ -41,3 +41,20 @@ def test_arrow_of_time_requires_low_entropy_start():
     assert o_time["initial_entropy"] < e_time["initial_entropy"] - 0.3
     # Пошаговая монотонность остаётся плохим индикатором даже при явной стреле.
     assert o_time["entropy_non_decrease_ratio"] < 0.7
+
+
+def test_annealed_dynamics_descends_its_own_energy():
+    """Шов 1: при dynamics='annealed' Метрополис по конфигурационной энергии
+    заставляет L0 спускаться по энергии, которую он и так измеряет; случайная
+    динамика лишь диффундирует."""
+    shared = dict(n_parts=40, dim=3, modulus=48, steps=300, seed=1)
+    rnd = RelationalUniverse(UWTConfig(dynamics="random", **shared))
+    ann = RelationalUniverse(UWTConfig(dynamics="annealed", temperature=0.5, **shared))
+    u0 = rnd._potential_energy(rnd.distances())  # same seed ⇒ same start for both
+    rnd.run()
+    ann.run()
+    rnd_final = rnd._potential_energy(rnd.distances())
+    ann_final = ann._potential_energy(ann.distances())
+    assert ann_final < u0 * 0.8      # annealed relaxes into the energy basin
+    assert ann_final < rnd_final     # far below the diffusive run
+    assert rnd_final >= u0 * 0.9     # random dynamics does not descend

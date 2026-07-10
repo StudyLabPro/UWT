@@ -52,25 +52,25 @@ export function MatterAtomsSimulation({ embedded = false }: { embedded?: boolean
   const stability = Math.max(0, Math.round(params.cohesion - temperature * (phase === 'solid' ? 0.2 : phase === 'liquid' ? 0.35 : 0.55)))
 
   return (
-    <section className={embedded ? 'matterLab embeddedVisualizer' : 'matterLab'}>
-      <div className="sectionHeader compact">
+    <section className={embedded ? 'matterLab embeddedVisualizer visualizerShell' : 'matterLab visualizerShell'}>
+      <div className="sectionHeader compact visualizerHeader">
         <p className="kicker">Симуляция вещества</p>
         <h2>Атомы как реляционная структура</h2>
         <p>В UWT вещество можно показать как устойчивую сеть отношений между частями: при нагреве связи ослабевают, расстояния меняются, устойчивость падает.</p>
       </div>
 
-      <div className="matterGrid">
-        <div className="matterControls glass">
+      <div className="visualizerGrid matterGrid">
+        <div className="matterControls glass visualizerControls">
           <label>Фаза вещества<span>Выбирает тип устойчивости: твёрдое — сильные связи, жидкость — текучие, газ — слабые и редкие.</span></label>
           <div className="phaseButtons">
-            {(['solid', 'liquid', 'gas'] as Phase[]).map((item) => <button key={item} className={phase === item ? 'active' : ''} onClick={() => setPhase(item)}>{phaseLabels[item]}</button>)}
+            {(['solid', 'liquid', 'gas'] as Phase[]).map((item) => <button key={item} type="button" className={phase === item ? 'active' : ''} onClick={() => setPhase(item)}>{phaseLabels[item]}</button>)}
           </div>
           <label>Температура <strong>{temperature}</strong><span>Увеличивает амплитуду движения атомов; при росте температуры связи становятся менее устойчивыми.</span><RangeControl min={5} max={100} value={temperature} onChange={setTemperature} /></label>
           <label>Внутреннее время <strong>{time.toFixed(1)}</strong><span>Сдвигает состояние системы; показывает, как отношения атомов меняются изнутри.</span><RangeControl min={0} max={40} step={0.1} value={time} onChange={setTime} /></label>
           <div className="formulaBox">вещество = устойчивые отношения атомов</div>
         </div>
 
-        <div className="matterStage">
+        <div className="matterStage visualizerStage">
           <svg viewBox="0 0 100 100" className="matterSvg" role="img" aria-label="Симуляция атомов вещества">
             <defs>
               <radialGradient id="atomGlow"><stop offset="0" stopColor="#f4f1e8" /><stop offset="0.55" stopColor="#ffb347" /><stop offset="1" stopColor="#2f80ed" /></radialGradient>

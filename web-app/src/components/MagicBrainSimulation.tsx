@@ -97,15 +97,15 @@ export function MagicBrainSimulation({ embedded = false }: { embedded?: boolean 
   const code = buildMagicBrainCode(safeGenome, Math.max(8, Math.min(128, neurons)), steps)
 
   return (
-    <section className={embedded ? 'magicBrainLab embeddedVisualizer' : 'magicBrainLab'}>
-      <div className="sectionHeader compact">
+    <section className={embedded ? 'magicBrainLab embeddedVisualizer visualizerShell' : 'magicBrainLab visualizerShell'}>
+      <div className="sectionHeader compact visualizerHeader">
         <p className="kicker">MagicBrain · MetaBrain</p>
         <h2>Геномная SNN-память как UWT-сеть отношений</h2>
         <p>Genome задаёт архитектуру, нейроны — части Aᵢ, синапсы — отношения R(Aᵢ,Aⱼ), устойчивые связи — память, Balansis/MagicBrain-код можно запустить прямо в браузере.</p>
       </div>
 
-      <div className="magicBrainGrid">
-        <div className="magicBrainControls glass">
+      <div className="visualizerGrid magicBrainGrid">
+        <div className="magicBrainControls glass visualizerControls">
           <label>Genome<span>Base-4 строка MagicBrain, управляющая топологией и связностью.</span><input value={genome} onChange={(e) => setGenome(e.target.value)} /></label>
           <label>Нейроны <strong>{neurons}</strong><span>Размер видимой SNN-сети.</span><RangeControl min={16} max={128} value={neurons} onChange={setNeurons} /></label>
           <label>Активность <strong>{activity}%</strong><span>Доля активных спайковых узлов.</span><RangeControl min={0} max={100} value={activity} onChange={setActivity} /></label>
@@ -115,7 +115,7 @@ export function MagicBrainSimulation({ embedded = false }: { embedded?: boolean 
           <div className="formulaBox">MagicBrain = genome → SNN → stable memory</div>
         </div>
 
-        <div className="magicBrainStage">
+        <div className="magicBrainStage visualizerStage">
           <svg viewBox="0 0 100 100" className="magicBrainSvg" role="img" aria-label="MagicBrain SNN визуализация">
             <defs>
               <radialGradient id="magicNeuronGlow"><stop offset="0" stopColor="#f4f1e8" /><stop offset="0.48" stopColor="#7ee0b8" /><stop offset="1" stopColor="#2f80ed" /></radialGradient>

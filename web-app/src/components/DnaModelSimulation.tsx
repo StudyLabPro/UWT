@@ -102,15 +102,15 @@ export function DnaModelSimulation({ embedded = false }: { embedded?: boolean })
   const information = length * 2 - mutationCount * 0.5 - (damage === 'break' ? 3 : 0)
 
   return (
-    <section className={embedded ? 'dnaLab embeddedVisualizer' : 'dnaLab'}>
-      <div className="sectionHeader compact">
+    <section className={embedded ? 'dnaLab embeddedVisualizer visualizerShell' : 'dnaLab visualizerShell'}>
+      <div className="sectionHeader compact visualizerHeader">
         <p className="kicker">Модель ДНК</p>
         <h2>Двойная спираль как 3D-сеть отношений</h2>
         <p>Нуклеотиды — части, пары оснований — отношения, комплементарность — правило устойчивости, распределённый центр — локальная область описания структуры.</p>
       </div>
 
-      <div className="dnaGrid">
-        <div className="dnaControls glass">
+      <div className="visualizerGrid dnaGrid">
+        <div className="dnaControls glass visualizerControls">
           <label>Длина <strong>{length}</strong><span>Количество пар оснований в видимом фрагменте.</span><RangeControl min={8} max={64} value={length} onChange={setLength} /></label>
           <label>Скручивание <strong>{twist}</strong><span>Фаза двойной спирали; меняет геометрию, но не правило парности.</span><RangeControl min={0} max={100} value={twist} onChange={setTwist} /></label>
           <label>Центр <strong>{activeFocus + 1}</strong><span>Позиция, вокруг которой распределяется локальный центр описания.</span><RangeControl min={0} max={Math.max(0, length - 1)} value={activeFocus} onChange={setFocus} /></label>
@@ -120,12 +120,12 @@ export function DnaModelSimulation({ embedded = false }: { embedded?: boolean })
           <label>Вращение Z <strong>{rotation.z}°</strong><span>Поворачивает экранную проекцию вокруг оси Z.</span><RangeControl min={-180} max={180} value={rotation.z} onChange={(z) => setRotation((r) => ({ ...r, z }))} /></label>
           <label>Повреждение<span>Норма сохраняет связи, мутация меняет основание, разрыв удаляет водородные связи.</span></label>
           <div className="phaseButtons">
-            {(['none', 'mutation', 'break'] as Damage[]).map((item) => <button key={item} className={damage === item ? 'active' : ''} onClick={() => setDamage(item)}>{damageLabels[item]}</button>)}
+            {(['none', 'mutation', 'break'] as Damage[]).map((item) => <button key={item} type="button" className={damage === item ? 'active' : ''} onClick={() => setDamage(item)}>{damageLabels[item]}</button>)}
           </div>
           <div className="formulaBox">A↔T, G↔C · 3D-центр = распределённая локальность</div>
         </div>
 
-        <div className="dnaStage">
+        <div className="dnaStage visualizerStage">
           <svg viewBox="0 0 100 100" className="dnaSvg" role="img" aria-label="3D-модель двойной спирали ДНК">
             <defs>
               <linearGradient id="dnaBackbone" x1="0" x2="1"><stop offset="0" stopColor="#2f80ed" /><stop offset="1" stopColor="#7ee0b8" /></linearGradient>

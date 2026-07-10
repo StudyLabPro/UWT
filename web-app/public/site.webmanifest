@@ -1,0 +1,19 @@
+{
+  "name": "Unified Whole Theory Explorer",
+  "short_name": "UWT",
+  "description": "Интерактивный атлас Unified Whole Theory: реляционная физика, визуальные модели и монография Теории Единого Целого.",
+  "lang": "ru-RU",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070a10",
+  "theme_color": "#070a10",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

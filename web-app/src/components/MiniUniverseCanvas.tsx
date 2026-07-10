@@ -267,7 +267,7 @@ export function MiniUniverseCanvas({
   }
 
   return (
-    <div className="universePanel">
+    <div className="universePanel visualizerStage">
       <div className="centerReadout">
         <span>UWT-вычислитель отношений · вращение вокруг (0,0,0)</span>
         <strong>{parts > 0 ? `A${model.normalizedCenter + 1}` : '∅'}</strong>

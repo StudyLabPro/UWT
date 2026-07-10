@@ -25,6 +25,8 @@ class UWTConfig:
     init: str = "equilibrium"
     ordered_extent: int = 3
     entropy_smoothing_window: int = 15
+    dynamics: str = "random"
+    temperature: float = 1.0
 
     def __post_init__(self) -> None:
         if self.n_parts <= 1:
@@ -53,3 +55,7 @@ class UWTConfig:
             raise ValueError("ordered_extent must be greater than 0")
         if self.entropy_smoothing_window < 1:
             raise ValueError("entropy_smoothing_window must be greater than 0")
+        if self.dynamics not in ("random", "annealed"):
+            raise ValueError("dynamics must be 'random' or 'annealed'")
+        if self.temperature <= 0:
+            raise ValueError("temperature must be greater than 0")

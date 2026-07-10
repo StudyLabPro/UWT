@@ -54,5 +54,5 @@ starting template for commercial orders and enterprise deals.
 
 Commercial licensing, quotes, and enterprise requests:
 
-- Email: `andrew@xteam.pro`
+- Email: `uwt@xteam.pro`
 - Website: [https://xteam.pro](https://xteam.pro)
