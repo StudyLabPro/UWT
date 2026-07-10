@@ -18,6 +18,7 @@ class UWTConfig:
     entropy_weight: float = 1.0
     hbar_eff: float = 1.0
     wave_sigma: float = 2.0
+    stability_width_gamma: float = 0.0
     seed: int = 42
     steps: int = 200
     forecast_horizon: int = 25

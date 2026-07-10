@@ -150,6 +150,36 @@ def test_config_rejects_non_positive_wave_parameters(field, message):
         UWTConfig(**{field: 0})
 
 
+def test_stability_width_gamma_changes_psi_but_preserves_physics():
+    """Связь ширины пакета с устойчивостью (gamma != 0) меняет ψ, но сохраняет физику."""
+    baseline = relational_wavefunction(make_universe(n_parts=10, modulus=24, steps=12))
+    coupled_universe = make_universe(n_parts=10, modulus=24, steps=12, stability_width_gamma=-0.5)
+    coupled = relational_wavefunction(coupled_universe)
+    # ψ действительно изменилась относительно фиксированной ширины.
+    assert not np.allclose(coupled["psi"], baseline["psi"])
+    # Правило Борна и унитарность импульсного перехода сохраняются.
+    assert np.allclose(coupled["probability"].sum(axis=-1), 1.0, atol=1e-9)
+    assert coupled["probability"].min() >= -1e-12
+    assert np.allclose(coupled["momentum_probability"].sum(axis=-1), 1.0, atol=1e-9)
+    checks = wavefunction_checks(coupled, coupled_universe.cfg)
+    assert checks["born_rule"]["is_valid"]
+    assert checks["momentum"]["unitary_transform"]
+
+
+def test_stability_width_gamma_path_is_act_clean(monkeypatch):
+    """Путь по-реляционной ширины не использует сырых numpy-редукций."""
+    universe = make_universe(n_parts=4, modulus=16, steps=4, stability_width_gamma=-0.5)
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("raw numpy float64 reduction used inside wavefunction computation")
+
+    for name in ("sum", "dot", "matmul", "einsum", "mean", "cumsum", "prod", "vdot", "inner", "tensordot", "average"):
+        monkeypatch.setattr(np, name, forbidden)
+    monkeypatch.setattr(np.fft, "fft", forbidden)
+    result = relational_wavefunction(universe)
+    assert wavefunction_checks(result, universe.cfg)["born_rule"]["is_valid"]
+
+
 def test_run_experiment_includes_wavefunction_section():
     result = run_experiment(UWTConfig(n_parts=5, modulus=16, steps=5, forecast_horizon=2, seed=2))
     assert result["wavefunction"]["born_rule"]["is_valid"]

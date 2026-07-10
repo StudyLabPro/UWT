@@ -91,6 +91,65 @@ def circular_spread(prob: np.ndarray) -> np.ndarray:
     return compensated_elementwise_multiply(spread, np.full_like(spread, factor))
 
 
+def _stability_kernel_scale(cfg: UWTConfig, stability: np.ndarray, offdiag: np.ndarray, ell0_sq: float):
+    """Масштаб гауссова ядра по-реляционно из устойчивости отношения.
+
+    Ширина пакета отношения (i, j): ``sigma_ij = wave_sigma · (Stab_ij / Stab̄)^gamma``,
+    где ``gamma = cfg.stability_width_gamma``. Возвращает матрицу масштабов
+    ``-ℓ0²/(4·sigma_ij²)`` для ядра ``exp(scale · Δ²)`` или ``None`` при ``gamma = 0``
+    (общая фиксированная ширина — исходное поведение, без изменения численности).
+
+    Теоретическая мотивация: в UWT масса задаётся как монотонная функция устойчивости
+    ``m = M(Stab)``, а кинетическая масса также появляется как кривизна функционала
+    стоимости ``m = Cost''(0)`` (см. theory/unified_whole_theory_full.tex, следствие
+    «согласование двух определений массы»). При дополнительной мостовой калибровке
+    ``m ∝ Stab`` и жёсткости гармонического удержания ``k ∝ Stab`` ширина основного
+    состояния ``σ ∝ (m·k)^(-1/4)`` даёт ``σ ∝ Stab^(-1/2)``, то есть ``gamma ≈ -0.5``.
+    Все операции — через компенсированную арифметику Balansis (АКТ), без сырых
+    numpy-редукций.
+    """
+    gamma = cfg.stability_width_gamma
+    if gamma == 0.0:
+        return None
+    offdiag_stability = stability[offdiag]
+    mean_total, _ = compensated_sum(offdiag_stability)
+    mean_stability = mean_total / offdiag_stability.size
+    snorm = np.clip(
+        compensated_elementwise_divide(stability, np.full_like(stability, mean_stability)),
+        1e-6,
+        None,
+    )
+    log_snorm = compensated_elementwise("log", snorm)
+    ratio = compensated_elementwise("exp", compensated_elementwise_multiply(log_snorm, np.full_like(log_snorm, gamma)))
+    sigma = np.clip(compensated_elementwise_multiply(ratio, np.full_like(ratio, cfg.wave_sigma)), 0.4, 10.0)
+    sigma_sq = compensated_elementwise_multiply(sigma, sigma)
+    denom = compensated_elementwise_multiply(sigma_sq, np.full_like(sigma_sq, 4.0))
+    scale = compensated_elementwise_divide(np.full_like(denom, ell0_sq), denom)
+    return compensated_elementwise_multiply(scale, np.full_like(scale, -1.0))
+
+
+def _superpose_relation_kernels(relation_scale: np.ndarray, displacement_sq: np.ndarray, amplitude: np.ndarray, weights: np.ndarray):
+    """ACT-чистая суперпозиция ``ψ_i(u) = Σ_j amp_ij · kernel_ij(u)`` при по-реляционной ширине.
+
+    ``kernel_ij(u) = exp(scale_ij · Δ_j(u)²)``. Свёртка по оси j выполняется через
+    ``compensated_axis_sum`` (перенос j в последнюю ось), без сырых numpy-редукций
+    и матричного умножения.
+    Возвращает ``(axis_psi, superposition_comp, axis_classical, classical_comp)``.
+    """
+    arg = compensated_elementwise_multiply(relation_scale[:, :, None], displacement_sq[None, :, :])
+    kernel = compensated_elementwise("exp", arg)
+    real_part = compensated_elementwise_multiply(amplitude.real[:, :, None], kernel)
+    imag_part = compensated_elementwise_multiply(amplitude.imag[:, :, None], kernel)
+    psi_real, real_comp = compensated_axis_sum(np.moveaxis(real_part, 1, -1))
+    psi_imag, imag_comp = compensated_axis_sum(np.moveaxis(imag_part, 1, -1))
+    axis_psi = psi_real + 1j * psi_imag
+    axis_comp = max(float(real_comp.max()), float(imag_comp.max()))
+    kernel_sq = compensated_elementwise_multiply(kernel, kernel)
+    weighted = compensated_elementwise_multiply(weights[:, :, None], kernel_sq)
+    axis_classical, classical_comp = compensated_axis_sum(np.moveaxis(weighted, 1, -1))
+    return axis_psi, axis_comp, axis_classical, float(classical_comp.max())
+
+
 def relational_wavefunction(universe: RelationalUniverse) -> dict:
     """Строит ψ_i(u) для каждой части i и каждой оси из истории отношений вселенной."""
     cfg = universe.cfg
@@ -117,6 +176,7 @@ def relational_wavefunction(universe: RelationalUniverse) -> dict:
     ell0_sq = compensated_elementwise_multiply(np.array([cfg.ell0]), np.array([cfg.ell0]))[0]
     sigma_sq = compensated_elementwise_multiply(np.array([cfg.wave_sigma]), np.array([cfg.wave_sigma]))[0]
     kernel_scale = -_scalar_divide(float(ell0_sq), 4.0 * float(sigma_sq))
+    relation_scale = _stability_kernel_scale(cfg, stability, offdiag, float(ell0_sq))
     lattice = np.arange(cfg.modulus)
     psi = np.zeros((n, cfg.dim, cfg.modulus), dtype=complex)
     classical = np.zeros((n, cfg.dim, cfg.modulus))
@@ -125,11 +185,16 @@ def relational_wavefunction(universe: RelationalUniverse) -> dict:
     for axis in range(cfg.dim):
         displacement = universe.space.shortest((lattice[None, :] - universe.x[:, axis][:, None]) % cfg.modulus)
         displacement_sq = (displacement * displacement).astype(float)
-        kernel = compensated_elementwise("exp", compensated_elementwise_multiply(displacement_sq, np.full_like(displacement_sq, kernel_scale)))
-        axis_psi, axis_comp = compensated_complex_matmul(amplitude, kernel)
+        if relation_scale is None:
+            kernel = compensated_elementwise("exp", compensated_elementwise_multiply(displacement_sq, np.full_like(displacement_sq, kernel_scale)))
+            axis_psi, axis_comp = compensated_complex_matmul(amplitude, kernel)
+            axis_classical, axis_classical_comp = compensated_matmul(weights, compensated_elementwise_multiply(kernel, kernel))
+        else:
+            axis_psi, axis_comp, axis_classical, axis_classical_comp = _superpose_relation_kernels(
+                relation_scale, displacement_sq, amplitude, weights
+            )
         psi[:, axis, :] = axis_psi
         superposition_comp = max(superposition_comp, axis_comp)
-        axis_classical, axis_classical_comp = compensated_matmul(weights, compensated_elementwise_multiply(kernel, kernel))
         classical[:, axis, :] = axis_classical
         classical_comp = max(classical_comp, axis_classical_comp)
     norm_totals, norm_comp = compensated_axis_sum(_abs2(psi))
