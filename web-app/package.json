@@ -1,7 +1,8 @@
 {
-  "name": "trae-project",
+  "name": "uwt-web-app",
   "private": true,
   "version": "0.0.0",
+  "description": "React/Vite web atlas and visualizer frontend for Unified Whole Theory (UWT).",
   "license": "AGPL-3.0-only",
   "type": "module",
   "scripts": {
