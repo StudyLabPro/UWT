@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState } from 'react'
+import { AppFooter } from './components/AppFooter'
 import { TopNavigation } from './components/TopNavigation'
 import type { Tab } from './data/navigation'
 
@@ -26,6 +27,7 @@ export default function App() {
           {active === 'monograph' && <MonographPage />}
         </Suspense>
       </main>
+      <AppFooter />
     </div>
   )
 }
