@@ -21,6 +21,9 @@ class UWTConfig:
     seed: int = 42
     steps: int = 200
     forecast_horizon: int = 25
+    init: str = "equilibrium"
+    ordered_extent: int = 3
+    entropy_smoothing_window: int = 15
 
     def __post_init__(self) -> None:
         if self.n_parts <= 1:
@@ -43,3 +46,9 @@ class UWTConfig:
             raise ValueError("hbar_eff must be greater than 0")
         if self.wave_sigma <= 0:
             raise ValueError("wave_sigma must be greater than 0")
+        if self.init not in ("equilibrium", "ordered"):
+            raise ValueError("init must be 'equilibrium' or 'ordered'")
+        if self.ordered_extent <= 0:
+            raise ValueError("ordered_extent must be greater than 0")
+        if self.entropy_smoothing_window < 1:
+            raise ValueError("entropy_smoothing_window must be greater than 0")

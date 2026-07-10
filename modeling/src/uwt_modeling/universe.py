@@ -9,13 +9,36 @@ from .metrics import check_metric_axioms
 from .structures import RelationSpace
 
 
+def _moving_average(values: np.ndarray, window: int) -> np.ndarray:
+    """Скользящее среднее (mode='valid'); при коротком ряде возвращает исходный."""
+    if window <= 1 or values.size < window:
+        return values
+    kernel = np.ones(window) / window
+    return np.convolve(values, kernel, mode="valid")
+
+
 class RelationalUniverse:
     def __init__(self, cfg: UWTConfig):
         self.cfg = cfg
         self.space = RelationSpace(cfg.modulus, cfg.dim, cfg.ell0)
         self.rng = np.random.default_rng(cfg.seed)
-        self.x = self.rng.integers(0, cfg.modulus, size=(cfg.n_parts, cfg.dim), endpoint=False)
+        self.x = self._initial_positions()
         self.history: list[dict] = []
+
+    def _initial_positions(self) -> np.ndarray:
+        """Начальные состояния частей.
+
+        ``equilibrium`` — равномерно случайные позиции на торе Z_N^d: система
+        стартует уже в равновесии, поэтому энтропия лишь флуктуирует.
+        ``ordered`` — все части сжаты в малый угол решётки (низкоэнтропийное
+        упорядоченное состояние), из которого система релаксирует к равновесию;
+        только такой старт делает термодинамическую стрелу времени наблюдаемой.
+        """
+        cfg = self.cfg
+        if cfg.init == "ordered":
+            extent = min(cfg.ordered_extent, cfg.modulus)
+            return self.rng.integers(0, extent, size=(cfg.n_parts, cfg.dim), endpoint=False)
+        return self.rng.integers(0, cfg.modulus, size=(cfg.n_parts, cfg.dim), endpoint=False)
 
     def relations(self) -> np.ndarray:
         return (self.x[None, :, :] - self.x[:, None, :]) % self.cfg.modulus
@@ -100,6 +123,15 @@ class RelationalUniverse:
         masses = np.concatenate([h["mass"].ravel() for h in self.history])
         local_speed_bound = self.cfg.ell0 * np.sqrt(self.cfg.dim) * 2.0 * self.cfg.max_step / self.cfg.dt
         entropy_deltas = np.diff(entropies)
+        window = max(1, min(self.cfg.entropy_smoothing_window, entropies.size))
+        smoothed_deltas = np.diff(_moving_average(entropies, window))
+        net_entropy_production = float(entropies[-1] - entropies[0])
+        # Пошаговая монотонность энтропии — плохой индикатор стрелы времени: оценка
+        # энтропии из гистограммы шумная, поэтому доля неубывающих шагов держится
+        # около 0.5 даже при явной релаксации. Макроскопический критерий —
+        # чистое производство энтропии; порог 0.1 нат ≈ 2× потолка равновесных
+        # флуктуаций и много ниже производства при упорядоченном старте.
+        arrow_threshold = 0.1
         return {
             "config": asdict(self.cfg),
             "metric": metric,
@@ -116,6 +148,10 @@ class RelationalUniverse:
                 "final_entropy": float(entropies[-1]),
                 "mean_entropy_delta": float(entropy_deltas.mean()) if entropy_deltas.size else 0.0,
                 "entropy_non_decrease_ratio": float((entropy_deltas >= -1e-9).mean()) if entropy_deltas.size else 1.0,
+                "net_entropy_production": net_entropy_production,
+                "smoothing_window": int(window),
+                "smoothed_non_decrease_ratio": float((smoothed_deltas >= -1e-9).mean()) if smoothed_deltas.size else 1.0,
+                "arrow_of_time_detected": bool(net_entropy_production > arrow_threshold),
             },
             "energy": {
                 "initial_total_energy": float(energies[0]),

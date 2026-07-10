@@ -24,6 +24,9 @@ from uwt_modeling.serialization import to_builtin, write_json
         ("max_step", -1, "max_step must be non-negative"),
         ("steps", -1, "steps must be non-negative"),
         ("forecast_horizon", -1, "forecast_horizon must be non-negative"),
+        ("init", "random", "init must be 'equilibrium' or 'ordered'"),
+        ("ordered_extent", 0, "ordered_extent must be greater than 0"),
+        ("entropy_smoothing_window", 0, "entropy_smoothing_window must be greater than 0"),
     ],
 )
 def test_config_rejects_invalid_boundaries(field, value, message):

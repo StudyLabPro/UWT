@@ -18,13 +18,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--forecast-horizon", type=int, default=UWTConfig.forecast_horizon)
     parser.add_argument("--seed", type=int, default=UWTConfig.seed)
     parser.add_argument("--max-step", type=int, default=UWTConfig.max_step)
+    parser.add_argument("--init", choices=("equilibrium", "ordered"), default=UWTConfig.init,
+                        help="initial state: 'equilibrium' (uniform on the torus) or 'ordered' (low-entropy cluster)")
+    parser.add_argument("--ordered-extent", type=int, default=UWTConfig.ordered_extent,
+                        help="cluster edge size for --init ordered")
     parser.add_argument("--out", default="results/uwt_experiment_result.json")
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
-    cfg = replace(UWTConfig(), n_parts=args.parts, dim=args.dim, modulus=args.modulus, steps=args.steps, forecast_horizon=args.forecast_horizon, seed=args.seed, max_step=args.max_step)
+    cfg = replace(UWTConfig(), n_parts=args.parts, dim=args.dim, modulus=args.modulus, steps=args.steps, forecast_horizon=args.forecast_horizon, seed=args.seed, max_step=args.max_step, init=args.init, ordered_extent=args.ordered_extent)
     result = run_experiment(cfg)
     out = Path(args.out)
     write_json(out, result)
