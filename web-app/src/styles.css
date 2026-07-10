@@ -651,6 +651,16 @@ input[type='range'] { width: 100%; accent-color: var(--amber); height: 18px; cur
   --radius-md: 8px;
   --shadow: none;
   --focus: 0 0 0 3px rgba(126, 224, 195, .18);
+  --pixel-bg: #080b11;
+  --pixel-panel: rgba(11, 18, 23, .94);
+  --pixel-panel-soft: rgba(16, 26, 31, .84);
+  --pixel-line: rgba(126, 224, 195, .36);
+  --pixel-line-dim: rgba(126, 224, 195, .14);
+  --pixel-shadow: #020405;
+  --pixel-lime: #9cffd2;
+  --pixel-cyan: #7aa7ff;
+  --pixel-amber: #ffd36b;
+  --pixel-red: #ff6f8c;
 }
 
 html { background: var(--ink); }
@@ -808,6 +818,652 @@ p { color: rgba(230,235,242,.78); line-height: 1.62; }
 .codeModeTabs button:hover,
 .magicModuleCard:hover {
   transform: none;
+}
+
+.labGrid,
+.matterGrid,
+.brainGrid,
+.electronGrid,
+.dnaGrid,
+.magicBrainGrid {
+  grid-template-columns: 316px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.visualizerTabs {
+  gap: 6px;
+  padding: 6px;
+  border: 2px solid var(--pixel-line);
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(126,224,195,.08), rgba(122,167,255,.035)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 1px, transparent 1px 8px),
+    var(--pixel-panel);
+  box-shadow: 4px 4px 0 var(--pixel-shadow), inset 0 0 0 1px rgba(255,255,255,.05);
+}
+.visualizerTab {
+  position: relative;
+  border: 1px solid rgba(126,224,195,.18);
+  border-radius: 0;
+  padding: 9px 12px 8px 24px;
+  background: rgba(8,11,17,.78);
+  color: rgba(156,255,210,.76);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.visualizerTab::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  background: rgba(126,224,195,.24);
+  box-shadow: 0 0 0 1px rgba(126,224,195,.24);
+  transform: translateY(-50%);
+}
+.visualizerTab:hover {
+  background: rgba(126,224,195,.09);
+  color: var(--pixel-lime);
+}
+.visualizerTab.active {
+  color: #07100d;
+  background: var(--pixel-lime);
+  box-shadow: inset -3px -3px 0 rgba(0,0,0,.22), inset 3px 3px 0 rgba(255,255,255,.22);
+}
+.visualizerTab.active::before {
+  background: #07100d;
+  box-shadow: 0 0 0 1px rgba(7,16,13,.48);
+}
+
+.matterLab,
+.brainLab,
+.electronLab,
+.dnaLab,
+.magicBrainLab,
+.waveLab {
+  margin-top: 28px;
+  padding: 22px;
+  border: 2px solid rgba(126,224,195,.2);
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, rgba(126,224,195,.055), transparent 34%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.024) 0 1px, transparent 1px 8px),
+    rgba(8,11,17,.5);
+  box-shadow: 4px 4px 0 rgba(2,4,5,.88);
+}
+.matterLab.embeddedVisualizer,
+.brainLab.embeddedVisualizer,
+.electronLab.embeddedVisualizer,
+.dnaLab.embeddedVisualizer,
+.magicBrainLab.embeddedVisualizer,
+.waveLab.embeddedVisualizer {
+  margin-top: 0;
+}
+
+.controlPanel,
+.matterControls,
+.brainControls,
+.electronControls,
+.dnaControls,
+.magicBrainControls {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  padding: 48px 12px 12px;
+  border: 2px solid var(--pixel-line);
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(156,255,210,.08), rgba(122,167,255,.03)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(126,224,195,.035) 0 1px, transparent 1px 12px),
+    var(--pixel-panel);
+  box-shadow: 5px 5px 0 var(--pixel-shadow), inset 0 0 0 1px rgba(255,255,255,.055);
+  backdrop-filter: none;
+}
+.controlPanel::before,
+.matterControls::before,
+.brainControls::before,
+.electronControls::before,
+.dnaControls::before,
+.magicBrainControls::before {
+  content: 'VISUAL CTRL // 16BIT';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  border-bottom: 2px solid var(--pixel-line);
+  background:
+    linear-gradient(90deg, rgba(126,224,195,.24), rgba(255,211,107,.12)),
+    #0b1217;
+  color: var(--pixel-lime);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-shadow: 0 0 8px rgba(156,255,210,.38);
+}
+.controlPanel::after,
+.matterControls::after,
+.brainControls::after,
+.electronControls::after,
+.dnaControls::after,
+.magicBrainControls::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  background: var(--pixel-amber);
+  box-shadow: -14px 0 0 var(--pixel-lime), -28px 0 0 var(--pixel-cyan), 0 0 12px rgba(255,211,107,.48);
+}
+.controlPanel label,
+.matterControls label,
+.brainControls label,
+.electronControls label,
+.dnaControls label,
+.magicBrainControls label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 10px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid rgba(126,224,195,.18);
+  background:
+    linear-gradient(90deg, rgba(126,224,195,.055), transparent 42%),
+    rgba(4,8,12,.62);
+  color: var(--pixel-lime);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.controlPanel label span,
+.matterControls label span,
+.brainControls label span,
+.electronControls label span,
+.dnaControls label span,
+.magicBrainControls label span {
+  grid-column: 1 / -1;
+  color: rgba(230,235,242,.64);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-transform: none;
+}
+.controlPanel strong,
+.matterControls strong,
+.brainControls strong,
+.electronControls strong,
+.dnaControls strong,
+.magicBrainControls strong {
+  justify-self: end;
+  min-width: 42px;
+  padding: 2px 7px;
+  border: 1px solid rgba(255,211,107,.36);
+  background: rgba(255,211,107,.1);
+  color: var(--pixel-amber);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: right;
+  text-shadow: 0 0 8px rgba(255,211,107,.34);
+}
+
+.pixelRange {
+  grid-column: 1 / -1;
+  appearance: none;
+  width: 100%;
+  height: 18px;
+  margin: 2px 0 0;
+  border: 1px solid rgba(126,224,195,.28);
+  border-radius: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 13px, rgba(255,255,255,.22) 13px 14px),
+    linear-gradient(90deg, var(--pixel-amber) 0 var(--range-value), rgba(21,31,37,.96) var(--range-value) 100%);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.28);
+  cursor: pointer;
+}
+.pixelRange::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 22px;
+  border: 2px solid #07100d;
+  border-radius: 0;
+  background: var(--pixel-lime);
+  box-shadow: 2px 2px 0 var(--pixel-shadow), 0 0 12px rgba(156,255,210,.42);
+}
+.pixelRange::-moz-range-thumb {
+  width: 12px;
+  height: 20px;
+  border: 2px solid #07100d;
+  border-radius: 0;
+  background: var(--pixel-lime);
+  box-shadow: 2px 2px 0 var(--pixel-shadow), 0 0 12px rgba(156,255,210,.42);
+}
+
+.phaseButtons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 7px;
+  padding: 8px;
+  border: 1px solid rgba(126,224,195,.14);
+  background: rgba(4,8,12,.52);
+}
+.phaseButtons button {
+  position: relative;
+  border: 1px solid rgba(126,224,195,.28);
+  border-radius: 0;
+  padding: 9px 9px 9px 22px;
+  background: rgba(8,11,17,.82);
+  color: rgba(156,255,210,.74);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-align: left;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--pixel-shadow);
+}
+.phaseButtons button::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: rgba(126,224,195,.26);
+  transform: translateY(-50%);
+}
+.phaseButtons button:hover {
+  border-color: rgba(255,211,107,.42);
+  color: var(--pixel-amber);
+}
+.phaseButtons button.active {
+  border-color: var(--pixel-amber);
+  background: rgba(255,211,107,.14);
+  color: var(--pixel-amber);
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,.24), inset 2px 2px 0 rgba(255,255,255,.08), 2px 2px 0 var(--pixel-shadow);
+}
+.phaseButtons button.active::before {
+  background: var(--pixel-amber);
+  box-shadow: 0 0 10px rgba(255,211,107,.55);
+}
+
+.formulaBox {
+  border: 1px solid rgba(255,211,107,.26);
+  border-radius: 0;
+  padding: 10px;
+  background:
+    linear-gradient(90deg, rgba(255,211,107,.1), rgba(126,224,195,.045)),
+    rgba(4,8,12,.62);
+  color: var(--pixel-amber);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.magicBrainControls input[type='text'],
+.magicBrainControls input:not([type]) {
+  grid-column: 1 / -1;
+  width: 100%;
+  border: 1px solid rgba(126,224,195,.28);
+  border-radius: 0;
+  padding: 10px;
+  background: rgba(4,8,12,.78);
+  color: var(--pixel-lime);
+  font-family: 'IBM Plex Sans', monospace;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.2);
+}
+
+.universePanel,
+.matterStage,
+.brainStage,
+.electronStage,
+.dnaStage,
+.magicBrainStage,
+.waveStage {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(122,167,255,.2);
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(126,224,195,.055), transparent 52%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.026) 0 1px, transparent 1px 6px),
+    rgba(5,9,14,.72);
+  box-shadow: 5px 5px 0 var(--pixel-shadow), inset 0 0 0 1px rgba(255,255,255,.045);
+}
+.universePanel::after,
+.matterStage::after,
+.brainStage::after,
+.electronStage::after,
+.dnaStage::after,
+.magicBrainStage::after,
+.waveStage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(255,255,255,.025) 50%, transparent 50%);
+  background-size: 100% 4px;
+  mix-blend-mode: screen;
+  opacity: .55;
+}
+
+.metricsGrid {
+  gap: 8px;
+}
+.metricsGrid div {
+  border: 1px solid rgba(126,224,195,.16);
+  border-radius: 0;
+  background: rgba(4,8,12,.56);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.24);
+}
+.metricsGrid small {
+  color: rgba(156,255,210,.66);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.metricsGrid strong {
+  color: var(--pixel-amber);
+  font-family: 'IBM Plex Sans', monospace;
+  text-shadow: 0 0 10px rgba(255,211,107,.24);
+}
+
+.labPage {
+  width: min(1500px, calc(100% - 32px));
+}
+
+.labGrid,
+.matterGrid,
+.brainGrid,
+.electronGrid,
+.dnaGrid,
+.magicBrainGrid {
+  grid-template-columns: 268px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.visualizerTabs {
+  margin-bottom: 14px;
+  padding: 5px;
+  border-width: 1px;
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(126,224,195,.12), rgba(122,167,255,.055)),
+    rgba(8, 13, 20, .78);
+  box-shadow: 0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.visualizerTab {
+  border-radius: 12px;
+  padding: 8px 11px 8px 24px;
+  font-size: 10px;
+  letter-spacing: .075em;
+}
+.visualizerTab::before {
+  left: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.visualizerTab.active {
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--pixel-lime), rgba(122,167,255,.9));
+  box-shadow: 0 10px 24px rgba(126,224,195,.18), inset 0 1px 0 rgba(255,255,255,.32);
+}
+
+.matterLab,
+.brainLab,
+.electronLab,
+.dnaLab,
+.magicBrainLab,
+.waveLab {
+  padding: 18px;
+}
+
+.controlPanel,
+.matterControls,
+.brainControls,
+.electronControls,
+.dnaControls,
+.magicBrainControls {
+  gap: 8px;
+  padding: 42px 12px 12px;
+  border-width: 1px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 0 0, rgba(126,224,195,.16), transparent 38%),
+    linear-gradient(155deg, rgba(16, 28, 38, .92), rgba(8, 12, 19, .9) 58%, rgba(9, 15, 24, .94)),
+    rgba(8, 13, 20, .82);
+  box-shadow: 0 22px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 36px rgba(122,167,255,.045);
+  backdrop-filter: blur(18px);
+}
+.controlPanel::before,
+.matterControls::before,
+.brainControls::before,
+.electronControls::before,
+.dnaControls::before,
+.magicBrainControls::before {
+  content: 'MISSION HUD // CONTROL';
+  height: 29px;
+  padding: 0 12px;
+  border-bottom-width: 1px;
+  background:
+    linear-gradient(90deg, rgba(126,224,195,.18), rgba(122,167,255,.12), rgba(255,211,107,.06)),
+    rgba(9, 16, 24, .9);
+  font-size: 9px;
+  letter-spacing: .16em;
+}
+.controlPanel::after,
+.matterControls::after,
+.brainControls::after,
+.electronControls::after,
+.dnaControls::after,
+.magicBrainControls::after {
+  top: 10px;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: -12px 0 0 var(--pixel-lime), -24px 0 0 var(--pixel-cyan), 0 0 12px rgba(255,211,107,.45);
+}
+.controlPanel label,
+.matterControls label,
+.brainControls label,
+.electronControls label,
+.dnaControls label,
+.magicBrainControls label {
+  gap: 5px 8px;
+  padding: 8px;
+  border-color: rgba(126,224,195,.16);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(126,224,195,.065), rgba(122,167,255,.035)),
+    rgba(5, 10, 16, .5);
+  font-size: 10px;
+  letter-spacing: .055em;
+}
+.controlPanel label span,
+.matterControls label span,
+.brainControls label span,
+.electronControls label span,
+.dnaControls label span,
+.magicBrainControls label span {
+  max-height: 52px;
+  opacity: .72;
+  font-size: 10px;
+  line-height: 1.32;
+  transition: max-height .16s ease, opacity .16s ease;
+}
+.controlPanel label:hover span,
+.controlPanel label:focus-within span,
+.matterControls label:hover span,
+.matterControls label:focus-within span,
+.brainControls label:hover span,
+.brainControls label:focus-within span,
+.electronControls label:hover span,
+.electronControls label:focus-within span,
+.dnaControls label:hover span,
+.dnaControls label:focus-within span,
+.magicBrainControls label:hover span,
+.magicBrainControls label:focus-within span {
+  max-height: 96px;
+  opacity: 1;
+}
+.controlPanel strong,
+.matterControls strong,
+.brainControls strong,
+.electronControls strong,
+.dnaControls strong,
+.magicBrainControls strong {
+  min-width: 40px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+}
+
+.pixelRange {
+  height: 14px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, var(--pixel-lime) 0 var(--range-value), rgba(21,31,37,.96) var(--range-value) 100%);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.24), 0 0 14px rgba(126,224,195,.09);
+}
+.pixelRange::-webkit-slider-thumb {
+  width: 14px;
+  height: 18px;
+  border-width: 2px;
+  border-radius: 50%;
+}
+.pixelRange::-moz-range-thumb {
+  width: 12px;
+  height: 16px;
+  border-width: 2px;
+  border-radius: 50%;
+}
+
+.phaseButtons {
+  gap: 6px;
+  padding: 6px;
+  border-radius: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+}
+.phaseButtons button {
+  border-radius: 999px;
+  padding: 7px 8px 7px 20px;
+  font-size: 9px;
+  letter-spacing: .045em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+.phaseButtons button::before {
+  left: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.phaseButtons button.active {
+  border-color: rgba(156,255,210,.72);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(126,224,195,.2), rgba(122,167,255,.12));
+  color: var(--pixel-lime);
+  box-shadow: 0 8px 18px rgba(126,224,195,.1), inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+.formulaBox {
+  padding: 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  line-height: 1.32;
+}
+
+.magicBrainControls input[type='text'],
+.magicBrainControls input:not([type]) {
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 10px;
+}
+
+.universePanel,
+.matterStage,
+.brainStage,
+.electronStage,
+.dnaStage,
+.magicBrainStage,
+.waveStage {
+  min-height: 560px;
+  padding: 14px;
+  border-width: 1px;
+  border-radius: 18px;
+  box-shadow: 0 24px 62px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.06), inset 0 0 44px rgba(122,167,255,.04);
+}
+.universePanel {
+  min-height: 620px;
+}
+.universeSvg,
+.matterSvg,
+.brainSvg,
+.electronSvg,
+.dnaSvg,
+.magicBrainSvg {
+  height: clamp(500px, 60vh, 660px);
+}
+.waveStage {
+  align-content: stretch;
+}
+.waveStage > .waveSvg:first-of-type {
+  min-height: clamp(360px, 44vh, 520px);
+}
+.waveStage > .waveSvg:nth-of-type(2) {
+  min-height: 150px;
+}
+.waveStage > .waveSvg:nth-of-type(3) {
+  min-height: 90px;
+}
+.waveChartTitle,
+.waveLegend {
+  font-size: 10px;
+}
+
+.metricsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+.metricsGrid div {
+  padding: 7px 8px;
+  border-radius: 10px;
+}
+.metricsGrid small {
+  font-size: 8.5px;
+  letter-spacing: .05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.metricsGrid strong {
+  margin-top: 2px;
+  font-size: 16px;
+  line-height: 1;
+}
+.metricsGrid div span {
+  display: none;
 }
 
 .monographPage {
@@ -1167,6 +1823,552 @@ p { color: rgba(230,235,242,.78); line-height: 1.62; }
   color: var(--green);
 }
 
+/* Unified 8/16-bit application skin */
+:root {
+  --retro-ink: #070a10;
+  --retro-panel: rgba(11, 17, 25, .94);
+  --retro-panel-soft: rgba(13, 23, 31, .82);
+  --retro-line: rgba(133, 255, 207, .34);
+  --retro-line-hot: rgba(255, 207, 99, .64);
+  --retro-lime: #9cffd2;
+  --retro-cyan: #83b5ff;
+  --retro-gold: #ffd36b;
+  --retro-red: #ff718d;
+  --retro-shadow: #010306;
+  --retro-cell: 8px;
+}
+
+html {
+  background: var(--retro-ink);
+  image-rendering: pixelated;
+}
+
+body {
+  color: var(--paper);
+  background:
+    linear-gradient(rgba(156,255,210,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(131,181,255,.018) 1px, transparent 1px),
+    radial-gradient(circle at 18% 12%, rgba(131,181,255,.18), transparent 24rem),
+    radial-gradient(circle at 86% 18%, rgba(156,255,210,.12), transparent 22rem),
+    linear-gradient(135deg, #05070d, #101723 52%, #06090e);
+  background-size: 16px 16px, 16px 16px, auto, auto, auto;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 50%, transparent 50%),
+    radial-gradient(circle at 50% 0, rgba(156,255,210,.08), transparent 42rem);
+  background-size: 100% 4px, auto;
+  mix-blend-mode: screen;
+  opacity: .42;
+}
+
+button,
+input,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.appShell {
+  background:
+    linear-gradient(180deg, rgba(156,255,210,.035), transparent 320px),
+    repeating-linear-gradient(90deg, transparent 0 30px, rgba(255,255,255,.018) 30px 31px);
+}
+
+.cosmicNoise {
+  display: block;
+  opacity: .18;
+  background-image:
+    radial-gradient(circle, rgba(156,255,210,.24) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 42px 42px, 8px 8px;
+  mask-image: linear-gradient(black, transparent 88%);
+}
+
+.topbar,
+.tabs,
+.brandMark,
+.tab,
+.glass,
+.homeHero,
+.relationGlyph,
+.slideCard,
+.taskCard,
+.conceptCard,
+.calcBox,
+.taskTabsPanel,
+.taskWorkspace,
+.codeBlock,
+.browserRunner,
+.runnerOutput,
+.matterLab,
+.brainLab,
+.electronLab,
+.dnaLab,
+.magicBrainLab,
+.magicDemoLab,
+.waveLab,
+.controlPanel,
+.matterControls,
+.brainControls,
+.electronControls,
+.dnaControls,
+.magicBrainControls,
+.universePanel,
+.matterStage,
+.brainStage,
+.electronStage,
+.dnaStage,
+.magicBrainStage,
+.waveStage,
+.monographHero,
+.monographAside,
+.monographPaper,
+.chapterSwitcher,
+.chapterTab,
+.monoFormula pre,
+.monoFormula figcaption,
+.appFooter,
+.footerInner,
+.footerLink {
+  border-radius: 0;
+}
+
+.topbar {
+  padding: 12px 18px;
+  border-bottom: 2px solid var(--retro-line);
+  background:
+    linear-gradient(90deg, rgba(156,255,210,.12), transparent 34%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, transparent 1px var(--retro-cell)),
+    rgba(5, 9, 14, .94);
+  box-shadow: 0 4px 0 var(--retro-shadow), 0 18px 46px rgba(0,0,0,.38);
+}
+
+.brand {
+  min-width: 260px;
+}
+
+.brandMark {
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--retro-lime);
+  background:
+    linear-gradient(135deg, rgba(156,255,210,.22), rgba(131,181,255,.1)),
+    #081019;
+  color: var(--retro-lime);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 18px;
+  box-shadow: 3px 3px 0 var(--retro-shadow), inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+.brand strong,
+.brand small,
+.tab,
+.kicker,
+.visualizerTab,
+.taskTab,
+.codeModeTabs button,
+.chapterTab,
+.chapterSwitcher,
+.footerMeta,
+.footerLink strong,
+.metricsGrid small {
+  font-family: 'IBM Plex Sans', monospace;
+}
+
+.brand strong {
+  color: var(--retro-lime);
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.brand small {
+  color: rgba(156,255,210,.62);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.tabs,
+.visualizerTabs,
+.taskTabs,
+.codeModeTabs {
+  border: 2px solid rgba(156,255,210,.22);
+  border-radius: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 8px),
+    rgba(7, 12, 18, .78);
+  box-shadow: 3px 3px 0 var(--retro-shadow);
+}
+
+.tab,
+.visualizerTab,
+.taskTab,
+.codeModeTabs button,
+.browserRunner button,
+.chapterSwitcher button,
+.footerMeta a,
+.footerMeta button {
+  border: 1px solid rgba(156,255,210,.24);
+  border-radius: 0;
+  background: rgba(9, 15, 22, .86);
+  color: rgba(244,246,248,.82);
+  box-shadow: 2px 2px 0 var(--retro-shadow);
+  text-transform: uppercase;
+}
+
+.tab:hover,
+.visualizerTab:hover,
+.taskTab:hover,
+.codeModeTabs button:hover,
+.browserRunner button:hover:not(:disabled),
+.chapterSwitcher button:hover:not(:disabled),
+.footerMeta a:hover,
+.footerMeta button:hover {
+  transform: translate(-1px, -1px);
+  border-color: var(--retro-line-hot);
+  color: var(--retro-gold);
+  background: rgba(255,211,107,.1);
+}
+
+.tab.active,
+.visualizerTab.active,
+.taskTab.active,
+.codeModeTabs button.active {
+  border-color: var(--retro-gold);
+  background: var(--retro-gold);
+  color: #07100d;
+  box-shadow: inset -3px -3px 0 rgba(0,0,0,.24), inset 3px 3px 0 rgba(255,255,255,.2), 2px 2px 0 var(--retro-shadow);
+}
+
+.tab.active small {
+  color: rgba(7,16,13,.62);
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'IBM Plex Sans', monospace;
+  letter-spacing: -.025em;
+  text-shadow: 3px 3px 0 rgba(0,0,0,.32);
+}
+
+h1 {
+  color: var(--retro-lime);
+}
+
+h2 {
+  color: #eef7ff;
+}
+
+h3 {
+  color: var(--retro-gold);
+}
+
+.kicker {
+  color: var(--retro-gold);
+  letter-spacing: .22em;
+}
+
+p {
+  color: rgba(230,235,242,.78);
+}
+
+.page {
+  width: min(1440px, calc(100% - 32px));
+}
+
+.labPage {
+  width: min(1500px, calc(100% - 32px));
+}
+
+.glass,
+.slideCard,
+.taskCard,
+.conceptCard,
+.calcBox,
+.universePanel,
+.controlPanel,
+.matterControls,
+.brainControls,
+.electronControls,
+.dnaControls,
+.magicBrainControls,
+.monographHero,
+.monographAside,
+.monographPaper,
+.footerInner,
+.magicBrainCode,
+.taskTabsPanel,
+.taskWorkspace {
+  border: 2px solid rgba(156,255,210,.2);
+  background:
+    linear-gradient(135deg, rgba(156,255,210,.075), transparent 36%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0 1px, transparent 1px var(--retro-cell)),
+    var(--retro-panel);
+  box-shadow: 5px 5px 0 var(--retro-shadow);
+  backdrop-filter: none;
+}
+
+.homeHero,
+.magicHero {
+  border: 2px solid rgba(156,255,210,.2);
+  background:
+    radial-gradient(circle at 80% 20%, rgba(131,181,255,.13), transparent 24rem),
+    linear-gradient(135deg, rgba(156,255,210,.07), transparent),
+    rgba(8, 13, 20, .84);
+  box-shadow: 5px 5px 0 var(--retro-shadow);
+}
+
+.homeStats div,
+.monographStats div,
+.metricsGrid div,
+.symbolGrid div,
+.magicModuleCard,
+.footerLink,
+.chapterSubsections span,
+.monoBlockTitle,
+.monoInlineFormula,
+.formulaBox,
+.runnerOutput,
+.browserRunner {
+  border: 1px solid rgba(156,255,210,.2);
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, rgba(156,255,210,.06), rgba(131,181,255,.025)),
+    rgba(5, 10, 16, .68);
+  box-shadow: 2px 2px 0 var(--retro-shadow);
+}
+
+.relationGlyph,
+.magicStack {
+  border: 2px solid rgba(156,255,210,.22);
+  background:
+    radial-gradient(circle, rgba(156,255,210,.08), transparent 58%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 10px),
+    rgba(5, 10, 16, .72);
+  box-shadow: 4px 4px 0 var(--retro-shadow);
+}
+
+.slideCard,
+.taskCard,
+.conceptCard {
+  border-width: 2px;
+  background:
+    linear-gradient(135deg, rgba(255,211,107,.08), transparent 32%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.024) 0 1px, transparent 1px 8px),
+    rgba(9, 15, 22, .92);
+}
+
+.slideCard code,
+.formulaBox,
+.finalEquation,
+.monoFormula code,
+.codeBlock code {
+  font-family: 'IBM Plex Sans', monospace;
+}
+
+.carouselViewport {
+  border-radius: 0;
+  box-shadow: 5px 5px 0 var(--retro-shadow);
+}
+
+.carouselArrow {
+  border: 2px solid var(--retro-line);
+  border-radius: 0;
+  background: rgba(5, 10, 16, .92);
+  box-shadow: 3px 3px 0 var(--retro-shadow);
+}
+
+.dot {
+  border-radius: 0;
+}
+
+.dot.active {
+  border-radius: 0;
+  background: var(--retro-gold);
+}
+
+.labGrid,
+.matterGrid,
+.brainGrid,
+.electronGrid,
+.dnaGrid,
+.magicBrainGrid {
+  grid-template-columns: 286px minmax(0, 1fr);
+}
+
+.controlPanel,
+.matterControls,
+.brainControls,
+.electronControls,
+.dnaControls,
+.magicBrainControls {
+  border-radius: 0;
+  padding-top: 44px;
+}
+
+.controlPanel::before,
+.matterControls::before,
+.brainControls::before,
+.electronControls::before,
+.dnaControls::before,
+.magicBrainControls::before {
+  content: '8/16 BIT CONTROL';
+  border-bottom: 2px solid rgba(156,255,210,.24);
+  background:
+    linear-gradient(90deg, rgba(156,255,210,.24), rgba(255,211,107,.12)),
+    #07101a;
+}
+
+.controlPanel label,
+.matterControls label,
+.brainControls label,
+.electronControls label,
+.dnaControls label,
+.magicBrainControls label {
+  border-radius: 0;
+  background: rgba(3, 8, 13, .7);
+}
+
+.pixelRange,
+.magicBrainControls input[type='text'],
+.magicBrainControls input:not([type]) {
+  border-radius: 0;
+}
+
+.pixelRange::-webkit-slider-thumb,
+.pixelRange::-moz-range-thumb {
+  border-radius: 0;
+}
+
+.phaseButtons {
+  border-radius: 0;
+}
+
+.phaseButtons button,
+.phaseButtons button.active {
+  border-radius: 0;
+}
+
+.universePanel,
+.matterStage,
+.brainStage,
+.electronStage,
+.dnaStage,
+.magicBrainStage,
+.waveStage {
+  border: 2px solid rgba(131,181,255,.24);
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(156,255,210,.06), transparent 52%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.026) 0 1px, transparent 1px 6px),
+    rgba(4, 8, 13, .86);
+  box-shadow: 5px 5px 0 var(--retro-shadow);
+}
+
+.universeSvg,
+.matterSvg,
+.brainSvg,
+.electronSvg,
+.dnaSvg,
+.magicBrainSvg,
+.waveSvg {
+  image-rendering: pixelated;
+}
+
+.metricsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+}
+
+.metricsGrid div {
+  border-radius: 0;
+}
+
+.metricsGrid strong,
+.homeStats strong,
+.monographStats strong,
+.centerReadout strong {
+  color: var(--retro-gold);
+  font-family: 'IBM Plex Sans', monospace;
+}
+
+.codeBlock,
+.runnerOutput {
+  border: 2px solid rgba(156,255,210,.18);
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(156,255,210,.035) 1px, transparent 1px),
+    #05090f;
+  background-size: 100% 18px;
+}
+
+.codeBlock code {
+  color: #dfffe9;
+}
+
+.browserRunner {
+  border-width: 2px;
+}
+
+.monographPage {
+  width: min(1440px, calc(100% - 32px));
+}
+
+.monographAside {
+  top: 76px;
+}
+
+.chapterTab {
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--retro-shadow);
+}
+
+.chapterTab.active {
+  background: var(--retro-lime);
+  color: #07100d;
+}
+
+.chapterSwitcher {
+  border: 1px solid rgba(156,255,210,.16);
+  border-radius: 0;
+}
+
+.monoHeading2 {
+  color: var(--retro-lime);
+}
+
+.monoFormula pre,
+.monoFormula figcaption {
+  border-radius: 0;
+}
+
+.appFooter {
+  border-radius: 0;
+}
+
+.footerInner {
+  border-width: 2px;
+}
+
+.footerIntro h2 {
+  color: var(--retro-lime);
+}
+
+.footerLink {
+  min-height: 112px;
+}
+
+.footerLink b {
+  border-radius: 0;
+  color: var(--retro-gold);
+}
+
 @media (max-width: 1180px) {
   .topbar { grid-template-columns: 1fr; }
   .tabs { justify-self: start; width: 100%; }
@@ -1177,6 +2379,14 @@ p { color: rgba(230,235,242,.78); line-height: 1.62; }
 @media (max-width: 960px) {
   .topbar { position: sticky; }
   .footerInner { grid-template-columns: 1fr; }
+  .labGrid,
+  .matterGrid,
+  .brainGrid,
+  .electronGrid,
+  .dnaGrid,
+  .magicBrainGrid {
+    grid-template-columns: 1fr;
+  }
   .monographLayout { grid-template-columns: 1fr; }
   .monographAside {
     position: static;
@@ -1202,6 +2412,55 @@ p { color: rgba(230,235,242,.78); line-height: 1.62; }
     width: min(100% - 20px, 1400px);
     padding-bottom: 18px;
   }
+  .visualizerTabs {
+    width: 100%;
+  }
+  .visualizerTab {
+    flex: 1 1 42%;
+  }
+  .controlPanel,
+  .matterControls,
+  .brainControls,
+  .electronControls,
+  .dnaControls,
+  .magicBrainControls {
+    padding: 38px 10px 10px;
+    border-radius: 0;
+    box-shadow: 3px 3px 0 var(--retro-shadow);
+  }
+  .controlPanel label,
+  .matterControls label,
+  .brainControls label,
+  .electronControls label,
+  .dnaControls label,
+  .magicBrainControls label {
+    padding: 5px;
+  }
+  .phaseButtons {
+    grid-template-columns: 1fr;
+  }
+  .universePanel,
+  .matterStage,
+  .brainStage,
+  .electronStage,
+  .dnaStage,
+  .magicBrainStage,
+  .waveStage {
+    min-height: 62vh;
+    border-radius: 0;
+    box-shadow: 3px 3px 0 var(--retro-shadow);
+  }
+  .universeSvg,
+  .matterSvg,
+  .brainSvg,
+  .electronSvg,
+  .dnaSvg,
+  .magicBrainSvg {
+    height: 56vh;
+  }
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .footerInner { padding: 14px; }
   .footerLinks { grid-template-columns: 1fr; }
   .footerLink { min-height: auto; }
@@ -1214,6 +2473,7 @@ p { color: rgba(230,235,242,.78); line-height: 1.62; }
   .monographHero,
   .monographPaper,
   .monographAside {
+    border-radius: 0;
     padding: 14px;
   }
   .monographStats { grid-template-columns: 1fr 1fr 1fr; }
