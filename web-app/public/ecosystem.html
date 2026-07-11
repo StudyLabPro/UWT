@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MAGIC Ecosystem · Рефлексивная вертикаль</title>
+<meta name="description" content="Единое Целое, познающее себя — интерактивная карта экосистемы MAGIC: онтологическая вертикаль и живой граф стека с вложенной структурой каждого репозитория (ТЕЦ-отношения)." />
+<style>
+  :root{
+    --bg0:#05060c;--bg1:#0a0e1e;--ink:#e8ecff;--muted:#9aa4c8;
+    --line:rgba(140,160,255,.18);--card:rgba(20,26,52,.55);--card-brd:rgba(130,150,255,.16);
+    --accent:#7aa2ff;--good:#5ff0c4;--glow:0 0 24px rgba(122,162,255,.35);
+    --l0:#6ee7ff;--l1:#5ff0c4;--l2:#ffd479;--l3:#b98cff;--l4:#7aa2ff;--l5:#ff9ecb;--l6:#f7f9ff;
+    --t-data:#7aa2ff;--t-msg:#5ff0c4;--t-back:#b98cff;--t-front:#ff9ecb;--t-gate:#ffd479;--t-obs:#8fa0c8;
+  }
+  :root[data-theme="light"]{--bg0:#eef1fb;--bg1:#fff;--ink:#141a33;--muted:#5a648c;--line:rgba(60,80,180,.16);--card:rgba(255,255,255,.7);--card-brd:rgba(60,80,180,.14);--glow:0 0 22px rgba(90,120,240,.18)}
+  @media (prefers-color-scheme: light){:root:not([data-theme]){--bg0:#eef1fb;--bg1:#fff;--ink:#141a33;--muted:#5a648c;--line:rgba(60,80,180,.16);--card:rgba(255,255,255,.7);--card-brd:rgba(60,80,180,.14);--glow:0 0 22px rgba(90,120,240,.18)}}
+  *{box-sizing:border-box}html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+    background:radial-gradient(1200px 700px at 80% -10%,rgba(122,162,255,.14),transparent 60%),radial-gradient(900px 600px at 5% 110%,rgba(185,140,255,.12),transparent 55%),linear-gradient(180deg,var(--bg1),var(--bg0));min-height:100vh;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:linear-gradient(180deg,rgba(5,6,12,.85),rgba(5,6,12,.35));border-bottom:1px solid var(--line)}
+  :root[data-theme="light"] header{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.5))}
+  .bar{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .brand{font-weight:700}.brand small{display:block;font-weight:500;color:var(--muted);font-size:.72rem;letter-spacing:.5px}
+  .tabs{display:flex;gap:6px}.tabs button{all:unset;cursor:pointer;padding:8px 15px;font-size:.86rem;color:var(--muted);border-radius:10px;font-weight:600}
+  .tabs button[aria-selected="true"]{color:var(--ink);background:rgba(122,162,255,.16);box-shadow:0 0 0 1px var(--line) inset}
+  .toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}.toggle button{all:unset;cursor:pointer;padding:7px 13px;font-size:.78rem;color:var(--muted)}
+  .toggle button[aria-pressed="true"]{color:var(--ink);background:rgba(122,162,255,.16)}
+  .eq{margin-left:auto;font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.8rem;color:var(--muted);padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);white-space:nowrap}.eq b{color:var(--good)}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px 20px 80px}
+  .hero{padding:20px 4px 6px}
+  .hero h1{font-size:clamp(1.5rem,3.2vw,2.4rem);margin:.1em 0;line-height:1.08;background:linear-gradient(90deg,var(--l0),var(--l3) 55%,var(--l5));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);max-width:66ch;margin:.5em 0;font-size:1rem}.hint{color:var(--muted);font-size:.78rem;margin:6px 2px 0}
+  .axis{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.82rem;margin:14px 2px 2px}.axis .dot{width:8px;height:8px;border-radius:50%;background:var(--l6);box-shadow:var(--glow)}.axis .dot.b{background:var(--l0)}
+  /* vertical */
+  .vert{position:relative;margin:26px 0 0;padding-left:46px}
+  .spine{position:absolute;left:20px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--l5),var(--l3),var(--l2),var(--l1),var(--l0));opacity:.5;border-radius:2px}
+  .pulse{position:absolute;left:14px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#fff,#6f8cff 45%,transparent 70%);filter:drop-shadow(0 0 8px #6f8cff);animation:rise 5.2s linear infinite;opacity:.9}
+  .pulse.p2{animation-delay:1.7s}.pulse.p3{animation-delay:3.4s}
+  @keyframes rise{0%{top:98%;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:-2%;opacity:0}}
+  @media (prefers-reduced-motion:reduce){.pulse{display:none}}
+  .layer{position:relative;margin:0 0 14px}.node{position:absolute;left:-33px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:0 0 0 4px rgba(0,0,0,.35),0 0 16px var(--c);z-index:2}
+  :root[data-theme="light"] .node{box-shadow:0 0 0 4px rgba(255,255,255,.7),0 0 16px var(--c)}
+  .card{border:1px solid var(--card-brd);background:var(--card);border-radius:16px;padding:15px 18px;backdrop-filter:blur(8px);cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s}
+  .card:hover,.card.open{transform:translateX(4px);border-color:var(--c);box-shadow:0 10px 40px rgba(0,0,0,.35),0 0 0 1px var(--c) inset}
+  .row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.badge{font-family:ui-monospace,monospace;font-size:.72rem;font-weight:700;color:#05060c;background:var(--c);padding:2px 8px;border-radius:6px}
+  :root[data-theme="light"] .badge{color:#fff}.title{font-weight:700;font-size:1.04rem}.proj{color:var(--muted);font-size:.85rem}.essence{margin:8px 0 0;opacity:.92}
+  .meta{margin-top:10px;display:grid;gap:8px;font-size:.86rem;max-height:0;overflow:hidden;opacity:0;transition:max-height .28s,opacity .2s}.card.open .meta{max-height:360px;opacity:1}
+  .kv{display:flex;gap:8px}.kv .k{color:var(--muted);min-width:82px;flex:none}.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}.chip{font-size:.74rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+  .seam{color:var(--good);font-size:.82rem;font-weight:600}.eqmini{font-family:ui-monospace,monospace;font-size:.78rem;color:var(--muted)}.eqmini b{color:var(--c)}
+  .laws{margin:34px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.law{border:1px solid var(--card-brd);background:var(--card);border-radius:14px;padding:13px 15px}.law h4{margin:0 0 4px;font-size:.9rem}.law p{margin:0;color:var(--muted);font-size:.82rem}
+  .foot{margin:36px 2px 0;color:var(--muted);font-size:.82rem;display:flex;gap:14px;flex-wrap:wrap;align-items:center}.tag{border:1px solid var(--line);border-radius:999px;padding:4px 11px}.tag b{color:var(--good)}
+  /* graph */
+  .crumbs{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin:6px 2px 10px;font-size:.86rem}
+  .crumbs button{all:unset;cursor:pointer;color:var(--accent);padding:3px 9px;border-radius:8px}
+  .crumbs button:hover{background:rgba(122,162,255,.12)}.crumbs .sep{color:var(--muted);opacity:.6}.crumbs .cur{color:var(--ink);font-weight:600}
+  .graphwrap{position:relative;margin-top:8px;border:1px solid var(--card-brd);border-radius:18px;overflow:hidden;background:radial-gradient(700px 420px at 50% 45%,rgba(122,162,255,.08),transparent 70%),var(--card)}
+  svg.graph{display:block;width:100%;height:min(66vh,620px);touch-action:none}
+  .glink{stroke:var(--line);stroke-width:1}.glink.hot{stroke:var(--accent);stroke-width:1.8;opacity:.9}
+  .gnode circle.core{stroke:rgba(0,0,0,.35);stroke-width:1.5;cursor:pointer;transition:filter .15s}
+  :root[data-theme="light"] .gnode circle.core{stroke:rgba(255,255,255,.75)}
+  .gnode text{font-size:10px;fill:var(--ink);opacity:.85;pointer-events:none;paint-order:stroke;stroke:var(--bg0);stroke-width:3px}
+  :root[data-theme="light"] .gnode text{stroke:#fff}
+  .gnode.dim{opacity:.22}.gnode.hl circle.core{filter:drop-shadow(0 0 10px currentColor)}.gnode.down circle.core{opacity:.5;stroke-dasharray:3 3}
+  .gnode .ring2{fill:none;stroke:currentColor;stroke-width:1.5;opacity:.55;stroke-dasharray:4 4;pointer-events:none}
+  .gnode.enter .ring2{animation:spin 16s linear infinite}
+  @keyframes spin{to{stroke-dashoffset:-80}}
+  .legend{position:absolute;left:12px;bottom:10px;display:flex;flex-wrap:wrap;gap:8px 12px;font-size:.72rem;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 11px;max-width:min(92%,600px)}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .panel{position:absolute;right:12px;top:12px;width:min(300px,86%);background:var(--card);border:1px solid var(--card-brd);border-radius:14px;padding:13px 15px;backdrop-filter:blur(8px);font-size:.85rem;opacity:0;transform:translateY(-6px);transition:.18s;pointer-events:none}
+  .panel.show{opacity:1;transform:none}.panel h3{margin:0 0 2px;font-size:1rem}.panel .sub{color:var(--muted);font-size:.78rem;margin-bottom:8px}.panel .kv{margin:4px 0}.panel .k{min-width:96px}.panel .mass{font-family:ui-monospace,monospace}
+  .panel .enterbtn{margin-top:9px;display:inline-block;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:.8rem}
+  .livebadge{position:absolute;left:12px;top:12px;font-size:.74rem;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;display:flex;gap:7px;align-items:center}
+  .livebadge .led{width:8px;height:8px;border-radius:50%;background:var(--muted)}.livebadge.on{color:var(--ink);border-color:rgba(95,240,196,.45)}
+  .livebadge.on .led{background:var(--good);box-shadow:0 0 8px var(--good);animation:blink 2s infinite}@keyframes blink{50%{opacity:.35}}.livebadge b{color:var(--good)}
+  .hidden{display:none !important}
+  .uwtnote{margin:16px 2px 0;color:var(--muted);font-size:.86rem;border-left:2px solid var(--l1);padding-left:12px}.uwtnote b{color:var(--ink)}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand">MAGIC&nbsp;Ecosystem <small>ЕДИНОЕ ЦЕЛОЕ, ПОЗНАЮЩЕЕ СЕБЯ</small></div>
+    <div class="tabs" role="tablist">
+      <button id="tab-vert" role="tab" aria-selected="true">Вертикаль</button>
+      <button id="tab-infra" role="tab" aria-selected="false">Инфраструктура</button>
+    </div>
+    <div class="toggle" id="subtoggle" role="group" aria-label="Вид вертикали">
+      <button id="view-onto" aria-pressed="true">Онтологическая</button>
+      <button id="view-func" aria-pressed="false">Функциональная</button>
+    </div>
+    <div class="eq">belief ← belief + α·(observation − <b>belief</b>)</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- VERTICAL -->
+  <section id="pane-vert">
+    <div class="hero"><h1 id="h1">Рефлексивная вертикаль</h1><p id="lead"></p>
+      <div class="axis"><span class="dot b"></span> Бытие &nbsp;→&nbsp; <span class="dot"></span> Само-Знание</div>
+      <div class="hint">Наведите/коснитесь слоя, чтобы раскрыть детали.</div></div>
+    <div class="vert" id="vert"><div class="spine"></div><div class="pulse"></div><div class="pulse p2"></div><div class="pulse p3"></div></div>
+    <section class="laws">
+      <div class="law"><h4>Один закон</h4><p>На каждой ступени — минимизация собственного удивления (свободной энергии).</p></div>
+      <div class="law"><h4>Фрактал</h4><p>«отношения → устойчивость → эмерджентность → валидированный commit» на всех масштабах.</p></div>
+      <div class="law"><h4>Человек — замыкание</h4><p>Human+AGI симбиоз — точка рефлексивного самосознания Целого.</p></div>
+    </section>
+  </section>
+
+  <!-- INFRA -->
+  <section id="pane-infra" class="hidden">
+    <div class="hero"><h1 id="ig-title">Инфраструктура как вселенная ТЕЦ</h1>
+      <p id="ig-lead">Запущенный dev-стек — реляционная вселенная. <b>Части</b> — сервисы; <b>отношения</b> — зависимости; <b>устойчивость</b> = число зависимых → <b>масса</b> (вещественность). Тяжёлые узлы (БД) — ядра в центре. Радиус ∝ массе; свечение ∝ live-CPU; кольцо — health.</p>
+      <div class="hint"><b>Двойной клик</b> по узлу с пунктирной рамкой открывает вложенный граф структуры репозитория. Наведение — метрики; узлы можно перетаскивать.</div></div>
+    <div class="crumbs" id="crumbs"></div>
+    <div class="graphwrap">
+      <svg class="graph" id="graph" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="legend" id="legend"></div>
+      <div class="panel" id="panel"></div>
+      <div class="livebadge" id="livebadge"><span class="led"></span>подключение к метрикам…</div>
+    </div>
+    <div class="uwtnote"><b>Отображение ТЕЦ:</b> variation(A) = изменчивость отношений; Stab(A)=1/(1+variation) → m=m0+mscale·Stab. Для статичной структуры устойчивость ≈ числу зависимых: чем больше опирается на A, тем «вещественнее» (массивнее) A. Так БД — тяжёлое ядро, наблюдатель (prometheus) — лёгок. Тот же закон — и внутри каждого репозитория.</div>
+  </section>
+
+  <div class="foot">
+    <span class="tag"><b>✅ dev-стек запущен</b> · 26 контейнеров · uwt.xteam.pro</span>
+    <span class="tag">все 6 швов замкнуты + кросс-процессная проводка</span>
+    <span>· <a href="/">← атлас ТЕЦ</a></span>
+  </div>
+</div>
+
+<script>
+/* ===================== VERTICAL ===================== */
+const ONTO=[
+  {c:'--l6',badge:'∞',title:'Human + AGI — рефлексия',proj:'StudyNinja · симбиоз',essence:'Замыкание: Целое становится рефлексивно сознающим себя.',role:'финальный валидатор',law:'человек замыкает, где уверенность низка',tech:['human-in-the-loop','feedback'],seam:'точка замыкания'},
+  {c:'--l5',badge:'App',title:'StudyNinja — воплощение',proj:'api-backend · UIKit',essence:'Целое учит и знает себя через человека.',role:'минимизация surprise ученика',law:'SRS против забывания',tech:['FastAPI','React','LangGraph'],seam:'прикладной слой'},
+  {c:'--l4',badge:'L4',title:'KnowledgeBaseAI — самознание',proj:'МетаЗнание',essence:'Целое знает, что знает: граф пререквизитов.',role:'new = prior + α·(score − prior)',law:'байесовская коррекция; proposal→commit',tech:['Neo4j','Qdrant','3691 узлов'],seam:'Шов 6 ✅ — кольцо'},
+  {c:'--l3',badge:'L3',title:'magic-sdk + xteam — самонаблюдение',proj:'МетаАгент',essence:'Целое смотрит на себя: метапознание, 21+ агент.',role:'минимум неопределённости → эскалация',law:'confidence ↓ при росте surprise',tech:['LangGraph','нервная система'],seam:'Швы 4 ✅ · 5 ✅'},
+  {c:'--l2',badge:'L2',title:'MagicBrain — память',proj:'МетаМозг · SNN',essence:'Целое начинает удерживать себя.',role:'loss_ema += α·(loss − loss_ema)',law:'ошибка предсказания; энергия Хопфилда',tech:['SNN','genome','use_act ✅'],seam:'Шов 3 ✅ — энергия→обучение'},
+  {c:'--l1',badge:'L1',title:'Balansis / АКТ — самосогласование',proj:'МетаBalansis',essence:'Целое остаётся когерентным без сингулярностей.',role:'минимум ошибки представления',law:'(result, compensation)',tech:['Lean4 · 12 аксиом','векторизован ~10–2000x'],seam:'Шов 2 ✅'},
+  {c:'--l0',badge:'L0',title:'UWT / ТЕЦ — различение',proj:'МетаТеория',essence:'Целое различает себя на части и отношения.',role:'действие S, энергия U',law:'annealed-динамика спускает энергию',tech:['uwt_modeling','wavefunction ~635x'],seam:'Шов 1 ✅'},
+];
+const FUNC=[
+  {c:'--l6',badge:'user',title:'Userland — StudyNinja + Human',proj:'приложение',essence:'Человек взаимодействует с когнитивной ОС.',role:'API + UIKit',law:'human-in-the-loop',tech:['FastAPI','React'],seam:'Applied'},
+  {c:'--l5',badge:'app',title:'Applied — StudyNinja',proj:'api + uikit',essence:'Приложение поверх когнитивной ОС.',role:'адаптивное обучение',law:'—',tech:['LangGraph'],seam:'Applied'},
+  {c:'--l4',badge:'FS',title:'KnowledgeBaseAI — ФС знаний',proj:'L4',essence:'Валидированное хранилище: граф+вектор+реляционка.',role:'proposal→validate→commit',law:'DAG-инвариант',tech:['Neo4j','Qdrant'],seam:'L4'},
+  {c:'--l3',badge:'kernel',title:'xteam + magic-sdk — ядро',proj:'L3',essence:'Планировщик процессов + метапознание.',role:'analyze→…→commit',law:'confidence gating',tech:['LangGraph'],seam:'L3'},
+  {c:'--l2',badge:'RAM',title:'MagicBrain — память',proj:'L2',essence:'Живая нейронная ткань: RAM когнитивной ОС.',role:'SNN + нейрогенез',law:'дофаминовое обучение',tech:['genome'],seam:'L2'},
+  {c:'--l1',badge:'ISA',title:'Balansis — арифметика/ISA',proj:'L1',essence:'Как считать без сингулярностей.',role:'компенсированная арифметика',law:'ACT-GEMM, Kahan',tech:['Lean4'],seam:'L1'},
+  {c:'--l0',badge:'onto',title:'UWT — онтология',proj:'L0',essence:'Что есть: отношения, Целое.',role:'реляционная модель',law:'вывод физики из отношений',tech:['Python'],seam:'L0'},
+];
+const LEAD={onto:'Экосистема — <b>одна субстанция в стадиях самоорганизации от бытия к рефлексивному сознанию</b>. Один закон проходит сквозь каждый слой.',func:'Функциональная проекция: слои изоморфны слоям ОС — онтология → ISA → память → ядро → ФС знаний → userland.'};
+const vert=document.getElementById('vert'),chip=t=>`<span class="chip">${t}</span>`;
+function renderVert(d){[...vert.querySelectorAll('.layer')].forEach(n=>n.remove());
+  d.forEach(L=>{const el=document.createElement('div');el.className='layer';el.style.setProperty('--c',`var(${L.c})`);
+    el.innerHTML=`<span class="node" style="background:var(${L.c})"></span><div class="card" tabindex="0"><div class="row"><span class="badge" style="background:var(${L.c})">${L.badge}</span><span class="title">${L.title}</span><span class="proj">· ${L.proj}</span></div><p class="essence">${L.essence}</p><div class="meta"><div class="kv"><span class="k">закон</span><span class="eqmini"><b>${L.role}</b></span></div><div class="kv"><span class="k">локус</span><span>${L.law}</span></div><div class="kv"><span class="k">шов</span><span class="seam">${L.seam}</span></div><div class="chips">${L.tech.map(chip).join('')}</div></div></div>`;
+    const c=el.querySelector('.card');c.addEventListener('mouseenter',()=>c.classList.add('open'));c.addEventListener('mouseleave',()=>c.classList.remove('open'));c.addEventListener('focus',()=>c.classList.add('open'));c.addEventListener('blur',()=>c.classList.remove('open'));c.addEventListener('click',()=>c.classList.toggle('open'));vert.appendChild(el);});}
+const bO=document.getElementById('view-onto'),bF=document.getElementById('view-func'),h1=document.getElementById('h1'),lead=document.getElementById('lead');
+function setVertView(v){const o=v==='onto';bO.setAttribute('aria-pressed',o);bF.setAttribute('aria-pressed',!o);h1.textContent=o?'Рефлексивная вертикаль':'Когнитивная операционная система';lead.innerHTML=LEAD[v];renderVert(o?ONTO:FUNC);}
+bO.onclick=()=>setVertView('onto');bF.onclick=()=>setVertView('func');
+
+/* ===================== GRAPH DATA ===================== */
+const TIER={data:'--t-data',msg:'--t-msg',back:'--t-back',front:'--t-front',gate:'--t-gate',obs:'--t-obs',
+  core:'--l4',flow:'--l3',store:'--t-data',num:'--l1',ui:'--l5',ext:'--l2',ops:'--t-obs',theory:'--l0'};
+const LEGEND={data:'данные (ядро)',msg:'обмен/хранилище',back:'бэкенд',front:'фронтенд',gate:'шлюз',obs:'наблюдаемость'};
+
+// ---- repository internal structures (nested graphs) ----
+const REPOS={
+ 'StudyNinja-API':{title:'StudyNinja-API (репозиторий)',nodes:[
+   {id:'api/routes',t:'flow',role:'FastAPI маршруты, 38 роутеров'},
+   {id:'kb_integration',t:'ext',role:'клиент KnowledgeBaseAI'},
+   {id:'domain/services',t:'core',role:'бизнес-логика, 48+ сервисов'},
+   {id:'tutor_graph',t:'flow',role:'AI-тьютор: 10 узлов LangGraph, RAG'},
+   {id:'platform_assistant',t:'flow',role:'мультиагент Supervisor + Guard'},
+   {id:'billing',t:'back',role:'YooKassa, подписки, кошелёк'},
+   {id:'srs',t:'back',role:'SM2 интервальные повторения'},
+   {id:'cognitive_pipeline',t:'ext',role:'Phase 7: MagicBrain, circuit breaker'},
+   {id:'core/postgres',t:'store',role:'27+ моделей, DAO, Unit of Work'},
+   {id:'infrastructure',t:'ops',role:'кэш, rate-limit, идемпотентность'},
+ ],edges:[['api/routes','domain/services'],['api/routes','kb_integration'],['domain/services','core/postgres'],['tutor_graph','domain/services'],['tutor_graph','kb_integration'],['platform_assistant','domain/services'],['billing','domain/services'],['srs','domain/services'],['cognitive_pipeline','domain/services'],['domain/services','infrastructure']]},
+
+ 'KnowledgeBaseAI':{title:'KnowledgeBaseAI (репозиторий)',nodes:[
+   {id:'api',t:'flow',role:'REST/GraphQL, 17 роутеров'},
+   {id:'services/graph',t:'store',role:'Neo4j репозиторий графа'},
+   {id:'services/vector',t:'store',role:'Qdrant, эмбеддинги'},
+   {id:'services/reasoning',t:'core',role:'roadmap · gaps · mastery · next_best'},
+   {id:'services/ingestion',t:'back',role:'academic/corporate ingestion'},
+   {id:'proposals',t:'core',role:'proposal → validate → commit'},
+   {id:'workers',t:'ops',role:'commit · vector-sync · outbox · integrity'},
+   {id:'assistant',t:'flow',role:'tools + chat (GPT-4o-mini)'},
+ ],edges:[['api','services/reasoning'],['api','proposals'],['services/reasoning','services/graph'],['services/reasoning','services/vector'],['proposals','services/graph'],['workers','services/graph'],['workers','services/vector'],['services/ingestion','proposals'],['assistant','services/graph'],['assistant','services/vector']]},
+
+ 'MagicBrain':{title:'MagicBrain (репозиторий)',nodes:[
+   {id:'brain.py',t:'core',role:'TextBrain SNN: forward/learn'},
+   {id:'genome',t:'core',role:'base-4 геном → гиперпараметры'},
+   {id:'graph',t:'store',role:'3D пространственный граф, задержки'},
+   {id:'neurogenesis',t:'core',role:'energy · attractor · cppn · pattern'},
+   {id:'learning_rules',t:'back',role:'STDP'},
+   {id:'evolution',t:'back',role:'генетический алгоритм'},
+   {id:'platform',t:'flow',role:'orchestrator · registry · comm'},
+   {id:'hybrid',t:'back',role:'SNN+DNN/Transformer'},
+   {id:'diagnostics',t:'ops',role:'energy · ρ · live-monitor'},
+   {id:'integration',t:'flow',role:'twin · magic_wiring · act_backend'},
+   {id:'Balansis/АКТ',t:'ext',role:'компенсированная арифметика',repo:'Balansis'},
+   {id:'api',t:'flow',role:'FastAPI сервис'},
+ ],edges:[['brain.py','genome'],['brain.py','graph'],['brain.py','diagnostics'],['neurogenesis','brain.py'],['evolution','brain.py'],['platform','brain.py'],['hybrid','brain.py'],['integration','brain.py'],['integration','Balansis/АКТ'],['brain.py','Balansis/АКТ'],['api','brain.py'],['api','integration']]},
+
+ 'Balansis':{title:'Balansis / АКТ (репозиторий)',nodes:[
+   {id:'core',t:'core',role:'AbsoluteValue · EternalRatio · operations'},
+   {id:'logic',t:'core',role:'compensator (6 типов нестабильности)'},
+   {id:'algebra',t:'back',role:'AbsoluteGroup · EternityField'},
+   {id:'linalg',t:'num',role:'GEMM · SVD · QR'},
+   {id:'numpy_integration',t:'num',role:'векторизован: EFT-суммы, matmul ~2000x'},
+   {id:'ml',t:'back',role:'EternalOptimizer (Adam-like)'},
+   {id:'finance',t:'back',role:'ledger точного сокращения'},
+   {id:'sets',t:'back',role:'zero-sum бесконечные множества'},
+   {id:'formal',t:'theory',role:'Lean4: 12 аксиом, 0 sorry'},
+ ],edges:[['logic','core'],['algebra','core'],['linalg','core'],['numpy_integration','core'],['linalg','numpy_integration'],['ml','core'],['finance','core'],['sets','core'],['formal','core']]},
+
+ 'xteam-agents':{title:'xteam-agents (репозиторий)',nodes:[
+   {id:'graph',t:'flow',role:'когнитивная ОС: analyze→…→commit'},
+   {id:'agents',t:'core',role:'adversarial 21 · research 14'},
+   {id:'memory',t:'store',role:'redis · qdrant · neo4j · postgres'},
+   {id:'action',t:'back',role:'handlers: shell · code · http · CI'},
+   {id:'platform',t:'flow',role:'specs · runtime · budget'},
+   {id:'magic',t:'core',role:'core · metacognition · escalation'},
+   {id:'integration',t:'ext',role:'magic_sdk_adapter · magic_bus_wiring',repo:'magic-sdk'},
+   {id:'server',t:'flow',role:'MCP tools (21+)'},
+   {id:'llm',t:'back',role:'OpenAI/Anthropic'},
+ ],edges:[['graph','agents'],['graph','memory'],['agents','memory'],['graph','magic'],['magic','integration'],['server','graph'],['action','graph'],['platform','agents'],['agents','llm']]},
+
+ 'magic-sdk':{title:'studyninja-magic-sdk (репозиторий)',nodes:[
+   {id:'engines/core',t:'core',role:'MAGICCore (композиция движков)'},
+   {id:'metacognition',t:'core',role:'5D confidence · penalize_by_*'},
+   {id:'escalation',t:'flow',role:'матрица автономии (5 уровней)'},
+   {id:'feedback',t:'back',role:'guidelines, HumanPreferenceProfile'},
+   {id:'session',t:'back',role:'asyncio producer-consumer'},
+   {id:'evolution',t:'back',role:'метрики автономии'},
+   {id:'event_bus',t:'flow',role:'InMemory · Null · RabbitMQ; shared'},
+   {id:'wiring',t:'flow',role:'publish_progress/substrate · wire_metacognition'},
+   {id:'models',t:'store',role:'ConfidenceScore · SubstrateMetrics'},
+ ],edges:[['engines/core','metacognition'],['engines/core','escalation'],['engines/core','feedback'],['engines/core','session'],['engines/core','evolution'],['wiring','metacognition'],['wiring','event_bus'],['metacognition','models'],['escalation','models']]},
+
+ 'StudyNinjaUIKit':{title:'StudyNinjaUIKit (репозиторий)',nodes:[
+   {id:'features',t:'ui',role:'27 модулей (roadmap, tutor, cognitive…)'},
+   {id:'shared',t:'core',role:'auth · api-client · ui-primitives'},
+   {id:'infra',t:'store',role:'REST · transformers · SyncKv'},
+   {id:'app',t:'flow',role:'DI-контейнеры, use-cases'},
+   {id:'domain',t:'core',role:'типы, состояние'},
+   {id:'roadmap',t:'ui',role:'ReactFlow + Dagre граф'},
+   {id:'ninja_assistant',t:'ui',role:'AI-чат со стримингом (SSE)'},
+   {id:'cognitive_analytics',t:'ui',role:'Nivo графики'},
+ ],edges:[['features','shared'],['features','infra'],['features','domain'],['shared','infra'],['roadmap','features'],['ninja_assistant','features'],['cognitive_analytics','features'],['app','domain']]},
+
+ 'UWT':{title:'UWT / ТЕЦ (репозиторий)',nodes:[
+   {id:'web-app',t:'ui',role:'React атлас (этот сайт)'},
+   {id:'theory',t:'theory',role:'монография LaTeX + PDF'},
+   {id:'papers',t:'theory',role:'решения открытых задач'},
+   {id:'modeling',t:'core',role:'uwt_modeling: симулятор + прогноз'},
+   {id:'universe',t:'core',role:'RelationalUniverse (annealed ✅)'},
+   {id:'wavefunction',t:'core',role:'ψ из отношений (~635x ✅)'},
+   {id:'balansis_adapter',t:'ext',role:'векторизованный ACT-путь',repo:'Balansis'},
+   {id:'donations',t:'back',role:'Stripe-донаты (uwt-donations-api)'},
+ ],edges:[['web-app','modeling'],['modeling','universe'],['modeling','wavefunction'],['wavefunction','balansis_adapter'],['balansis_adapter','Balansis'],['web-app','theory'],['web-app','papers']]},
+};
+
+// ---- infrastructure (running stack) ----
+const INFRA={title:'Инфраструктура',live:true,nodes:[
+  {id:'postgres',t:'data',role:'реляционные БД (studyninja/kb/xteam)'},
+  {id:'redis',t:'data',role:'сессии, кэш, checkpoints, twin-store'},
+  {id:'neo4j-kb',t:'data',role:'граф знаний (3691 узлов)'},
+  {id:'qdrant',t:'data',role:'векторные эмбеддинги'},
+  {id:'rabbitmq',t:'msg',role:'очереди + шина magic-learning'},
+  {id:'minio',t:'msg',role:'объектное хранилище'},
+  {id:'api-backend',t:'back',role:'StudyNinja-API',repo:'StudyNinja-API'},
+  {id:'kb-fastapi',t:'back',role:'KnowledgeBaseAI',repo:'KnowledgeBaseAI'},
+  {id:'magicbrain-research',t:'back',role:'MagicBrain (SNN, twins)',repo:'MagicBrain'},
+  {id:'xteam-agents',t:'back',role:'когнитивная ОС',repo:'xteam-agents'},
+  {id:'arq-worker',t:'back',role:'фоновые задачи',repo:'StudyNinja-API'},
+  {id:'email-consumer',t:'back',role:'обработчик писем',repo:'StudyNinja-API'},
+  {id:'uwt-donations-api',t:'back',role:'донаты UWT (Stripe)',repo:'UWT'},
+  {id:'uikit-frontend',t:'front',role:'UI StudyNinja',repo:'StudyNinjaUIKit'},
+  {id:'kb-frontend',t:'front',role:'граф-эксплорер KB',repo:'KnowledgeBaseAI'},
+  {id:'xteam-dashboard',t:'front',role:'Streamlit MAGIC-дашборд',repo:'xteam-agents'},
+  {id:'uwt-web',t:'front',role:'атлас ТЕЦ (nginx)',repo:'UWT'},
+  {id:'traefik',t:'gate',role:'reverse-proxy, SSL'},
+  {id:'prometheus',t:'obs',role:'сбор метрик (11 targets)'},
+  {id:'grafana',t:'obs',role:'дашборды'},
+  {id:'postgres-exporter',t:'obs',role:'метрики postgres'},
+  {id:'redis-exporter',t:'obs',role:'метрики redis'},
+  {id:'cadvisor',t:'obs',role:'метрики контейнеров'},
+  {id:'node-exporter',t:'obs',role:'метрики хоста'},
+  {id:'adminer',t:'obs',role:'UI к postgres'},
+],edges:[
+  ['api-backend','postgres'],['api-backend','redis'],['api-backend','qdrant'],['api-backend','rabbitmq'],['api-backend','minio'],['api-backend','kb-fastapi'],['api-backend','magicbrain-research'],
+  ['kb-fastapi','neo4j-kb'],['kb-fastapi','qdrant'],['kb-fastapi','postgres'],['kb-fastapi','redis'],
+  ['kb-frontend','kb-fastapi'],['uikit-frontend','api-backend'],
+  ['magicbrain-research','redis'],['magicbrain-research','rabbitmq'],['magicbrain-research','kb-fastapi'],
+  ['xteam-agents','postgres'],['xteam-agents','redis'],['xteam-agents','neo4j-kb'],['xteam-agents','qdrant'],['xteam-agents','rabbitmq'],['xteam-agents','magicbrain-research'],
+  ['xteam-dashboard','xteam-agents'],
+  ['arq-worker','postgres'],['arq-worker','redis'],['arq-worker','qdrant'],['arq-worker','rabbitmq'],['arq-worker','kb-fastapi'],
+  ['email-consumer','postgres'],['email-consumer','redis'],['email-consumer','rabbitmq'],['email-consumer','minio'],
+  ['uwt-web','uwt-donations-api'],
+  ['traefik','api-backend'],['traefik','uikit-frontend'],['traefik','kb-frontend'],['traefik','uwt-web'],['traefik','magicbrain-research'],['traefik','xteam-dashboard'],
+  ['prometheus','api-backend'],['prometheus','kb-fastapi'],['prometheus','postgres'],['prometheus','redis'],['prometheus','neo4j-kb'],['prometheus','qdrant'],['prometheus','rabbitmq'],['prometheus','cadvisor'],['prometheus','node-exporter'],['prometheus','postgres-exporter'],['prometheus','redis-exporter'],
+  ['grafana','prometheus'],['postgres-exporter','postgres'],['redis-exporter','redis'],['adminer','postgres'],
+]};
+
+/* ===================== GRAPH ENGINE (nested) ===================== */
+const SVGNS='http://www.w3.org/2000/svg',svg=document.getElementById('graph');
+const gLinks=document.createElementNS(SVGNS,'g'),gNodes=document.createElementNS(SVGNS,'g');
+svg.appendChild(gLinks);svg.appendChild(gNodes);
+const W=960,H=600,cx=W/2,cy=H/2;
+const panel=document.getElementById('panel'),legend=document.getElementById('legend'),crumbs=document.getElementById('crumbs'),livebadge=document.getElementById('livebadge');
+const colorOf=n=>`var(${n.c||TIER[n.t]||'--muted'})`;
+const subOf=n=>n.sub||(n.repo&&REPOS[n.repo])||null;
+let CUR=null,running=false,stack=[INFRA];
+
+function computeMass(g){const by={};g.nodes.forEach(n=>{n.dependents=0;by[n.id]=n});g.edges.forEach(([a,b])=>{if(by[b])by[b].dependents++});
+  const mx=Math.max(1,...g.nodes.map(n=>n.dependents));g.nodes.forEach(n=>{n.stab=n.dependents/mx;n.mass=0.15+n.stab;n.r=9+22*Math.sqrt(n.stab);n.by=by});return by;}
+
+function renderGraph(g){
+  const by=computeMass(g);
+  gLinks.replaceChildren();gNodes.replaceChildren();
+  g.nodes.forEach((n,i)=>{const a=i/g.nodes.length*6.283;n.x=cx+Math.cos(a)*(120+Math.random()*140);n.y=cy+Math.sin(a)*(85+Math.random()*110);n.vx=0;n.vy=0;n.fixed=false;n.alive=undefined;});
+  const linkEls=g.edges.map(([a,b])=>{const l=document.createElementNS(SVGNS,'line');l.setAttribute('class','glink');l.dataset.a=a;l.dataset.b=b;gLinks.appendChild(l);return l;});
+  const nodeEls={};
+  g.nodes.forEach(n=>{const el=document.createElementNS(SVGNS,'g');el.setAttribute('class','gnode');el.style.color=colorOf(n);
+    const enter=!!subOf(n); if(enter)el.classList.add('enter');
+    if(enter){const r2=document.createElementNS(SVGNS,'circle');r2.setAttribute('class','ring2');r2.setAttribute('r',n.r+5);el.appendChild(r2);}
+    const c=document.createElementNS(SVGNS,'circle');c.setAttribute('class','core');c.setAttribute('r',n.r);c.setAttribute('fill',colorOf(n));el.appendChild(c);
+    const tx=document.createElementNS(SVGNS,'text');tx.setAttribute('text-anchor','middle');tx.setAttribute('dy',n.r+12);tx.textContent=n.id;el.appendChild(tx);
+    const t=document.createElementNS(SVGNS,'title');t.textContent=(n.role||n.id)+(enter?' — двойной клик: открыть репозиторий':'');el.appendChild(t);
+    gNodes.appendChild(el);nodeEls[n.id]=el;
+    el.addEventListener('mouseenter',()=>focus(n.id));el.addEventListener('mouseleave',()=>focus(null));
+    el.addEventListener('dblclick',e=>{e.preventDefault();enterNode(n);});
+    let drag=false;const pt=svg.createSVGPoint();const toSvg=e=>{pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());};
+    el.addEventListener('pointerdown',e=>{drag=true;n.fixed=true;el.setPointerCapture(e.pointerId);});
+    el.addEventListener('pointermove',e=>{if(!drag)return;const p=toSvg(e);n.x=p.x;n.y=p.y;n.vx=n.vy=0;});
+    el.addEventListener('pointerup',e=>{drag=false;n.fixed=false;try{el.releasePointerCapture(e.pointerId);}catch(_){}} );
+  });
+  CUR={g,by,nodeEls,linkEls,live:!!g.live};
+  legend.style.display=g.live?'flex':'none';
+  running=true;requestAnimationFrame(tick);
+}
+function focus(id){if(!CUR)return;const {g,by,nodeEls,linkEls}=CUR;
+  linkEls.forEach(l=>l.classList.toggle('hot',id&&(l.dataset.a===id||l.dataset.b===id)));
+  g.nodes.forEach(n=>{const rel=!id||n.id===id||g.edges.some(([a,b])=>(a===id&&b===n.id)||(b===id&&a===n.id));nodeEls[n.id].classList.toggle('dim',id&&!rel);nodeEls[n.id].classList.toggle('hl',id&&n.id===id);});
+  if(!id){panel.classList.remove('show');return;}
+  const n=by[id];const out=g.edges.filter(([a])=>a===id).map(([,b])=>b),inc=g.edges.filter(([,b])=>b===id).map(([a])=>a);
+  const en=subOf(n);
+  let live='';if(CUR.live){live=`<div class="kv"><span class="k">живо</span><span>${n.alive?`CPU ${(n.cpu*100).toFixed(1)}% · RAM ${(n.mem/1048576).toFixed(0)} МБ · <b style="color:var(--good)">● жив</b>`:'<span style="color:#ff8f8f">○ метрик нет</span>'}</span></div>`;}
+  panel.innerHTML=`<h3>${n.id}</h3><div class="sub">${(LEGEND[n.t]||'модуль')} · слой ${n.lay||''}</div><div>${n.role||''}</div>
+    <div class="kv"><span class="k">масса (Stab)</span><span class="mass">${n.mass.toFixed(2)} · ${n.stab.toFixed(2)}</span></div>
+    <div class="kv"><span class="k">зависимых</span><span>${n.dependents}${inc.length?' ← '+inc.slice(0,5).join(', ')+(inc.length>5?'…':''):''}</span></div>
+    <div class="kv"><span class="k">опирается на</span><span>${out.length?out.join(', '):'—'}</span></div>${live}
+    ${en?`<div class="enterbtn">⤢ двойной клик — вложенный граф (${en.nodes.length} узлов)</div>`:''}`;
+  panel.classList.add('show');
+}
+function enterNode(n){const sub=subOf(n);if(!sub)return;stack.push(sub);showLevel();}
+function showLevel(){const g=stack[stack.length-1];renderGraph(g);renderCrumbs();updateLive();
+  const root=stack.length===1;document.getElementById('ig-title').textContent=root?'Инфраструктура как вселенная ТЕЦ':g.title;
+  document.getElementById('ig-lead').innerHTML=root
+    ?'Запущенный dev-стек — реляционная вселенная. <b>Части</b> — сервисы; <b>отношения</b> — зависимости; <b>устойчивость</b> = число зависимых → <b>масса</b>. Радиус ∝ массе; свечение ∝ live-CPU; кольцо — health.'
+    :`Внутренняя структура репозитория как реляционная вселенная: части = модули, отношения = зависимости, масса = число зависимых модулей. Узлы с рамкой ведут в другой репозиторий (двойной клик).`;
+}
+function renderCrumbs(){crumbs.innerHTML='';stack.forEach((g,i)=>{const last=i===stack.length-1;
+  if(i>0)crumbs.insertAdjacentHTML('beforeend','<span class="sep">/</span>');
+  const label=i===0?'Инфраструктура':(g.title||'репозиторий').replace(/\s*\(репозиторий\)/,'');
+  if(last)crumbs.insertAdjacentHTML('beforeend',`<span class="cur">${label}</span>`);
+  else{const b=document.createElement('button');b.textContent=label;b.onclick=()=>{stack=stack.slice(0,i+1);showLevel();};crumbs.appendChild(b);}});}
+
+/* force sim */
+function tick(){if(!running||!CUR)return;const {g,by,nodeEls,linkEls}=CUR,nn=g.nodes;
+  for(let i=0;i<nn.length;i++)for(let j=i+1;j<nn.length;j++){const a=nn[i],b=nn[j];let dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy||1,d=Math.sqrt(d2);const rep=2600/d2,ux=dx/d,uy=dy/d;a.vx+=ux*rep/a.mass;a.vy+=uy*rep/a.mass;b.vx-=ux*rep/b.mass;b.vy-=uy*rep/b.mass;}
+  g.edges.forEach(([ai,bi])=>{const a=by[ai],b=by[bi];if(!a||!b)return;let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1;const L=90+30*(a.mass+b.mass),f=(d-L)*0.008,ux=dx/d,uy=dy/d;a.vx+=ux*f/a.mass;a.vy+=uy*f/a.mass;b.vx-=ux*f/b.mass;b.vy-=uy*f/b.mass;});
+  nn.forEach(n=>{n.vx+=(cx-n.x)*0.0009*(0.4+n.mass);n.vy+=(cy-n.y)*0.0009*(0.4+n.mass);
+    if(!n.fixed){n.vx*=0.86;n.vy*=0.86;n.x+=Math.max(-6,Math.min(6,n.vx));n.y+=Math.max(-6,Math.min(6,n.vy));}
+    n.x=Math.max(n.r+6,Math.min(W-n.r-6,n.x));n.y=Math.max(n.r+6,Math.min(H-n.r-18,n.y));
+    nodeEls[n.id].setAttribute('transform',`translate(${n.x.toFixed(1)},${n.y.toFixed(1)})`);});
+  linkEls.forEach(l=>{const a=by[l.dataset.a],b=by[l.dataset.b];if(!a||!b)return;l.setAttribute('x1',a.x.toFixed(1));l.setAttribute('y1',a.y.toFixed(1));l.setAttribute('x2',b.x.toFixed(1));l.setAttribute('y2',b.y.toFixed(1));});
+  requestAnimationFrame(tick);}
+
+/* live metrics (root infra only) */
+let liveTimer=null,liveMisses=0;
+function applyLive(n){const g=CUR.nodeEls[n.id];if(!g)return;const c=g.querySelector('circle.core');const health=n.alive?'#5ff0c4':'#ff6b6b';c.setAttribute('stroke',health);c.setAttribute('stroke-width',n.alive?2:2.5);const glow=n.alive?Math.min(24,4+n.cpu*140):0;g.style.filter=glow>1?`drop-shadow(0 0 ${glow.toFixed(0)}px ${health})`:'';g.classList.toggle('down',!n.alive);}
+async function pollLive(){if(!CUR||!CUR.live){livebadge.style.display='none';return;}livebadge.style.display='flex';
+  try{const q=s=>fetch('/api/prom/api/v1/query?query='+encodeURIComponent(s),{cache:'no-store'}).then(r=>r.json());
+    const [mem,cpu]=await Promise.all([q('sum by(name)(container_memory_usage_bytes{name=~"dev-.*"})'),q('sum by(name)(rate(container_cpu_usage_seconds_total{name=~"dev-.*"}[1m]))')]);
+    if(mem.status!=='success')throw 0;const M={},C={};(mem.data.result||[]).forEach(r=>M[r.metric.name]=+r.value[1]);(cpu.data.result||[]).forEach(r=>C[r.metric.name]=+r.value[1]);
+    let alive=0,tc=0,tm=0;CUR.g.nodes.forEach(n=>{const cn='dev-'+n.id,m=M[cn];n.alive=(m!=null);if(n.alive){alive++;n.mem=m;n.cpu=C[cn]||0;tc+=n.cpu;tm+=m;}else{n.mem=0;n.cpu=0;}applyLive(n);});
+    liveMisses=0;livebadge.className='livebadge on';livebadge.innerHTML=`<span class="led"></span>LIVE · <b>${alive}/${CUR.g.nodes.length}</b> живых · CPU ${(tc*100).toFixed(0)}% · RAM ${(tm/1073741824).toFixed(1)} ГБ`;
+  }catch(e){liveMisses++;if(liveMisses>=2){livebadge.className='livebadge';livebadge.innerHTML='<span class="led"></span>статичная схема · метрики недоступны';}}}
+function updateLive(){if(CUR&&CUR.live){if(!liveTimer){pollLive();liveTimer=setInterval(pollLive,4000);}}else{livebadge.style.display='none';}}
+function stopLive(){if(liveTimer){clearInterval(liveTimer);liveTimer=null;}}
+
+/* ===================== TABS ===================== */
+const paneV=document.getElementById('pane-vert'),paneI=document.getElementById('pane-infra'),tabV=document.getElementById('tab-vert'),tabI=document.getElementById('tab-infra'),sub=document.getElementById('subtoggle');
+function showTab(w){const isv=w==='vert';tabV.setAttribute('aria-selected',isv);tabI.setAttribute('aria-selected',!isv);paneV.classList.toggle('hidden',!isv);paneI.classList.toggle('hidden',isv);sub.style.visibility=isv?'visible':'hidden';
+  if(isv){running=false;stopLive();}else{if(!CUR)showLevel();else{running=true;requestAnimationFrame(tick);updateLive();}}}
+tabV.onclick=()=>showTab('vert');tabI.onclick=()=>showTab('infra');
+legend.innerHTML=Object.entries(LEGEND).map(([k,v])=>`<span><i style="background:var(${TIER[k]})"></i>${v}</span>`).join('')+`<span style="opacity:.8">радиус ∝ масса · ⤢ = двойной клик</span>`;
+setVertView('onto');showTab('vert');
+</script>
+</body>
+</html>

@@ -3179,3 +3179,214 @@ p {
     min-height: 280px;
   }
 }
+
+/* ============================================================
+   Mobile adaptation + KaTeX monograph polish (final layer)
+   ============================================================ */
+
+/* --- KaTeX formulas in monograph --- */
+.monoFormula .katexBlock {
+  padding: 16px 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid rgba(156,255,210,.2);
+  background:
+    linear-gradient(135deg, rgba(156,255,210,.05), transparent 42%),
+    rgba(5, 9, 14, .72);
+  box-shadow: 2px 2px 0 var(--retro-shadow);
+  color: #eef5ff;
+}
+.monoFormula .katexBlock .katex-display {
+  margin: 0;
+}
+.monoFormula .katexBlock .katex {
+  font-size: 1.28em;
+}
+.monoThesisFormula .katexBlock {
+  border-color: rgba(156,255,210,.3);
+  background:
+    linear-gradient(135deg, rgba(156,255,210,.1), transparent 46%),
+    rgba(5, 9, 14, .72);
+}
+.monoThesisFormula .katexBlock .katex {
+  font-size: 1.05em;
+}
+.monoThesisFormula .katexBlock .katex-display > .katex {
+  white-space: normal;
+}
+.monoInlineFormula {
+  white-space: nowrap;
+}
+.monoInlineFormula .katex {
+  font-size: 1.06em;
+  color: #dcecff;
+}
+.symbolGrid .katex {
+  color: var(--retro-lime);
+}
+
+/* --- Monograph summary table (chapter "Сводка решённых проблем") --- */
+.monoTableWrap {
+  margin: 20px 0 26px;
+  overflow-x: auto;
+  border: 1px solid rgba(156,255,210,.22);
+  background: rgba(5, 9, 14, .6);
+  box-shadow: 3px 3px 0 var(--retro-shadow);
+}
+.monoTable {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+.monoTable th {
+  padding: 12px 14px;
+  border-bottom: 2px solid rgba(156,255,210,.3);
+  background: rgba(156,255,210,.07);
+  color: var(--retro-lime);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.monoTable td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(228,233,240,.09);
+  color: rgba(238,241,245,.84);
+  font-family: 'STIX Two Text', serif;
+  font-size: 15px;
+  line-height: 1.55;
+  vertical-align: top;
+}
+.monoTable tr:last-child td {
+  border-bottom: 0;
+}
+.monoTable td:first-child {
+  color: var(--retro-gold);
+  font-weight: 600;
+}
+
+/* --- Chapter quick-select (mobile navigation for monograph) --- */
+.chapterSelect {
+  display: none;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(156,255,210,.3);
+  border-radius: 0;
+  background: rgba(5, 9, 14, .92);
+  color: var(--retro-lime);
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 13px;
+  box-shadow: 2px 2px 0 var(--retro-shadow);
+}
+.chapterSelect:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+/* --- Unified visualizer deck tabs: label on its own row --- */
+.visualizerDeck .visualizerTab::before {
+  display: none;
+}
+.visualizerDeck .visualizerTab small {
+  grid-area: label;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.visualizerDeck .visualizerTab.active small {
+  color: #07100d;
+}
+
+/* --- Tablet: monograph reading order (content first) --- */
+@media (max-width: 960px) {
+  .monographLayout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .monographPaper { order: 1; }
+  .monographAside { order: 2; }
+  .chapterSelect { display: block; }
+  .chapterSwitcher strong { display: none; }
+  .chapterSwitcher.bottom strong { display: block; }
+}
+
+/* --- Phones: full navigation without horizontal scroll --- */
+@media (max-width: 700px) {
+  .topbar {
+    position: static;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 5px;
+    overflow: visible;
+    padding: 5px;
+  }
+  .tab {
+    min-width: 0;
+    padding: 9px 8px;
+    text-align: center;
+  }
+  .tab span {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Carousel: swipe + dots are enough, arrows overlapped the text */
+  .carouselArrow { display: none; }
+
+  /* Square-viewBox stages: match the SVG aspect instead of fixed vh
+     (removes the large letterboxed dead space on phones) */
+  .universeSvg,
+  .matterSvg,
+  .brainSvg,
+  .electronSvg,
+  .dnaSvg,
+  .magicBrainSvg,
+  .visualizerStage > svg:not(.waveSvg) {
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: 58vh;
+  }
+  .universePanel,
+  .matterStage,
+  .brainStage,
+  .electronStage,
+  .dnaStage,
+  .magicBrainStage,
+  .waveStage {
+    min-height: auto;
+  }
+
+  .visualizerDeck .visualizerTabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Monograph fine-tuning */
+  .monographHero h1 { font-size: clamp(30px, 9vw, 40px); }
+  .monographStats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .monoFormula .katexBlock { padding: 12px; }
+  .monoFormula .katexBlock .katex { font-size: 1.12em; }
+  .monoTable { min-width: 460px; }
+  .monoTable th, .monoTable td { padding: 9px 10px; }
+  .monoTable td { font-size: 14px; }
+  .chapterSwitcher { grid-template-columns: 1fr 1fr; }
+  .chapterSwitcher div { grid-column: 1 / -1; order: -1; }
+}

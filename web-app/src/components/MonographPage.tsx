@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import monographSource from '../../../theory/unified_whole_theory_full.tex?raw'
 
 type MonographNode =
@@ -7,6 +9,7 @@ type MonographNode =
   | { type: 'formula'; latex: string }
   | { type: 'listItem'; text: string }
   | { type: 'blockTitle'; label: string; title: string }
+  | { type: 'table'; rows: string[][] }
 
 type SymbolInfo = {
   latex: string
@@ -64,34 +67,40 @@ const symbolGlossary: SymbolInfo[] = [
   { latex: 'c', plain: 'c', meaning: 'предельная скорость изменения, заданная максимальной нормой и минимальным шагом времени.' },
 ]
 
-const macroReplacements: [RegExp, string][] = [
-  [/\\Whole\b/g, 'U'],
-  [/\\Parts\b/g, '\\mathcal A'],
-  [/\\SubParts\b/g, '\\mathcal B'],
-  [/\\Rel\b/g, 'R'],
-  [/\\Values\b/g, 'V'],
-  [/\\Vstruct\b/g, '\\mathbf V'],
-  [/\\State\b/g, 'S'],
-  [/\\States\b/g, '\\mathcal S'],
-  [/\\PartOf\b/g, '\\sqsubseteq'],
-  [/\\PropPart\b/g, '\\sqsubset'],
-  [/\\comp\b/g, '\\circ'],
-  [/\\Vord\b/g, '\\preceq'],
-  [/\\norm\b/g, '\\rho'],
-  [/\\ide\b/g, 'e'],
-  [/\\Disc\b/g, '\\mathsf{Disc}'],
-  [/\\Space\b/g, '\\mathsf{Space}'],
-  [/\\Time\b/g, '\\mathsf{Time}'],
-  [/\\Physics\b/g, '\\mathsf{Physics}'],
-  [/\\Motion\b/g, '\\mathsf{Motion}'],
-  [/\\Observer\b/g, '\\mathsf{Obs}'],
-  [/\\Struct\b/g, '\\operatorname{Struct}'],
-  [/\\Inv\b/g, '\\operatorname{Inv}'],
-  [/\\Center\b/g, '\\operatorname{Center}'],
-  [/\\Varr\b/g, '\\operatorname{Var}'],
-  [/\\Stab\b/g, '\\sigma'],
-  [/\\Cost\b/g, '\\mathcal C'],
-]
+// Макросы преамбулы .tex-файла. Разворачиваются одним проходом:
+// \b не срабатывает перед "_"/цифрами (это словесные символы), а последовательные
+// замены склеивали бы соседние команды (\comp\Rel -> \compR), поэтому один общий
+// regex с (?![A-Za-z]) и пробел после подстановки (в math-режиме он игнорируется).
+const macroDefinitions: Record<string, string> = {
+  Whole: 'U',
+  SubParts: '\\mathcal B',
+  Parts: '\\mathcal A',
+  Rel: 'R',
+  Values: 'V',
+  Vstruct: '\\mathbf V',
+  States: '\\mathcal S',
+  State: 'S',
+  PartOf: '\\sqsubseteq',
+  PropPart: '\\sqsubset',
+  comp: '\\circ',
+  Vord: '\\preceq',
+  norm: '\\rho',
+  ide: 'e',
+  Disc: '\\mathsf{Disc}',
+  Space: '\\mathsf{Space}',
+  Time: '\\mathsf{Time}',
+  Physics: '\\mathsf{Physics}',
+  Motion: '\\mathsf{Motion}',
+  Observer: '\\mathsf{Obs}',
+  Struct: '\\operatorname{Struct}',
+  Inv: '\\operatorname{Inv}',
+  Center: '\\operatorname{Center}',
+  Varr: '\\operatorname{Var}',
+  Stab: '\\sigma',
+  Cost: '\\mathcal C',
+}
+
+const macroPattern = new RegExp(`\\\\(${Object.keys(macroDefinitions).join('|')})(?![A-Za-z])`, 'g')
 
 const blockLabels: Record<string, string> = {
   axiom: 'Аксиома',
@@ -107,7 +116,9 @@ const blockLabels: Record<string, string> = {
 }
 
 function expandMacros(value: string) {
-  return macroReplacements.reduce((text, [pattern, replacement]) => text.replace(pattern, replacement), value)
+  // Пробелы вокруг подстановки не дают ей склеиться с соседними командами
+  // (например, \neq\Whole без пробела превратился бы в \neqU).
+  return value.replace(macroPattern, (_, name: string) => ` ${macroDefinitions[name]} `)
 }
 
 function stripLatexCommands(value: string) {
@@ -123,7 +134,7 @@ function stripLatexCommands(value: string) {
     .replace(/\\text\{([^{}]*)\}/g, '$1')
     .replace(/\\href\{([^{}]*)\}\{([^{}]*)\}/g, '$2')
     .replace(/\\label\{[^{}]*\}/g, '')
-    .replace(/\\ref\{([^{}]*)\}/g, '$1')
+    .replace(/~?\\(?:eq)?ref\{[^{}]*\}/g, '')
     .replace(/\\[a-zA-Z]+\*?(?:\[[^\]]*\])?(?:\{[^{}]*\})?/g, '')
     .replace(/[{}]/g, '')
     .replace(/~+/g, ' ')
@@ -140,6 +151,7 @@ function normalizeFormula(value: string) {
   return expandMacros(value)
     .replace(/\\notag/g, '')
     .replace(/\\label\{[^{}]*\}/g, '')
+    .replace(/~?\\(?:eq)?ref\{[^{}]*\}/g, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
 }
@@ -327,6 +339,18 @@ function containsMathToken(formula: string, symbol: SymbolInfo) {
   return formula.includes(symbol.plain)
 }
 
+function parseTabular(lines: string[]): string[][] {
+  const body = lines
+    .join('\n')
+    .replace(/\\(?:top|mid|bottom)rule/g, '')
+    .replace(/\\hline/g, '')
+
+  return body
+    .split(/\\\\/)
+    .map((row) => row.split('&').map((cell) => stripLatexCommands(cell)))
+    .filter((row) => row.some((cell) => cell.length > 0))
+}
+
 function parseMonograph(source: string): MonographNode[] {
   const lines = source.replace(/\r\n/g, '\n').split('\n')
   const nodes: MonographNode[] = []
@@ -334,8 +358,18 @@ function parseMonograph(source: string): MonographNode[] {
   let inDocument = false
   let formulaBuffer: string[] | null = null
   let formulaEnd = ''
+  let tableBuffer: string[] | null = null
+  let listItemBuffer: string[] | null = null
+
+  const flushListItem = () => {
+    if (!listItemBuffer) return
+    const text = stripLatexCommands(listItemBuffer.join(' '))
+    listItemBuffer = null
+    if (text) nodes.push({ type: 'listItem', text })
+  }
 
   const flushParagraph = () => {
+    flushListItem()
     const text = stripLatexCommands(paragraph.join(' '))
     paragraph.length = 0
     if (text) nodes.push({ type: 'paragraph', text })
@@ -345,6 +379,29 @@ function parseMonograph(source: string): MonographNode[] {
     const line = rawLine.replace(/(?<!\\)%.*/, '').trim()
     if (!inDocument) {
       if (line === '\\begin{document}') inDocument = true
+      continue
+    }
+
+    if (tableBuffer) {
+      if (line.startsWith('\\end{tabular}')) {
+        const rows = parseTabular(tableBuffer)
+        if (rows.length > 0) nodes.push({ type: 'table', rows })
+        tableBuffer = null
+      } else {
+        tableBuffer.push(line)
+      }
+      continue
+    }
+
+    if (line.startsWith('\\begin{tabular}')) {
+      flushParagraph()
+      // Спецификация колонок стоит на той же строке и в таблицу не попадает.
+      tableBuffer = []
+      continue
+    }
+
+    if (/^\\(begin|end)\{center\}/.test(line) || line.startsWith('\\renewcommand')) {
+      flushParagraph()
       continue
     }
 
@@ -402,7 +459,9 @@ function parseMonograph(source: string): MonographNode[] {
 
     if (line.startsWith('\\item')) {
       flushParagraph()
-      nodes.push({ type: 'listItem', text: stripLatexCommands(line.replace(/^\\item\s*/, '')) })
+      // Пункт может продолжаться на следующих строках — копим до пустой строки,
+      // следующего \item или конца окружения.
+      listItemBuffer = [line.replace(/^\\item\s*/, '')]
       continue
     }
 
@@ -430,7 +489,11 @@ function parseMonograph(source: string): MonographNode[] {
       continue
     }
 
-    paragraph.push(line)
+    if (listItemBuffer) {
+      listItemBuffer.push(line)
+    } else {
+      paragraph.push(line)
+    }
   }
 
   flushParagraph()
@@ -470,6 +533,65 @@ function explainFormula(latex: string) {
   return hits.slice(0, 9).map((symbol) => `${formatLatexForDisplay(symbol.latex)} — ${symbol.meaning}`)
 }
 
+function renderKatexHtml(latex: string, displayMode: boolean): string | null {
+  let value = normalizeFormula(latex)
+  if (displayMode && (/\\\\/.test(value) || value.includes('&'))) {
+    value = `\\begin{aligned}${value}\\end{aligned}`
+  }
+
+  try {
+    return katex.renderToString(value, {
+      displayMode,
+      throwOnError: true,
+      strict: false,
+      trust: false,
+      output: 'html',
+    })
+  } catch {
+    return null
+  }
+}
+
+function FormulaMath({ latex, displayMode }: { latex: string; displayMode: boolean }) {
+  const html = useMemo(() => renderKatexHtml(latex, displayMode), [latex, displayMode])
+
+  if (html === null) {
+    return (
+      <pre>
+        <code>{formatLatexForDisplay(latex)}</code>
+      </pre>
+    )
+  }
+
+  return <div className={displayMode ? 'katexBlock' : 'katexInline'} dangerouslySetInnerHTML={{ __html: html }} />
+}
+
+function MonographTable({ rows }: { rows: string[][] }) {
+  const [head, ...body] = rows
+  return (
+    <div className="monoTableWrap">
+      <table className="monoTable">
+        <thead>
+          <tr>
+            {head.map((cell, index) => (
+              <th key={index}>{renderInlineLatex(cell)}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {body.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex}>{renderInlineLatex(cell)}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 function MonographBodyNode({ node }: { node: MonographNode }) {
   if (node.type === 'heading') {
     const Tag = node.level === 1 ? 'h2' : node.level === 2 ? 'h3' : 'h4'
@@ -493,14 +615,16 @@ function MonographBodyNode({ node }: { node: MonographNode }) {
     )
   }
 
+  if (node.type === 'table') {
+    return <MonographTable rows={node.rows} />
+  }
+
   const explanation = isTextThesisFormula(node.latex) ? [] : explainFormula(node.latex)
   const formulaClassName = isTextThesisFormula(node.latex) ? 'monoFormula monoThesisFormula' : 'monoFormula'
 
   return (
     <figure className={formulaClassName}>
-      <pre>
-        <code>{formatLatexForDisplay(node.latex)}</code>
-      </pre>
+      <FormulaMath latex={node.latex} displayMode />
       {explanation.length > 0 && (
         <figcaption>
           <strong>Расшифровка</strong>
@@ -520,10 +644,21 @@ function renderInlineLatex(text: string) {
     if (!part.startsWith('$') || !part.endsWith('$')) return part
     const latex = part.slice(1, -1)
     const explanation = explainFormula(latex)
+    const html = renderKatexHtml(latex, false)
+    if (html === null) {
+      return (
+        <code className="monoInlineFormula" title={explanation.join('\n')} key={`${part}-${index}`}>
+          {formatLatexForDisplay(latex)}
+        </code>
+      )
+    }
     return (
-      <code className="monoInlineFormula" title={explanation.join('\n')} key={`${part}-${index}`}>
-        {formatLatexForDisplay(latex)}
-      </code>
+      <span
+        className="monoInlineFormula"
+        title={explanation.join('\n')}
+        key={`${part}-${index}`}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     )
   })
 }
@@ -554,8 +689,8 @@ export function MonographPage() {
           <p className="kicker">Полная монография</p>
           <h1>Теория Единого Целого</h1>
           <p>
-            Текст собран из исходного LaTeX-файла. Главы переключаются слева, формулы показаны в читаемой записи
-            с расшифровкой обозначений.
+            Текст собран из исходного LaTeX-файла. Главы переключаются через оглавление, формулы отрисованы
+            KaTeX с расшифровкой обозначений.
           </p>
         </div>
         <div className="monographStats" aria-label="Сводка монографии">
@@ -622,6 +757,18 @@ export function MonographPage() {
             <div>
               <span>Глава {chapterProgress}</span>
               <strong>{active.title}</strong>
+              <select
+                className="chapterSelect"
+                value={activeChapter}
+                onChange={(event) => selectChapter(Number(event.target.value))}
+                aria-label="Быстрый переход к главе"
+              >
+                {chapterSections.map((chapter, index) => (
+                  <option key={`${chapter.title}-${index}`} value={index}>
+                    {`${index + 1}. ${chapter.title}`}
+                  </option>
+                ))}
+              </select>
             </div>
             <button type="button" onClick={goToNext} disabled={activeChapter === chapterSections.length - 1}>
               Вперед

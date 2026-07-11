@@ -17,6 +17,14 @@ export function TopNavigation({ active, onChange }: { active: Tab; onChange: (ta
             <small>{tab.caption}</small>
           </button>
         ))}
+        <a
+          className="tab"
+          href="/ecosystem.html"
+          title="Живая карта экосистемы MAGIC и стека как реляционной вселенной ТЕЦ"
+        >
+          <span>Экосистема</span>
+          <small>стек · живой граф</small>
+        </a>
       </nav>
     </header>
   )

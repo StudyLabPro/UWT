@@ -86,7 +86,7 @@ export function ExamplesLab() {
             >
               <span>{String(index + 1).padStart(2, '0')}</span>
               <b>{item.short}</b>
-              {item.label}
+              <small>{item.label}</small>
             </button>
           ))}
         </div>
