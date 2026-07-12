@@ -1,6 +1,15 @@
-import { navigationTabs, type Tab } from '../data/navigation'
+import { navigationTabs, tabPaths, type Tab } from '../data/navigation'
 
 export function TopNavigation({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void }) {
+  const handleTabClick = (event: React.MouseEvent<HTMLAnchorElement>, tab: Tab) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+      return
+    }
+
+    event.preventDefault()
+    onChange(tab)
+  }
+
   return (
     <header className="topbar">
       <div className="brand">
@@ -12,10 +21,16 @@ export function TopNavigation({ active, onChange }: { active: Tab; onChange: (ta
       </div>
       <nav className="tabs" aria-label="Основные вкладки">
         {navigationTabs.map((tab) => (
-          <button key={tab.id} className={active === tab.id ? 'tab active' : 'tab'} onClick={() => onChange(tab.id)}>
+          <a
+            key={tab.id}
+            href={tabPaths[tab.id]}
+            className={active === tab.id ? 'tab active' : 'tab'}
+            onClick={(event) => handleTabClick(event, tab.id)}
+            aria-current={active === tab.id ? 'page' : undefined}
+          >
             <span>{tab.label}</span>
             <small>{tab.caption}</small>
-          </button>
+          </a>
         ))}
         <a
           className="tab"
