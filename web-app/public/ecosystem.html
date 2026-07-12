@@ -4,7 +4,46 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MAGIC Ecosystem · Рефлексивная вертикаль</title>
-<meta name="description" content="Единое Целое, познающее себя — интерактивная карта экосистемы MAGIC: онтологическая вертикаль и живой граф стека с вложенной структурой каждого репозитория (ТЕЦ-отношения)." />
+<meta name="description" content="Единое Целое, познающее себя — интерактивная карта экосистемы MAGIC: онтологическая вертикаль и граф стека с вложенной структурой каждого репозитория (ТЕЦ-отношения)." />
+<meta name="keywords" content="MAGIC Ecosystem, рефлексивная вертикаль, UWT, ТЕЦ, экосистема, граф зависимостей, репозиторная архитектура" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://uwt.xteam.pro/ecosystem.html" />
+<link rel="alternate" hreflang="ru" href="https://uwt.xteam.pro/ecosystem.html" />
+<link rel="alternate" hreflang="x-default" href="https://uwt.xteam.pro/ecosystem.html" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://uwt.xteam.pro/ecosystem.html" />
+<meta property="og:title" content="MAGIC Ecosystem · Рефлексивная вертикаль" />
+<meta property="og:description" content="Единое Целое, познающее себя — интерактивная карта экосистемы MAGIC: онтологическая вертикаль и граф стека с вложенной структурой каждого репозитория (ТЕЦ-отношения)." />
+<meta property="og:image" content="https://uwt.xteam.pro/og-image.svg" />
+<meta property="og:image:alt" content="MAGIC Ecosystem — рефлексивная вертикаль" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="MAGIC Ecosystem · Рефлексивная вертикаль" />
+<meta name="twitter:description" content="Единое Целое, познающее себя — интерактивная карта экосистемы MAGIC: онтологическая вертикаль и граф стека с вложенной структурой каждого репозитория (ТЕЦ-отношения)." />
+<meta name="twitter:image" content="https://uwt.xteam.pro/og-image.svg" />
+<meta name="twitter:image:alt" content="MAGIC Ecosystem — рефлексивная вертикаль" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://uwt.xteam.pro/ecosystem.html#webpage",
+        "url": "https://uwt.xteam.pro/ecosystem.html",
+        "name": "MAGIC Ecosystem · Рефлексивная вертикаль",
+        "inLanguage": "ru-RU",
+        "description": "Единое Целое, познающее себя — интерактивная карта экосистемы MAGIC: онтологическая вертикаль и граф стека с вложенной структурой каждого репозитория (ТЕЦ-отношения).",
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": "https://uwt.xteam.pro/#website"
+        },
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [".hero h1", ".hero p"]
+        }
+      }
+    ]
+  }
+</script>
 <style>
   :root{
     --bg0:#05060c;--bg1:#0a0e1e;--ink:#e8ecff;--muted:#9aa4c8;
@@ -71,9 +110,6 @@
   .panel{position:absolute;right:12px;top:12px;width:min(300px,86%);background:var(--card);border:1px solid var(--card-brd);border-radius:14px;padding:13px 15px;backdrop-filter:blur(8px);font-size:.85rem;opacity:0;transform:translateY(-6px);transition:.18s;pointer-events:none}
   .panel.show{opacity:1;transform:none}.panel h3{margin:0 0 2px;font-size:1rem}.panel .sub{color:var(--muted);font-size:.78rem;margin-bottom:8px}.panel .kv{margin:4px 0}.panel .k{min-width:96px}.panel .mass{font-family:ui-monospace,monospace}
   .panel .enterbtn{margin-top:9px;display:inline-block;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:.8rem}
-  .livebadge{position:absolute;left:12px;top:12px;font-size:.74rem;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;display:flex;gap:7px;align-items:center}
-  .livebadge .led{width:8px;height:8px;border-radius:50%;background:var(--muted)}.livebadge.on{color:var(--ink);border-color:rgba(95,240,196,.45)}
-  .livebadge.on .led{background:var(--good);box-shadow:0 0 8px var(--good);animation:blink 2s infinite}@keyframes blink{50%{opacity:.35}}.livebadge b{color:var(--good)}
   .hidden{display:none !important}
   .uwtnote{margin:16px 2px 0;color:var(--muted);font-size:.86rem;border-left:2px solid var(--l1);padding-left:12px}.uwtnote b{color:var(--ink)}
 </style>
@@ -99,6 +135,7 @@
   <section id="pane-vert">
     <div class="hero"><h1 id="h1">Рефлексивная вертикаль</h1><p id="lead"></p>
       <div class="axis"><span class="dot b"></span> Бытие &nbsp;→&nbsp; <span class="dot"></span> Само-Знание</div>
+      <div class="hint">статус: INTERPRETATION — онтологическая проекция; инженерные слои и швы — VERIFIED в лаборатории</div>
       <div class="hint">Наведите/коснитесь слоя, чтобы раскрыть детали.</div></div>
     <div class="vert" id="vert"><div class="spine"></div><div class="pulse"></div><div class="pulse p2"></div><div class="pulse p3"></div></div>
     <section class="laws">
@@ -111,20 +148,20 @@
   <!-- INFRA -->
   <section id="pane-infra" class="hidden">
     <div class="hero"><h1 id="ig-title">Инфраструктура как вселенная ТЕЦ</h1>
-      <p id="ig-lead">Запущенный dev-стек — реляционная вселенная. <b>Части</b> — сервисы; <b>отношения</b> — зависимости; <b>устойчивость</b> = число зависимых → <b>масса</b> (вещественность). Тяжёлые узлы (БД) — ядра в центре. Радиус ∝ массе; свечение ∝ live-CPU; кольцо — health.</p>
-      <div class="hint"><b>Двойной клик</b> по узлу с пунктирной рамкой открывает вложенный граф структуры репозитория. Наведение — метрики; узлы можно перетаскивать.</div></div>
+      <p id="ig-lead">Запущенный dev-стек — реляционная вселенная. <b>Части</b> — сервисы; <b>отношения</b> — зависимости; <b>устойчивость</b> = число зависимых → <b>масса</b> (вещественность). Тяжёлые узлы (БД) — ядра в центре. Радиус ∝ массе.</p>
+      <div class="hint"><b>Двойной клик</b> по узлу с пунктирной рамкой открывает вложенный граф структуры репозитория. Наведение — связи; узлы можно перетаскивать.</div>
+      <div class="hint">статус: MODEL — статичная схема зависимостей dev-стека</div></div>
     <div class="crumbs" id="crumbs"></div>
     <div class="graphwrap">
       <svg class="graph" id="graph" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet"></svg>
       <div class="legend" id="legend"></div>
       <div class="panel" id="panel"></div>
-      <div class="livebadge" id="livebadge"><span class="led"></span>подключение к метрикам…</div>
     </div>
     <div class="uwtnote"><b>Отображение ТЕЦ:</b> variation(A) = изменчивость отношений; Stab(A)=1/(1+variation) → m=m0+mscale·Stab. Для статичной структуры устойчивость ≈ числу зависимых: чем больше опирается на A, тем «вещественнее» (массивнее) A. Так БД — тяжёлое ядро, наблюдатель (prometheus) — лёгок. Тот же закон — и внутри каждого репозитория.</div>
   </section>
 
   <div class="foot">
-    <span class="tag"><b>✅ dev-стек запущен</b> · 26 контейнеров · uwt.xteam.pro</span>
+    <span class="tag">схема dev-стека · uwt.xteam.pro</span>
     <span class="tag">все 6 швов замкнуты + кросс-процессная проводка</span>
     <span>· <a href="/">← атлас ТЕЦ</a></span>
   </div>
@@ -168,17 +205,12 @@ const LEGEND={data:'данные (ядро)',msg:'обмен/хранилище'
 // ---- repository internal structures (nested graphs) ----
 const REPOS={
  'StudyNinja-API':{title:'StudyNinja-API (репозиторий)',nodes:[
-   {id:'api/routes',t:'flow',role:'FastAPI маршруты, 38 роутеров'},
+   {id:'api/routes',t:'flow',role:'FastAPI REST API'},
+   {id:'domain/services',t:'core',role:'бизнес-логика'},
    {id:'kb_integration',t:'ext',role:'клиент KnowledgeBaseAI'},
-   {id:'domain/services',t:'core',role:'бизнес-логика, 48+ сервисов'},
-   {id:'tutor_graph',t:'flow',role:'AI-тьютор: 10 узлов LangGraph, RAG'},
-   {id:'platform_assistant',t:'flow',role:'мультиагент Supervisor + Guard'},
-   {id:'billing',t:'back',role:'YooKassa, подписки, кошелёк'},
-   {id:'srs',t:'back',role:'SM2 интервальные повторения'},
-   {id:'cognitive_pipeline',t:'ext',role:'Phase 7: MagicBrain, circuit breaker'},
-   {id:'core/postgres',t:'store',role:'27+ моделей, DAO, Unit of Work'},
-   {id:'infrastructure',t:'ops',role:'кэш, rate-limit, идемпотентность'},
- ],edges:[['api/routes','domain/services'],['api/routes','kb_integration'],['domain/services','core/postgres'],['tutor_graph','domain/services'],['tutor_graph','kb_integration'],['platform_assistant','domain/services'],['billing','domain/services'],['srs','domain/services'],['cognitive_pipeline','domain/services'],['domain/services','infrastructure']]},
+   {id:'core/postgres',t:'store',role:'хранилище, DAO'},
+   {id:'infrastructure',t:'ops',role:'кэш, rate-limit'},
+ ],edges:[['api/routes','domain/services'],['api/routes','kb_integration'],['domain/services','core/postgres'],['domain/services','infrastructure']]},
 
  'KnowledgeBaseAI':{title:'KnowledgeBaseAI (репозиторий)',nodes:[
    {id:'api',t:'flow',role:'REST/GraphQL, 17 роутеров'},
@@ -193,18 +225,14 @@ const REPOS={
 
  'MagicBrain':{title:'MagicBrain (репозиторий)',nodes:[
    {id:'brain.py',t:'core',role:'TextBrain SNN: forward/learn'},
-   {id:'genome',t:'core',role:'base-4 геном → гиперпараметры'},
-   {id:'graph',t:'store',role:'3D пространственный граф, задержки'},
-   {id:'neurogenesis',t:'core',role:'energy · attractor · cppn · pattern'},
-   {id:'learning_rules',t:'back',role:'STDP'},
-   {id:'evolution',t:'back',role:'генетический алгоритм'},
+   {id:'research',t:'core',role:'адаптивные механизмы — детали закрыты до патентного гейта'},
    {id:'platform',t:'flow',role:'orchestrator · registry · comm'},
    {id:'hybrid',t:'back',role:'SNN+DNN/Transformer'},
-   {id:'diagnostics',t:'ops',role:'energy · ρ · live-monitor'},
-   {id:'integration',t:'flow',role:'twin · magic_wiring · act_backend'},
+   {id:'diagnostics',t:'ops',role:'live-monitor'},
+   {id:'integration',t:'flow',role:'twin · act_backend'},
    {id:'Balansis/АКТ',t:'ext',role:'компенсированная арифметика',repo:'Balansis'},
    {id:'api',t:'flow',role:'FastAPI сервис'},
- ],edges:[['brain.py','genome'],['brain.py','graph'],['brain.py','diagnostics'],['neurogenesis','brain.py'],['evolution','brain.py'],['platform','brain.py'],['hybrid','brain.py'],['integration','brain.py'],['integration','Balansis/АКТ'],['brain.py','Balansis/АКТ'],['api','brain.py'],['api','integration']]},
+ ],edges:[['api','brain.py'],['api','integration'],['research','brain.py'],['platform','brain.py'],['hybrid','brain.py'],['integration','brain.py'],['integration','Balansis/АКТ'],['brain.py','Balansis/АКТ'],['brain.py','diagnostics']]},
 
  'Balansis':{title:'Balansis / АКТ (репозиторий)',nodes:[
    {id:'core',t:'core',role:'AbsoluteValue · EternalRatio · operations'},
@@ -266,11 +294,12 @@ const REPOS={
 };
 
 // ---- infrastructure (running stack) ----
-const INFRA={title:'Инфраструктура',live:true,nodes:[
+const INFRA={title:'Инфраструктура',nodes:[
   {id:'postgres',t:'data',role:'реляционные БД (studyninja/kb/xteam)'},
   {id:'redis',t:'data',role:'сессии, кэш, checkpoints, twin-store'},
   {id:'neo4j-kb',t:'data',role:'граф знаний (3691 узлов)'},
   {id:'qdrant',t:'data',role:'векторные эмбеддинги'},
+  {id:'clickhouse',t:'data',role:'аналитика/телеметрия'},
   {id:'rabbitmq',t:'msg',role:'очереди + шина magic-learning'},
   {id:'minio',t:'msg',role:'объектное хранилище'},
   {id:'api-backend',t:'back',role:'StudyNinja-API',repo:'StudyNinja-API'},
@@ -279,6 +308,7 @@ const INFRA={title:'Инфраструктура',live:true,nodes:[
   {id:'xteam-agents',t:'back',role:'когнитивная ОС',repo:'xteam-agents'},
   {id:'arq-worker',t:'back',role:'фоновые задачи',repo:'StudyNinja-API'},
   {id:'email-consumer',t:'back',role:'обработчик писем',repo:'StudyNinja-API'},
+  {id:'telemetry-worker',t:'back',role:'консьюмер очереди analytics',repo:'StudyNinja-API'},
   {id:'uwt-donations-api',t:'back',role:'донаты UWT (Stripe)',repo:'UWT'},
   {id:'uikit-frontend',t:'front',role:'UI StudyNinja',repo:'StudyNinjaUIKit'},
   {id:'kb-frontend',t:'front',role:'граф-эксплорер KB',repo:'KnowledgeBaseAI'},
@@ -291,7 +321,6 @@ const INFRA={title:'Инфраструктура',live:true,nodes:[
   {id:'redis-exporter',t:'obs',role:'метрики redis'},
   {id:'cadvisor',t:'obs',role:'метрики контейнеров'},
   {id:'node-exporter',t:'obs',role:'метрики хоста'},
-  {id:'adminer',t:'obs',role:'UI к postgres'},
 ],edges:[
   ['api-backend','postgres'],['api-backend','redis'],['api-backend','qdrant'],['api-backend','rabbitmq'],['api-backend','minio'],['api-backend','kb-fastapi'],['api-backend','magicbrain-research'],
   ['kb-fastapi','neo4j-kb'],['kb-fastapi','qdrant'],['kb-fastapi','postgres'],['kb-fastapi','redis'],
@@ -301,10 +330,11 @@ const INFRA={title:'Инфраструктура',live:true,nodes:[
   ['xteam-dashboard','xteam-agents'],
   ['arq-worker','postgres'],['arq-worker','redis'],['arq-worker','qdrant'],['arq-worker','rabbitmq'],['arq-worker','kb-fastapi'],
   ['email-consumer','postgres'],['email-consumer','redis'],['email-consumer','rabbitmq'],['email-consumer','minio'],
+  ['telemetry-worker','clickhouse'],['telemetry-worker','rabbitmq'],
   ['uwt-web','uwt-donations-api'],
   ['traefik','api-backend'],['traefik','uikit-frontend'],['traefik','kb-frontend'],['traefik','uwt-web'],['traefik','magicbrain-research'],['traefik','xteam-dashboard'],
   ['prometheus','api-backend'],['prometheus','kb-fastapi'],['prometheus','postgres'],['prometheus','redis'],['prometheus','neo4j-kb'],['prometheus','qdrant'],['prometheus','rabbitmq'],['prometheus','cadvisor'],['prometheus','node-exporter'],['prometheus','postgres-exporter'],['prometheus','redis-exporter'],
-  ['grafana','prometheus'],['postgres-exporter','postgres'],['redis-exporter','redis'],['adminer','postgres'],
+  ['grafana','prometheus'],['postgres-exporter','postgres'],['redis-exporter','redis'],
 ]};
 
 /* ===================== GRAPH ENGINE (nested) ===================== */
@@ -312,7 +342,7 @@ const SVGNS='http://www.w3.org/2000/svg',svg=document.getElementById('graph');
 const gLinks=document.createElementNS(SVGNS,'g'),gNodes=document.createElementNS(SVGNS,'g');
 svg.appendChild(gLinks);svg.appendChild(gNodes);
 const W=960,H=600,cx=W/2,cy=H/2;
-const panel=document.getElementById('panel'),legend=document.getElementById('legend'),crumbs=document.getElementById('crumbs'),livebadge=document.getElementById('livebadge');
+const panel=document.getElementById('panel'),legend=document.getElementById('legend'),crumbs=document.getElementById('crumbs');
 const colorOf=n=>`var(${n.c||TIER[n.t]||'--muted'})`;
 const subOf=n=>n.sub||(n.repo&&REPOS[n.repo])||null;
 let CUR=null,running=false,stack=[INFRA];
@@ -340,8 +370,8 @@ function renderGraph(g){
     el.addEventListener('pointermove',e=>{if(!drag)return;const p=toSvg(e);n.x=p.x;n.y=p.y;n.vx=n.vy=0;});
     el.addEventListener('pointerup',e=>{drag=false;n.fixed=false;try{el.releasePointerCapture(e.pointerId);}catch(_){}} );
   });
-  CUR={g,by,nodeEls,linkEls,live:!!g.live};
-  legend.style.display=g.live?'flex':'none';
+  CUR={g,by,nodeEls,linkEls};
+  legend.style.display='flex';
   running=true;requestAnimationFrame(tick);
 }
 function focus(id){if(!CUR)return;const {g,by,nodeEls,linkEls}=CUR;
@@ -350,19 +380,18 @@ function focus(id){if(!CUR)return;const {g,by,nodeEls,linkEls}=CUR;
   if(!id){panel.classList.remove('show');return;}
   const n=by[id];const out=g.edges.filter(([a])=>a===id).map(([,b])=>b),inc=g.edges.filter(([,b])=>b===id).map(([a])=>a);
   const en=subOf(n);
-  let live='';if(CUR.live){live=`<div class="kv"><span class="k">живо</span><span>${n.alive?`CPU ${(n.cpu*100).toFixed(1)}% · RAM ${(n.mem/1048576).toFixed(0)} МБ · <b style="color:var(--good)">● жив</b>`:'<span style="color:#ff8f8f">○ метрик нет</span>'}</span></div>`;}
   panel.innerHTML=`<h3>${n.id}</h3><div class="sub">${(LEGEND[n.t]||'модуль')} · слой ${n.lay||''}</div><div>${n.role||''}</div>
     <div class="kv"><span class="k">масса (Stab)</span><span class="mass">${n.mass.toFixed(2)} · ${n.stab.toFixed(2)}</span></div>
     <div class="kv"><span class="k">зависимых</span><span>${n.dependents}${inc.length?' ← '+inc.slice(0,5).join(', ')+(inc.length>5?'…':''):''}</span></div>
-    <div class="kv"><span class="k">опирается на</span><span>${out.length?out.join(', '):'—'}</span></div>${live}
+    <div class="kv"><span class="k">опирается на</span><span>${out.length?out.join(', '):'—'}</span></div>
     ${en?`<div class="enterbtn">⤢ двойной клик — вложенный граф (${en.nodes.length} узлов)</div>`:''}`;
   panel.classList.add('show');
 }
 function enterNode(n){const sub=subOf(n);if(!sub)return;stack.push(sub);showLevel();}
-function showLevel(){const g=stack[stack.length-1];renderGraph(g);renderCrumbs();updateLive();
+function showLevel(){const g=stack[stack.length-1];renderGraph(g);renderCrumbs();
   const root=stack.length===1;document.getElementById('ig-title').textContent=root?'Инфраструктура как вселенная ТЕЦ':g.title;
   document.getElementById('ig-lead').innerHTML=root
-    ?'Запущенный dev-стек — реляционная вселенная. <b>Части</b> — сервисы; <b>отношения</b> — зависимости; <b>устойчивость</b> = число зависимых → <b>масса</b>. Радиус ∝ массе; свечение ∝ live-CPU; кольцо — health.'
+    ?'Запущенный dev-стек — реляционная вселенная. <b>Части</b> — сервисы; <b>отношения</b> — зависимости; <b>устойчивость</b> = число зависимых → <b>масса</b>. Радиус ∝ массе.'
     :`Внутренняя структура репозитория как реляционная вселенная: части = модули, отношения = зависимости, масса = число зависимых модулей. Узлы с рамкой ведут в другой репозиторий (двойной клик).`;
 }
 function renderCrumbs(){crumbs.innerHTML='';stack.forEach((g,i)=>{const last=i===stack.length-1;
@@ -382,23 +411,10 @@ function tick(){if(!running||!CUR)return;const {g,by,nodeEls,linkEls}=CUR,nn=g.n
   linkEls.forEach(l=>{const a=by[l.dataset.a],b=by[l.dataset.b];if(!a||!b)return;l.setAttribute('x1',a.x.toFixed(1));l.setAttribute('y1',a.y.toFixed(1));l.setAttribute('x2',b.x.toFixed(1));l.setAttribute('y2',b.y.toFixed(1));});
   requestAnimationFrame(tick);}
 
-/* live metrics (root infra only) */
-let liveTimer=null,liveMisses=0;
-function applyLive(n){const g=CUR.nodeEls[n.id];if(!g)return;const c=g.querySelector('circle.core');const health=n.alive?'#5ff0c4':'#ff6b6b';c.setAttribute('stroke',health);c.setAttribute('stroke-width',n.alive?2:2.5);const glow=n.alive?Math.min(24,4+n.cpu*140):0;g.style.filter=glow>1?`drop-shadow(0 0 ${glow.toFixed(0)}px ${health})`:'';g.classList.toggle('down',!n.alive);}
-async function pollLive(){if(!CUR||!CUR.live){livebadge.style.display='none';return;}livebadge.style.display='flex';
-  try{const q=s=>fetch('/api/prom/api/v1/query?query='+encodeURIComponent(s),{cache:'no-store'}).then(r=>r.json());
-    const [mem,cpu]=await Promise.all([q('sum by(name)(container_memory_usage_bytes{name=~"dev-.*"})'),q('sum by(name)(rate(container_cpu_usage_seconds_total{name=~"dev-.*"}[1m]))')]);
-    if(mem.status!=='success')throw 0;const M={},C={};(mem.data.result||[]).forEach(r=>M[r.metric.name]=+r.value[1]);(cpu.data.result||[]).forEach(r=>C[r.metric.name]=+r.value[1]);
-    let alive=0,tc=0,tm=0;CUR.g.nodes.forEach(n=>{const cn='dev-'+n.id,m=M[cn];n.alive=(m!=null);if(n.alive){alive++;n.mem=m;n.cpu=C[cn]||0;tc+=n.cpu;tm+=m;}else{n.mem=0;n.cpu=0;}applyLive(n);});
-    liveMisses=0;livebadge.className='livebadge on';livebadge.innerHTML=`<span class="led"></span>LIVE · <b>${alive}/${CUR.g.nodes.length}</b> живых · CPU ${(tc*100).toFixed(0)}% · RAM ${(tm/1073741824).toFixed(1)} ГБ`;
-  }catch(e){liveMisses++;if(liveMisses>=2){livebadge.className='livebadge';livebadge.innerHTML='<span class="led"></span>статичная схема · метрики недоступны';}}}
-function updateLive(){if(CUR&&CUR.live){if(!liveTimer){pollLive();liveTimer=setInterval(pollLive,4000);}}else{livebadge.style.display='none';}}
-function stopLive(){if(liveTimer){clearInterval(liveTimer);liveTimer=null;}}
-
 /* ===================== TABS ===================== */
 const paneV=document.getElementById('pane-vert'),paneI=document.getElementById('pane-infra'),tabV=document.getElementById('tab-vert'),tabI=document.getElementById('tab-infra'),sub=document.getElementById('subtoggle');
 function showTab(w){const isv=w==='vert';tabV.setAttribute('aria-selected',isv);tabI.setAttribute('aria-selected',!isv);paneV.classList.toggle('hidden',!isv);paneI.classList.toggle('hidden',isv);sub.style.visibility=isv?'visible':'hidden';
-  if(isv){running=false;stopLive();}else{if(!CUR)showLevel();else{running=true;requestAnimationFrame(tick);updateLive();}}}
+  if(isv){running=false;}else{if(!CUR)showLevel();else{running=true;requestAnimationFrame(tick);}}}
 tabV.onclick=()=>showTab('vert');tabI.onclick=()=>showTab('infra');
 legend.innerHTML=Object.entries(LEGEND).map(([k,v])=>`<span><i style="background:var(${TIER[k]})"></i>${v}</span>`).join('')+`<span style="opacity:.8">радиус ∝ масса · ⤢ = двойной клик</span>`;
 setVertView('onto');showTab('vert');
