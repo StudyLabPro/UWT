@@ -19,7 +19,7 @@ relations, проверяемые вычислительные эксперим�
 | `modeling/` | Python package `uwt-modeling` for relational simulation, verification, and forecasting experiments. |
 | `web-app/` | React/Vite web atlas served in the ecosystem as `uwt-web`. |
 | `donations-api/` | Lightweight Node.js API for donation/checkout integration. |
-| `simple_explanation.md` | Public-friendly explanation layer. |
+| `archive/simple_explanation.md` | Public-friendly explanation layer (archived). |
 
 ## Quick Start: Modeling
 

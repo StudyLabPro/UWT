@@ -15,10 +15,12 @@
 
 - все накопления — суммы по истории, суперпозиция, классическая смесь,
   ДПФ, нормировки и проверки — идут через Balansis: ACT-GEMM с
-  компенсацией Неймайера и суммирование Кахана; сырых numpy-редукций
+  компенсацией и EFT-суммирование (TwoSum); сырых numpy-редукций
   в модуле нет, это закреплено статическим и runtime-тестами;
-- поэлементные функции (exp, cos, sin, sqrt, log, деление, умножение)
-  идут через компенсированные операции Balansis;
+- поэлементные сложение и умножение — компенсированные операции Balansis
+  (Kahan two-sum / overflow-safe); поэлементные exp, cos, sin, sqrt, log
+  и деление — RAW numpy без компенсации (компенсированных float-векторных
+  версий этих операций в Balansis нет; честная карта — в balansis_adapter.py);
 - решётка, смещения и их квадраты — целочисленные, то есть точные;
   аргументы ДПФ приводятся точно по модулю решётки до взятия косинуса;
 - компенсационные члены каждого этапа возвращаются в результате
@@ -273,6 +275,10 @@ def wavefunction_checks(result: dict, cfg: UWTConfig) -> dict:
         "numerics": {
             "backend": "balansis-act",
             "raw_float64_reductions": False,
+            # Честная карта компенсации (см. balansis_adapter.py):
+            # редукции и add/mul компенсированы, трансцендентные и деление — raw numpy.
+            "compensated_operations": ["sum", "axis_sum", "matmul", "elementwise_add", "elementwise_multiply"],
+            "uncompensated_operations": ["elementwise_divide", "exp", "cos", "sin", "sqrt", "log"],
             "compensations": dict(result.get("compensations", {})),
         },
     }

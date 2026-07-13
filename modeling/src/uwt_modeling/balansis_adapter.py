@@ -1,12 +1,23 @@
 """Адаптер Balansis (АКТ — теория абсолютной компенсации) — векторизованный.
 
-Все накопительные операции моделирования идут через **векторизованные**
-компенсированные функции Balansis (`balansis.numpy_integration`):
-суммы — через error-free transform (попарный Kahan TwoSum), осевые суммы —
-тот же EFT вдоль оси, матричные произведения — BLAS + компенсация с log-space
-защитой от переполнения, поэлементные сложения/умножения — компенсированные
-numpy-операции. Ни одного Python-цикла по объектам `AbsoluteValue`, что даёт
-ускорение на порядки на больших структурах при сохранении точности АКТ.
+Честная карта компенсации (VERIFIED — закреплено тестами
+tests/test_balansis_adapter_and_metrics.py):
+
+- **Компенсируются** (через `balansis.numpy_integration`): суммы — error-free
+  transform (попарный Knuth TwoSum), осевые суммы — тот же EFT вдоль последней
+  оси, матричные произведения — BLAS + log-space защита от переполнения,
+  поэлементные сложение (Kahan two-sum) и умножение (overflow-safe).
+- **НЕ компенсируются** (сырой numpy, компенсация не применяется):
+  поэлементное деление (`compensated_elementwise_divide`) и поэлементные
+  exp/cos/sin/sqrt/log (`compensated_elementwise`). В Balansis нет
+  компенсированных float-векторных версий этих операций: его
+  `ufunc_exp`/`ufunc_log` и т.п. — объектные ufunc над `AbsoluteValue`
+  (Python-цикл, семантика АКТ-объектов), а не компенсация округления float64.
+  Префикс `compensated_` в именах этих двух функций сохранён только ради
+  стабильности API вызывающего кода; фактическое поведение — raw numpy.
+
+Ни одного Python-цикла по объектам `AbsoluteValue`, что даёт ускорение на
+порядки на больших структурах (реальные замеры — benchmarks/RESULTS.md).
 
 Balansis привязывает numpy на импорте, поэтому эти вызовы иммунны к
 monkeypatch'у `np.sum`/`np.matmul` в runtime-тесте ACT-чистоты волновой функции:
@@ -71,12 +82,26 @@ def compensated_elementwise_multiply(a: np.ndarray, b: np.ndarray) -> np.ndarray
 
 
 def compensated_elementwise_divide(a: np.ndarray, b: np.ndarray) -> np.ndarray:
-    """Поэлементное деление (векторизовано; знаменатели гарантируются вызывающим)."""
+    """Поэлементное деление — RAW numpy, компенсация НЕ применяется.
+
+    Несмотря на префикс ``compensated_`` (сохранён ради стабильности API),
+    это обычное IEEE-754 деление ``a / b`` без какой-либо коррекции ошибки
+    округления: в Balansis нет компенсированного float-векторного деления.
+    Компенсируются в этом адаптере только суммы/GEMM/сложение/умножение.
+    Знаменатели гарантируются вызывающим (ненулевые).
+    """
     return np.asarray(a, dtype=float) / np.asarray(b, dtype=float)
 
 
 def compensated_elementwise(op: str, values: np.ndarray) -> np.ndarray:
-    """Поэлементные exp/cos/sin/sqrt/log (векторизованные numpy-функции)."""
+    """Поэлементные exp/cos/sin/sqrt/log — RAW numpy, компенсация НЕ применяется.
+
+    Несмотря на префикс ``compensated_`` (сохранён ради стабильности API),
+    это прямые вызовы ``np.exp``/``np.cos``/``np.sin``/``np.sqrt``/``np.log``
+    без коррекции ошибки округления: компенсированных float-векторных
+    трансцендентных функций в Balansis нет. Компенсируются в этом адаптере
+    только суммы/GEMM/сложение/умножение.
+    """
     func = _ELEMENTWISE.get(op)
     if func is None:
         raise ValueError(f"unsupported compensated elementwise op: {op!r}")
