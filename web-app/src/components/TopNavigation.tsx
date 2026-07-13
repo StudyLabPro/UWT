@@ -36,10 +36,6 @@ export function TopNavigation({ active, onChange }: { active: Tab; onChange: (ta
             <small>{t(tab.caption)}</small>
           </a>
         ))}
-        <a className="tab" href="/ecosystem.html" title={t(ui.nav.ecosystemTitle)}>
-          <span>{t(ui.nav.ecosystemLabel)}</span>
-          <small>{t(ui.nav.ecosystemCaption)}</small>
-        </a>
         <button
           type="button"
           className="tab langToggle"

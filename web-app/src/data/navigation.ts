@@ -1,6 +1,6 @@
 import { loc, type Localized } from '../i18n/language'
 
-export type Tab = 'home' | 'examples' | 'act' | 'bridge' | 'magicbrain' | 'donate' | 'monograph'
+export type Tab = 'home' | 'examples' | 'act' | 'bridge' | 'magicbrain' | 'graph' | 'donate' | 'monograph'
 
 export type TabMeta = {
   id: Tab
@@ -15,6 +15,7 @@ export const tabPaths: Record<Tab, string> = {
   act: '/act',
   bridge: '/bridge',
   magicbrain: '/magicbrain',
+  graph: '/graph',
   donate: '/donate',
   monograph: '/monograph',
 }
@@ -83,6 +84,18 @@ export const tabMetadata: Record<Tab, TabMeta> = {
       ['MagicBrain', 'neural network models', 'cognitive layer', 'reflective intelligence', 'connection to UWT'],
     ),
   },
+  graph: {
+    id: 'graph',
+    title: loc('Полный граф экосистемы UWT', 'Full UWT ecosystem graph'),
+    description: loc(
+      'Интерактивный граф зависимостей и взаимосвязей между репозиториями, сервисами и компонентами dev-стека в одном экране.',
+      'An interactive full-stack graph of dependencies and links between repositories, services, and components in one view.',
+    ),
+    keywords: loc(
+      ['полный граф', 'экосистема UWT', 'зависимости', 'репозитории', 'инфраструктура'],
+      ['full graph', 'UWT ecosystem', 'dependencies', 'repositories', 'infrastructure'],
+    ),
+  },
   donate: {
     id: 'donate',
     title: loc('Поддержать проект UWT', 'Support the UWT project'),
@@ -122,6 +135,7 @@ export const navigationTabs: { id: Tab; label: Localized; caption: Localized }[]
   { id: 'act', label: loc('АКТ / Balansis', 'ACT / Balansis'), caption: loc('компенсация', 'compensation') },
   { id: 'bridge', label: loc('АКТ + UWT', 'ACT + UWT'), caption: loc('связь теорий', 'the bridge') },
   { id: 'magicbrain', label: loc('MagicBrain', 'MagicBrain'), caption: loc('MetaBrain', 'MetaBrain') },
+  { id: 'graph', label: loc('Граф', 'Graph'), caption: loc('экосистема и зависимости', 'ecosystem and dependencies') },
   { id: 'donate', label: loc('Поддержать', 'Support'), caption: loc('донат UWT', 'donate to UWT') },
   { id: 'monograph', label: loc('Монография', 'Monograph'), caption: loc('полный LaTeX', 'full LaTeX text') },
 ]

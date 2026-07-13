@@ -7,6 +7,7 @@ import { ui } from './i18n/strings'
 
 const HomeSlides = lazy(() => import('./components/HomeSlides').then((module) => ({ default: module.HomeSlides })))
 const ExamplesLab = lazy(() => import('./components/ExamplesLab').then((module) => ({ default: module.ExamplesLab })))
+const GraphAtlasPage = lazy(() => import('./components/GraphAtlasPage').then((module) => ({ default: module.GraphAtlasPage })))
 const ActBalansisPage = lazy(() => import('./components/ActBalansisPage').then((module) => ({ default: module.ActBalansisPage })))
 const ActUwtBridgePage = lazy(() => import('./components/ActUwtBridgePage').then((module) => ({ default: module.ActUwtBridgePage })))
 const MagicBrainPage = lazy(() => import('./components/MagicBrainPage').then((module) => ({ default: module.MagicBrainPage })))
@@ -261,6 +262,7 @@ export default function App() {
           {active === 'act' && <ActBalansisPage />}
           {active === 'bridge' && <ActUwtBridgePage />}
           {active === 'magicbrain' && <MagicBrainPage />}
+          {active === 'graph' && <GraphAtlasPage />}
           {active === 'donate' && <DonationPage />}
           {active === 'monograph' && <MonographPage />}
         </Suspense>

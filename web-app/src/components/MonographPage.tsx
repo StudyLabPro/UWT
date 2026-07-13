@@ -141,6 +141,8 @@ function stripLatexCommands(value: string) {
     .replace(/---/g, '—')
     .replace(/--/g, '–')
     .replace(/``|''/g, '"')
+    .replace(/\\[!;:,]/g, ' ')
+    .replace(/\\ /g, ' ')
     .replace(/\\,/g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/@@MATH_(\d+)@@/g, (_, index: string) => inlineMath[Number(index)] ?? '')
@@ -287,6 +289,8 @@ function formatLatexForDisplay(value: string) {
     .replace(/\\subset/g, '⊂')
     .replace(/\\emptyset/g, '∅')
     .replace(/\\mid/g, '|')
+    .replace(/\\[!;:,]/g, ' ')
+    .replace(/\\ /g, ' ')
     .replace(/\\sum/g, 'Σ')
     .replace(/\\min/g, 'min')
     .replace(/\\max/g, 'max')
@@ -327,16 +331,68 @@ function isTextThesisFormula(value: string) {
   return normalized.includes('\\text{') && withoutText.length === 0
 }
 
-function containsMathToken(formula: string, symbol: SymbolInfo) {
-  const probes = [symbol.latex, ...(symbol.aliases ?? [])].filter(Boolean)
-  if (probes.some((probe) => formula.includes(probe))) return true
+function addMathToken(tokens: Set<string>, token: string) {
+  const normalized = token.replace(/\s+/g, ' ').trim()
+  if (normalized) tokens.add(normalized)
+}
 
-  if (symbol.plain.length === 1) {
-    const escaped = symbol.plain.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    return new RegExp(`(^|[^A-Za-z\\\\])${escaped}($|[^A-Za-z])`).test(formula)
+function extractMathTokens(value: string): Set<string> {
+  const tokens = new Set<string>()
+  let rest = stripTextCommands(value)
+    .replace(/\\boxed/g, ' ')
+    .replace(/\\(?:begin|end)\{[^{}]*\}/g, ' ')
+
+  rest = rest.replace(
+    /\\(mathsf|mathcal|mathbb|mathbf|mathfrak|operatorname)\s*(?:\{([^{}]+)\}|([A-Za-z]))/g,
+    (_, command: string, bracedName: string | undefined, bareName: string | undefined) => {
+      const name = bracedName ?? bareName ?? ''
+      addMathToken(tokens, `\\${command}{${name}}`)
+      addMathToken(tokens, `\\${command} ${name}`)
+
+      if (command === 'mathsf' || command === 'operatorname') {
+        addMathToken(tokens, name)
+      }
+
+      return ' '
+    },
+  )
+
+  rest = rest.replace(/\\[A-Za-z]+/g, (command) => {
+    addMathToken(tokens, command)
+    return ' '
+  })
+  rest = rest.replace(/\\./g, ' ')
+
+  rest.replace(
+    /(^|[^A-Za-z\\])([A-Za-z])(?:_\{?([A-Za-z0-9]+)\}?|_([A-Za-z0-9]))?/g,
+    (_, _prefix: string, name: string, bracedSubscript: string | undefined, bareSubscript: string | undefined) => {
+      const subscript = bracedSubscript ?? bareSubscript
+      addMathToken(tokens, name)
+      if (subscript) addMathToken(tokens, `${name}_${subscript}`)
+      return ''
+    },
+  )
+
+  return tokens
+}
+
+function extractProbeTokens(probe: string): string[] {
+  if (probe.includes(',')) {
+    return probe.split(',').flatMap((part) => extractProbeTokens(part.trim()))
   }
 
-  return formula.includes(symbol.plain)
+  const tokens = Array.from(extractMathTokens(probe))
+  if (probe.includes('_')) {
+    const subscripted = tokens.filter((token) => token.includes('_'))
+    if (subscripted.length > 0) return subscripted
+  }
+
+  return tokens
+}
+
+function containsMathToken(formulaTokens: Set<string>, symbol: SymbolInfo) {
+  const probes = [symbol.latex, ...(symbol.aliases ?? [])].filter(Boolean)
+  return probes.some((probe) => extractProbeTokens(probe).some((token) => formulaTokens.has(token)))
 }
 
 function parseTabular(lines: string[]): string[][] {
@@ -525,9 +581,9 @@ function buildChapterSections(nodes: MonographNode[]): MonographChapter[] {
 }
 
 function explainFormula(latex: string) {
-  const expanded = stripTextCommands(expandMacros(latex))
+  const formulaTokens = extractMathTokens(expandMacros(latex))
   const hits = symbolGlossary.filter((symbol) => {
-    return containsMathToken(expanded, symbol)
+    return containsMathToken(formulaTokens, symbol)
   })
 
   return hits.slice(0, 9).map((symbol) => `${formatLatexForDisplay(symbol.latex)} — ${symbol.meaning}`)

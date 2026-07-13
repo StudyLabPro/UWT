@@ -3390,3 +3390,63 @@ p {
   .chapterSwitcher { grid-template-columns: 1fr 1fr; }
   .chapterSwitcher div { grid-column: 1 / -1; order: -1; }
 }
+
+/* Graph atlas route (full ecosystem graph) */
+.graphAtlasPage {
+  width: min(1660px, calc(100% - 32px));
+  padding-bottom: 24px;
+}
+
+.graphAtlasKicker {
+  margin: 0 0 8px;
+  color: var(--amber);
+}
+
+.graphAtlasTitle {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 56px);
+  color: var(--paper);
+}
+
+.graphAtlasLead {
+  margin: 8px 0 18px;
+  max-width: 980px;
+  color: var(--muted);
+}
+
+.graphAtlasFrame {
+  display: block;
+  width: 100%;
+  height: min(76vh, 860px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #05060c;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 1180px) {
+  .graphAtlasPage {
+    width: min(100% - 24px, 1660px);
+  }
+
+  .graphAtlasFrame {
+    height: min(80vh, 760px);
+  }
+}
+
+@media (max-width: 700px) {
+  .graphAtlasPage {
+    width: min(100% - 20px, 1660px);
+    padding-bottom: 20px;
+  }
+
+  .graphAtlasTitle {
+    font-size: clamp(28px, 8vw, 44px);
+  }
+
+  .graphAtlasFrame {
+    height: min(80vh, 700px);
+    border-radius: var(--radius-md);
+  }
+}
