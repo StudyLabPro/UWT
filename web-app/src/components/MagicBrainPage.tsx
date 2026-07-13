@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
 import { magicBrainDemos, magicBrainModules, magicBrainRoadmap, type MagicBrainDemoId } from '../data/magicbrainDemos'
+import { useLang } from '../i18n/language'
 import { BrowserPythonRunner } from './BrowserPythonRunner'
 import { MagicBrainSimulation } from './MagicBrainSimulation'
 
 export function MagicBrainPage() {
+  const { t } = useLang()
   const [activeDemo, setActiveDemo] = useState<MagicBrainDemoId>('textbrain')
   const demo = useMemo(() => magicBrainDemos.find((item) => item.id === activeDemo) || magicBrainDemos[0], [activeDemo])
 
@@ -21,7 +23,7 @@ export function MagicBrainPage() {
       </div>
 
       <div className="magicModuleGrid">
-        {magicBrainModules.map(([title, text]) => <article key={title} className="magicModuleCard glass"><h3>{title}</h3><p>{text}</p></article>)}
+        {magicBrainModules.map(([title, text]) => <article key={title} className="magicModuleCard glass"><h3>{title}</h3><p>{t(text)}</p></article>)}
       </div>
 
       <MagicBrainSimulation />
@@ -40,7 +42,7 @@ export function MagicBrainPage() {
         <article className="taskWorkspace">
           <div className="taskBrief">
             <h3>{demo.title}</h3>
-            <p>{demo.caption}</p>
+            <p>{t(demo.caption)}</p>
           </div>
           <pre className="codeBlock"><code>{demo.code}</code></pre>
           <BrowserPythonRunner code={demo.code} needsMagicBrain={demo.needsMagicBrain} needsBalansis={demo.needsBalansis} />

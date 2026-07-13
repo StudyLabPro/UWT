@@ -1,0 +1,15 @@
+{
+  "name": "uwt-donations-api",
+  "version": "0.2.0",
+  "description": "Zero-dependency Stripe donations API for the UWT atlas (checkout + webhook + stats).",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test/smoke.mjs"
+  }
+}

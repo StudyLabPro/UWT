@@ -27,6 +27,7 @@ class UWTConfig:
     entropy_smoothing_window: int = 15
     dynamics: str = "random"
     temperature: float = 1.0
+    entropy_estimator: str = "raw"
 
     def __post_init__(self) -> None:
         if self.n_parts <= 1:
@@ -59,3 +60,5 @@ class UWTConfig:
             raise ValueError("dynamics must be 'random' or 'annealed'")
         if self.temperature <= 0:
             raise ValueError("temperature must be greater than 0")
+        if self.entropy_estimator not in ("raw", "smoothed"):
+            raise ValueError("entropy_estimator must be 'raw' or 'smoothed'")

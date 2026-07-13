@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .config import UWTConfig
 from .experiments import run_experiment
+from .experiments_registry import EXPERIMENTS, run_named_experiment
 from .serialization import write_json
 
 
@@ -30,13 +31,31 @@ def build_parser() -> argparse.ArgumentParser:
                              "configurational energy")
     parser.add_argument("--temperature", type=float, default=UWTConfig.temperature,
                         help="Metropolis temperature for --dynamics annealed (lower = colder = deeper descent)")
+    parser.add_argument("--entropy-estimator", choices=("raw", "smoothed"), default=UWTConfig.entropy_estimator,
+                        help="'raw' histogram entropy (default) or 'smoothed' fixed-bin Laplace estimator")
+    parser.add_argument("--experiment", default=None, choices=sorted(EXPERIMENTS),
+                        help="run a named experiment from the registry instead of the full pipeline")
+    parser.add_argument("--list-experiments", action="store_true",
+                        help="list registered experiments with markers and exit")
     parser.add_argument("--out", default="results/uwt_experiment_result.json")
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
-    cfg = replace(UWTConfig(), n_parts=args.parts, dim=args.dim, modulus=args.modulus, steps=args.steps, forecast_horizon=args.forecast_horizon, seed=args.seed, max_step=args.max_step, init=args.init, ordered_extent=args.ordered_extent, stability_width_gamma=args.stability_width_gamma, dynamics=args.dynamics, temperature=args.temperature)
+    if args.list_experiments:
+        for name in sorted(EXPERIMENTS):
+            spec = EXPERIMENTS[name]
+            print(f"{name} [{spec.marker}] — {spec.description}")
+        return
+    cfg = replace(UWTConfig(), n_parts=args.parts, dim=args.dim, modulus=args.modulus, steps=args.steps, forecast_horizon=args.forecast_horizon, seed=args.seed, max_step=args.max_step, init=args.init, ordered_extent=args.ordered_extent, stability_width_gamma=args.stability_width_gamma, dynamics=args.dynamics, temperature=args.temperature, entropy_estimator=args.entropy_estimator)
+    if args.experiment:
+        result = run_named_experiment(args.experiment, cfg)
+        out = Path(args.out)
+        write_json(out, result)
+        print(f"Saved experiment '{args.experiment}' result to {out}")
+        print({k: v for k, v in result.items() if k in ("experiment", "marker", "description")})
+        return
     result = run_experiment(cfg)
     out = Path(args.out)
     write_json(out, result)

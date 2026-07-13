@@ -1,9 +1,11 @@
+import { loc, type Localized } from '../i18n/language'
+
 export type MagicBrainDemoId = 'textbrain' | 'genome' | 'neurogenesis' | 'twins' | 'hybrid' | 'diagnostics' | 'balansis'
 
 export type MagicBrainDemo = {
   id: MagicBrainDemoId
   title: string
-  caption: string
+  caption: Localized
   code: string
   needsMagicBrain?: boolean
   needsBalansis?: boolean
@@ -13,7 +15,10 @@ export const magicBrainDemos: MagicBrainDemo[] = [
   {
     id: 'textbrain',
     title: 'TextBrain SNN',
-    caption: 'Создание SNN-мозга из genome и короткий тренировочный цикл.',
+    caption: loc(
+      'Создание SNN-мозга из genome и короткий тренировочный цикл.',
+      'Building an SNN brain from a genome, plus a short training loop.',
+    ),
     needsMagicBrain: true,
     code: `from magicbrain import TextBrain
 try:
@@ -41,7 +46,10 @@ print("brain", type(brain).__name__)`,
   {
     id: 'genome',
     title: 'Genome decode',
-    caption: 'Геном как детерминированное описание архитектуры.',
+    caption: loc(
+      'Геном как детерминированное описание архитектуры.',
+      'The genome as a deterministic description of the architecture.',
+    ),
     needsMagicBrain: true,
     code: `genome = "30121033102301230112332100123"
 try:
@@ -61,7 +69,10 @@ except Exception as error:
   {
     id: 'neurogenesis',
     title: 'NeuroGenesis',
-    caption: 'Компиляция датасета в genome и запуск pipeline, если модуль доступен.',
+    caption: loc(
+      'Компиляция датасета в genome и запуск pipeline, если модуль доступен.',
+      'Compiling a dataset into a genome and launching the pipeline when the module is available.',
+    ),
     needsMagicBrain: true,
     code: `dataset = "relations memory agents stability"
 try:
@@ -84,7 +95,10 @@ except Exception as error:
   {
     id: 'twins',
     title: 'Digital Twin',
-    caption: 'Нейронный цифровой двойник студента и когнитивное состояние.',
+    caption: loc(
+      'Нейронный цифровой двойник студента и когнитивное состояние.',
+      'A neural digital twin of a student and its cognitive state.',
+    ),
     needsMagicBrain: true,
     code: `try:
     from magicbrain.integration.neural_digital_twin import NeuralDigitalTwin
@@ -99,7 +113,10 @@ except Exception as error:
   {
     id: 'hybrid',
     title: 'Hybrid Orchestrator',
-    caption: 'Каркас гибридного SNN → DNN/Transformer pipeline.',
+    caption: loc(
+      'Каркас гибридного SNN → DNN/Transformer pipeline.',
+      'A skeleton of a hybrid SNN → DNN/Transformer pipeline.',
+    ),
     needsMagicBrain: true,
     code: `try:
     from magicbrain.platform import ModelOrchestrator, ExecutionStrategy
@@ -119,7 +136,10 @@ except Exception as error:
   {
     id: 'diagnostics',
     title: 'Diagnostics',
-    caption: 'Диагностика активности, пластичности и устойчивости памяти.',
+    caption: loc(
+      'Диагностика активности, пластичности и устойчивости памяти.',
+      'Diagnostics of activity, plasticity, and memory stability.',
+    ),
     needsMagicBrain: true,
     code: `genome = "30121033102301230112332100123"
 try:
@@ -141,7 +161,10 @@ print(metrics)`,
   {
     id: 'balansis',
     title: 'Balansis ACT',
-    caption: 'Компенсированная сумма весов отношений как UWT-энергия.',
+    caption: loc(
+      'Компенсированная сумма весов отношений как UWT-энергия.',
+      'A compensated sum of relation weights as UWT energy.',
+    ),
     needsBalansis: true,
     code: `from balansis import AbsoluteValue, Operations
 
@@ -156,14 +179,14 @@ print("stable:", result.to_float() > 1.0)`,
   },
 ]
 
-export const magicBrainModules = [
-  ['TextBrain', 'SNN-ядро: sparse top-k, dopamine, Hebbian learning, delays.'],
-  ['Genome System', 'Base-4 DNA-код архитектуры, связности и гиперпараметров.'],
-  ['NeuroGenesis', 'Dataset → genome → 3D morphogenesis → training → reconstruction.'],
-  ['Digital Twins', 'Модель студента: mastery, attention, fatigue, confusion.'],
-  ['Hybrid Platform', 'SNN/DNN/Transformer/CNN/RNN orchestration strategies.'],
-  ['Diagnostics', 'LiveMonitor, plasticity, synaptic metrics, neuronal dynamics.'],
-  ['Balansis ACT', 'Компенсированная арифметика для аудита весов и энергии.'],
+export const magicBrainModules: [string, Localized][] = [
+  ['TextBrain', loc('SNN-ядро: sparse top-k, dopamine, Hebbian learning, delays.', 'The SNN core: sparse top-k, dopamine, Hebbian learning, delays.')],
+  ['Genome System', loc('Base-4 DNA-код архитектуры, связности и гиперпараметров.', 'A base-4 DNA code of the architecture, connectivity, and hyperparameters.')],
+  ['NeuroGenesis', loc('Dataset → genome → 3D morphogenesis → training → reconstruction.', 'Dataset → genome → 3D morphogenesis → training → reconstruction.')],
+  ['Digital Twins', loc('Модель студента: mastery, attention, fatigue, confusion.', 'A student model: mastery, attention, fatigue, confusion.')],
+  ['Hybrid Platform', loc('SNN/DNN/Transformer/CNN/RNN orchestration strategies.', 'SNN/DNN/Transformer/CNN/RNN orchestration strategies.')],
+  ['Diagnostics', loc('LiveMonitor, plasticity, synaptic metrics, neuronal dynamics.', 'LiveMonitor, plasticity, synaptic metrics, neuronal dynamics.')],
+  ['Balansis ACT', loc('Компенсированная арифметика для аудита весов и энергии.', 'Compensated arithmetic for auditing weights and energy.')],
 ]
 
 export const magicBrainRoadmap = ['TextBrain', 'Genome', 'NeuroGenesis', 'Digital Twin', 'Hybrid', 'Diagnostics', 'Balansis']

@@ -56,8 +56,10 @@ def test_forecast_observables_shape():
     cfg = UWTConfig(n_parts=8, steps=8, forecast_horizon=4, seed=4)
     forecast = forecast_observables(cfg)
     assert forecast["horizon"] == 4
-    assert set(forecast) == {"horizon", "energy", "entropy", "mean_mass", "max_velocity"}
+    assert set(forecast) == {"horizon", "energy", "entropy", "mean_mass", "max_velocity", "models"}
     assert all(len(forecast[key]) == 4 for key in ["energy", "entropy", "mean_mass", "max_velocity"])
+    assert all(forecast["models"][key]["selected"] in ("linear", "exp_relaxation")
+               for key in ["energy", "entropy", "mean_mass", "max_velocity"])
 
 
 def test_parameter_scan_rows_and_speed_bound():

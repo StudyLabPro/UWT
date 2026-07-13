@@ -127,3 +127,24 @@ Unified Whole Theory/web-app/
 │     ├─ ActBalansisPage.jsx
 │     └─ ActUwtBridgePage.jsx
 ```
+
+## Актуальное состояние (2026-07-13)
+
+Документ выше описывает исходный дизайн (4 вкладки, «без backend»). Фактическая
+архитектура ушла дальше:
+
+- **7 разделов** + статическая страница `/ecosystem.html`: home (17 слайдов),
+  examples (визуализаторы + Pyodide-раннер), act (интерактивная лаборатория
+  компенсации), bridge, magicbrain, donate, monograph (KaTeX-рендер настоящего
+  LaTeX из `theory/`).
+- **Роутинг** — ручной pushState с per-route URL (`src/data/navigation.ts`),
+  react-router-dom удалён из зависимостей как неиспользуемый (zustand — тоже).
+- **i18n** — RU/EN через `src/i18n/language.tsx` (`Localized`, `loc()`,
+  `useLang()`), переключатель в шапке, персистенция в localStorage.
+- **SEO** — статический head в `index.html` + рантайм-мета и JSON-LD на смену
+  вкладки/языка + пост-билд пререндер `scripts/prerender.mjs`
+  (dist/<route>/index.html с noscript-контентом); og-image — PNG 1200×630.
+- **Backend появился**: `donations-api/` (Stripe Checkout + webhook) — отдельный
+  сервис, фронтенд ходит в него через `/api/stripe/*`.
+- Маркировка достоверности контента — компонент `CredibilityBadge`
+  (THEORY/HYPOTHESIS/DEMO/MODEL/VERIFIED по конвенции проекта).

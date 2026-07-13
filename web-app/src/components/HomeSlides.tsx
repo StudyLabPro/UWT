@@ -1,9 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { slides } from '../data/slides'
+import { useLang } from '../i18n/language'
 
 const total = slides.length
 
 export function HomeSlides() {
+  const { t } = useLang()
   const [index, setIndex] = useState(0)
   const [trackHeight, setTrackHeight] = useState<number>()
   const cardRefs = useRef<Array<HTMLElement | null>>([])
@@ -105,11 +107,11 @@ export function HomeSlides() {
                 >
                   <div className="slideCardHead">
                     <span className="slideIndex">{String(item.id).padStart(2, '0')}</span>
-                    <p className="kicker">{item.eyebrow}</p>
+                    <p className="kicker">{t(item.eyebrow)}</p>
                   </div>
-                  <h2>{item.title}</h2>
-                  {item.body.map((paragraph, pi) => <p key={pi}>{paragraph}</p>)}
-                  <blockquote className="slideInsight">{item.insight}</blockquote>
+                  <h2>{t(item.title)}</h2>
+                  {t(item.body).map((paragraph, pi) => <p key={pi}>{paragraph}</p>)}
+                  <blockquote className="slideInsight">{t(item.insight)}</blockquote>
                   {item.formula && <code>{item.formula}</code>}
                 </article>
               ))}
@@ -127,8 +129,8 @@ export function HomeSlides() {
                 key={item.id}
                 className={i === index ? 'dot active' : 'dot'}
                 onClick={() => goTo(i)}
-                aria-label={`Слайд ${i + 1} из ${total}: ${item.eyebrow}`}
-                title={item.title}
+                aria-label={`Слайд ${i + 1} из ${total}: ${t(item.eyebrow)}`}
+                title={t(item.title)}
               />
             ))}
           </div>

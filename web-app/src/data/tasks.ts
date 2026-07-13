@@ -1,3 +1,5 @@
+import { loc, type Localized } from '../i18n/language'
+
 const balansisPrelude = `from balansis import AbsoluteValue, Operations
 
 
@@ -48,11 +50,25 @@ class UWTState:
         return {'Stab': round(stab, 3), 'change': change, 'compensation': c1 + c2}
 `
 
-export const practicalTasks = [
+export type PracticalTask = {
+  title: Localized
+  problem: Localized
+  uwtSolution: Localized
+  pythonSolution: string
+  actSolution: string
+}
+
+export const practicalTasks: PracticalTask[] = [
   {
-    title: 'Сети и связи',
-    problem: 'Найти, какие группы в социальной или технической сети становятся устойчивыми.',
-    uwtSolution: 'Считать узлы частями Aᵢ, связи отношениями R(Aᵢ,Aⱼ), а устойчивость — малым изменением отношений.',
+    title: loc('Сети и связи', 'Networks and connections'),
+    problem: loc(
+      'Найти, какие группы в социальной или технической сети становятся устойчивыми.',
+      'Find which groups in a social or technical network are becoming stable.',
+    ),
+    uwtSolution: loc(
+      'Считать узлы частями Aᵢ, связи отношениями R(Aᵢ,Aⱼ), а устойчивость — малым изменением отношений.',
+      'Treat nodes as parts Aᵢ, links as relations R(Aᵢ,Aⱼ), and stability as a small change in the relations.',
+    ),
     pythonSolution: `def stable_groups(prev, curr, threshold=0.15):
     n = len(curr)
     graph = [[] for _ in range(n)]
@@ -128,9 +144,15 @@ curr = [[0, .82, .7], [.82, 0, .22], [.7, .22, 0]]
 print(stable_groups_balansis(prev, curr))`,
   },
   {
-    title: 'Устойчивость систем',
-    problem: 'Понять, выдержит ли команда, маршрут, сеть серверов или экономика сильное изменение.',
-    uwtSolution: 'Измерить Stab(Aᵢ): чем меньше скачки отношений, тем выше устойчивость системы.',
+    title: loc('Устойчивость систем', 'System stability'),
+    problem: loc(
+      'Понять, выдержит ли команда, маршрут, сеть серверов или экономика сильное изменение.',
+      'Determine whether a team, a route, a server network, or an economy will withstand a major change.',
+    ),
+    uwtSolution: loc(
+      'Измерить Stab(Aᵢ): чем меньше скачки отношений, тем выше устойчивость системы.',
+      'Measure Stab(Aᵢ): the smaller the jumps in relations, the higher the stability of the system.',
+    ),
     pythonSolution: `def system_stability(before, after):
     total_change = 0
     total_power = 0
@@ -161,9 +183,15 @@ after = [[0, 3, 2], [3, 0, 1], [2, 1, 0]]
 print(withstands_shock(before, after))`,
   },
   {
-    title: 'Прогноз изменений',
-    problem: 'Предсказать нагрузку, движение потоков или вероятность конфликта.',
-    uwtSolution: 'Использовать историю состояний S₀→S₁→S₂ и прогнозировать будущие ΔR.',
+    title: loc('Прогноз изменений', 'Forecasting change'),
+    problem: loc(
+      'Предсказать нагрузку, движение потоков или вероятность конфликта.',
+      'Predict load, the movement of flows, or the probability of conflict.',
+    ),
+    uwtSolution: loc(
+      'Использовать историю состояний S₀→S₁→S₂ и прогнозировать будущие ΔR.',
+      'Use the history of states S₀→S₁→S₂ and forecast future ΔR.',
+    ),
     pythonSolution: `def forecast_next(history):
     prev = history[-2]
     curr = history[-1]
@@ -203,9 +231,15 @@ s2 = [[0, 17], [17, 0]]
 print(forecast_relations([s0, s1, s2]))`,
   },
   {
-    title: 'Важные узлы',
-    problem: 'Найти станции, людей, серверы или агенты, через которые лучше всего описывать систему.',
-    uwtSolution: 'Строить локальные центры описания R(Aᵢ, Aⱼ) для каждого узла и сравнивать их информативность.',
+    title: loc('Важные узлы', 'Key nodes'),
+    problem: loc(
+      'Найти станции, людей, серверы или агенты, через которые лучше всего описывать систему.',
+      'Find the stations, people, servers, or agents through which the system is best described.',
+    ),
+    uwtSolution: loc(
+      'Строить локальные центры описания R(Aᵢ, Aⱼ) для каждого узла и сравнивать их информативность.',
+      'Build local centers of description R(Aᵢ, Aⱼ) for every node and compare how informative they are.',
+    ),
     pythonSolution: `def important_nodes(relations):
     scores = []
     for i, row in enumerate(relations):
@@ -232,9 +266,15 @@ relations = [[0, 5, 1, 0], [5, 0, 4, 3], [1, 4, 0, 2], [0, 3, 2, 0]]
 print(important_local_centers(relations))`,
   },
   {
-    title: 'Резкие события',
-    problem: 'Рано обнаружить сбой сети, кризис, поломку или смену поведения.',
-    uwtSolution: 'Искать скачки энергии, скорости изменения отношений и падение устойчивости.',
+    title: loc('Резкие события', 'Sharp events'),
+    problem: loc(
+      'Рано обнаружить сбой сети, кризис, поломку или смену поведения.',
+      'Detect a network failure, a crisis, a breakdown, or a change in behavior early.',
+    ),
+    uwtSolution: loc(
+      'Искать скачки энергии, скорости изменения отношений и падение устойчивости.',
+      'Look for jumps in energy, in the rate of change of relations, and for drops in stability.',
+    ),
     pythonSolution: `def relation_energy(state):
     return sum(abs(value) for row in state for value in row) / 2
 
@@ -279,9 +319,15 @@ history = [[[0, 1], [1, 0]], [[0, 2], [2, 0]], [[0, 9], [9, 0]]]
 print(detect_sharp_events(history))`,
   },
   {
-    title: 'Внутреннее время',
-    problem: 'Сравнить системы, где по часам прошло одинаково, но изменений было разное количество.',
-    uwtSolution: 'Определять время как τ(Sᵢ,Sⱼ): мера различия состояний, а не просто часы.',
+    title: loc('Внутреннее время', 'Internal time'),
+    problem: loc(
+      'Сравнить системы, где по часам прошло одинаково, но изменений было разное количество.',
+      'Compare systems where the same clock time has passed but a different amount of change has occurred.',
+    ),
+    uwtSolution: loc(
+      'Определять время как τ(Sᵢ,Sⱼ): мера различия состояний, а не просто часы.',
+      'Define time as τ(Sᵢ,Sⱼ): a measure of the difference between states, not just a clock.',
+    ),
     pythonSolution: `def internal_time(a, b):
     tau = 0
     for i in range(len(a)):
@@ -311,9 +357,15 @@ variants = {
 print(compare_internal_time(start, variants))`,
   },
   {
-    title: 'ИИ-агенты',
-    problem: 'Понять, как группа агентов образует совместное поведение.',
-    uwtSolution: 'Моделировать агентов как части, а координацию как устойчивую структуру отношений.',
+    title: loc('ИИ-агенты', 'AI agents'),
+    problem: loc(
+      'Понять, как группа агентов образует совместное поведение.',
+      'Understand how a group of agents forms joint behavior.',
+    ),
+    uwtSolution: loc(
+      'Моделировать агентов как части, а координацию как устойчивую структуру отношений.',
+      'Model agents as parts, and coordination as a stable structure of relations.',
+    ),
     pythonSolution: `def agent_coordination(actions_history):
     scores = []
     for step, actions in enumerate(actions_history):
@@ -352,9 +404,38 @@ print(agent_coordination_balansis(history))`,
   },
 ]
 
-export const actConcepts = [
-  { title: 'AbsoluteValue', text: 'Структурное число, где важна не только величина, но и направление/семантика вычисления.' },
-  { title: 'Compensation', text: 'Явная поправка, которая показывает потерю или остаток вычисления вместо молчаливого округления.' },
-  { title: 'Singular arithmetic', text: 'Арифметика, где особые случаи не прячутся, а становятся частью модели.' },
-  { title: 'Audited semantics', text: 'Вычисление можно проверять: результат и компенсация видны отдельно.' },
+export type ActConcept = {
+  title: string
+  text: Localized
+}
+
+export const actConcepts: ActConcept[] = [
+  {
+    title: 'AbsoluteValue',
+    text: loc(
+      'Структурное число, где важна не только величина, но и направление/семантика вычисления.',
+      'A structured number where not only the magnitude matters, but also the direction/semantics of the computation.',
+    ),
+  },
+  {
+    title: 'Compensation',
+    text: loc(
+      'Явная поправка, которая показывает потерю или остаток вычисления вместо молчаливого округления.',
+      'An explicit correction that exposes the loss or residual of a computation instead of silently rounding it away.',
+    ),
+  },
+  {
+    title: 'Singular arithmetic',
+    text: loc(
+      'Арифметика, где особые случаи не прячутся, а становятся частью модели.',
+      'Arithmetic in which special cases are not hidden away but become part of the model.',
+    ),
+  },
+  {
+    title: 'Audited semantics',
+    text: loc(
+      'Вычисление можно проверять: результат и компенсация видны отдельно.',
+      'The computation can be audited: the result and the compensation are visible separately.',
+    ),
+  },
 ]

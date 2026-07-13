@@ -11,8 +11,8 @@ export function pick<T>(lang: Lang, value: Localized<T>): T {
   return value[lang]
 }
 
-/** Shorthand for building a Localized<string> pair inline. */
-export function loc(ru: string, en: string): Localized {
+/** Shorthand for building a Localized pair inline (strings, arrays, nodes…). */
+export function loc<T = string>(ru: T, en: T): Localized<T> {
   return { ru, en }
 }
 

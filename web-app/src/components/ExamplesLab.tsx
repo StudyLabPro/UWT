@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { practicalTasks } from '../data/tasks'
+import { useLang } from '../i18n/language'
 import { MiniUniverseCanvas } from './MiniUniverseCanvas'
 import { MatterAtomsSimulation } from './MatterAtomsSimulation'
 import { NeuromorphicBrainSimulation } from './NeuromorphicBrainSimulation'
@@ -23,6 +24,7 @@ const visualizers: { id: Visualizer; label: string; short: string; description: 
 ]
 
 export function ExamplesLab() {
+  const { t } = useLang()
   const [activeVisualizer, setActiveVisualizer] = useState<Visualizer>('uwt')
   const [activeTask, setActiveTask] = useState(0)
   const [activeCode, setActiveCode] = useState<'python' | 'act'>('python')
@@ -133,15 +135,15 @@ export function ExamplesLab() {
 
         <div className="taskTabs">
           {practicalTasks.map((item, index) => (
-            <button key={item.title} className={activeTask === index ? 'taskTab active' : 'taskTab'} onClick={() => setActiveTask(index)}>{item.title}</button>
+            <button key={item.title.ru} className={activeTask === index ? 'taskTab active' : 'taskTab'} onClick={() => setActiveTask(index)}>{t(item.title)}</button>
           ))}
         </div>
 
         <article className="taskWorkspace">
           <div className="taskBrief">
-            <h3>{task.title}</h3>
-            <p><b>Задача:</b> {task.problem}</p>
-            <p><b>Решение UWT:</b> {task.uwtSolution}</p>
+            <h3>{t(task.title)}</h3>
+            <p><b>Задача:</b> {t(task.problem)}</p>
+            <p><b>Решение UWT:</b> {t(task.uwtSolution)}</p>
           </div>
 
           <div className="codeModeTabs">

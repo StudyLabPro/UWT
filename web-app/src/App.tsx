@@ -2,6 +2,8 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import { AppFooter } from './components/AppFooter'
 import { TopNavigation } from './components/TopNavigation'
 import { navigationTabs, tabFromPath, tabMetadata, tabPaths, type Tab } from './data/navigation'
+import { loc, useLang, type Lang, type Localized } from './i18n/language'
+import { ui } from './i18n/strings'
 
 const HomeSlides = lazy(() => import('./components/HomeSlides').then((module) => ({ default: module.HomeSlides })))
 const ExamplesLab = lazy(() => import('./components/ExamplesLab').then((module) => ({ default: module.ExamplesLab })))
@@ -12,6 +14,17 @@ const DonationPage = lazy(() => import('./components/DonationPage').then((module
 const MonographPage = lazy(() => import('./components/MonographPage').then((module) => ({ default: module.MonographPage })))
 
 const siteUrl = 'https://uwt.xteam.pro'
+const ogImage = `${siteUrl}/og-image.png`
+
+const siteDescription: Localized = loc(
+  'Интерактивный атлас Unified Whole Theory: реляционная физика, визуальные модели и монография Теории Единого Целого.',
+  'The interactive Unified Whole Theory atlas: relational physics, visual models, and the Unified Whole Theory monograph.',
+)
+
+const webAppDescription: Localized = loc(
+  'Интерактивная среда для изучения Unified Whole Theory: визуализаторы, реляционные модели, мосты к Balansis и монография Теории Единого Целого.',
+  'An interactive environment for exploring Unified Whole Theory: visualizers, relational models, bridges to Balansis, and the monograph.',
+)
 
 function getCurrentTab() {
   return tabFromPath(window.location.pathname)
@@ -56,17 +69,22 @@ function setLinkHref(selector: string, href: string, rel: string, hreflang?: str
   link.setAttribute('href', href)
 }
 
-function setJsonLd(tab: Tab) {
+function setJsonLd(tab: Tab, lang: Lang) {
+  const pickLang = <T,>(value: Localized<T>): T => value[lang]
   const meta = tabMetadata[tab]
+  const title = pickLang(meta.title)
+  const description = pickLang(meta.description)
+  const inLanguage = lang === 'ru' ? 'ru-RU' : 'en-US'
   const canonical = `${siteUrl}${tabPaths[tab]}`
   const canonicalLink = tab === 'home' ? siteUrl : canonical
-  const navLabel = navigationTabs.find((item) => item.id === tab)?.label || 'Главная'
+  const navTab = navigationTabs.find((item) => item.id === tab)
+  const navLabel = navTab ? pickLang(navTab.label) : pickLang(loc('Главная', 'Home'))
   const isMonograph = tab === 'monograph'
   const breadcrumbItems = [
     {
       '@type': 'ListItem',
       position: 1,
-      name: 'Главная',
+      name: pickLang(loc('Главная', 'Home')),
       item: siteUrl,
     },
   ]
@@ -80,26 +98,26 @@ function setJsonLd(tab: Tab) {
   }
 
   const pageSchemaType = isMonograph ? 'ScholarlyArticle' : 'WebPage'
-  const pageSchema: Record<string, any> = {
+  const pageSchema: Record<string, unknown> = {
     '@type': pageSchemaType,
     '@id': `${canonicalLink}#webpage`,
-    name: meta.title,
-    headline: meta.title,
-    description: meta.description,
+    name: title,
+    headline: title,
+    description,
     url: canonical,
-    inLanguage: 'ru-RU',
+    inLanguage,
     isPartOf: {
       '@id': `${siteUrl}/#website`,
     },
-    primaryImageOfPage: `${siteUrl}/og-image.svg`,
+    primaryImageOfPage: ogImage,
     breadcrumb: {
       '@id': `${canonical}#breadcrumb`,
     },
   }
 
   if (isMonograph) {
-    pageSchema.articleBody = meta.description
-    pageSchema.genre = 'Научная статья'
+    pageSchema.articleBody = description
+    pageSchema.genre = pickLang(loc('Научная статья', 'Scholarly article'))
   }
 
   const webSite = {
@@ -108,8 +126,8 @@ function setJsonLd(tab: Tab) {
     name: 'Unified Whole Theory',
     alternateName: ['UWT', 'Теория Единого Целого', 'ТЕЦ'],
     url: siteUrl,
-    inLanguage: 'ru-RU',
-    description: 'Интерактивный атлас Unified Whole Theory: реляционная физика, визуальные модели и монография Теории Единого Целого.',
+    inLanguage,
+    description: pickLang(siteDescription),
     publisher: {
       '@id': `${siteUrl}/#organization`,
     },
@@ -152,11 +170,10 @@ function setJsonLd(tab: Tab) {
           url: siteUrl,
           applicationCategory: 'EducationalApplication',
           operatingSystem: 'Any',
-          inLanguage: 'ru-RU',
+          inLanguage,
           isAccessibleForFree: true,
-          description:
-            'Интерактивная среда для изучения Unified Whole Theory: визуализаторы, реляционные модели, мосты к Balansis и монография Теории Единого Целого.',
-          image: `${siteUrl}/og-image.svg`,
+          description: pickLang(webAppDescription),
+          image: ogImage,
           creator: {
             '@id': `${siteUrl}/#organization`,
           },
@@ -165,12 +182,12 @@ function setJsonLd(tab: Tab) {
         {
           '@type': 'ItemList',
           '@id': `${siteUrl}/#uwt-content-index`,
-          name: 'Разделы UWT',
-          itemListElement: navigationTabs.map((tab, index) => ({
+          name: pickLang(loc('Разделы UWT', 'UWT sections')),
+          itemListElement: navigationTabs.map((navItem, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            name: tab.label,
-            item: tabPaths[tab.id] === '/' ? siteUrl : `${siteUrl}${tabPaths[tab.id]}`,
+            name: pickLang(navItem.label),
+            item: tabPaths[navItem.id] === '/' ? siteUrl : `${siteUrl}${tabPaths[navItem.id]}`,
           })),
         },
       ],
@@ -181,6 +198,7 @@ function setJsonLd(tab: Tab) {
 }
 
 export default function App() {
+  const { lang, t } = useLang()
   const [active, setActive] = useState<Tab>(() => getCurrentTab())
 
   useEffect(() => {
@@ -190,31 +208,34 @@ export default function App() {
 
       const meta = tabMetadata[tab]
       const canonical = `${siteUrl}${tabPaths[tab]}`
+      const title = t(meta.title)
+      const description = t(meta.description)
 
-      document.title = meta.title
-      setMetaName('description', meta.description)
-      setMetaName('keywords', meta.keywords.join(', '))
-      setMetaProperty('og:title', meta.title)
-      setMetaProperty('og:description', meta.description)
+      document.title = title
+      setMetaName('description', description)
+      setMetaName('keywords', t(meta.keywords).join(', '))
+      setMetaProperty('og:title', title)
+      setMetaProperty('og:description', description)
       setMetaProperty('og:url', canonical)
-      setMetaProperty('og:image', `${siteUrl}/og-image.svg`)
-      setMetaProperty('og:image:alt', meta.title)
-      setMetaName('twitter:title', meta.title)
-      setMetaName('twitter:description', meta.description)
-      setMetaName('twitter:image', `${siteUrl}/og-image.svg`)
-      setMetaName('twitter:image:alt', meta.title)
+      setMetaProperty('og:image', ogImage)
+      setMetaProperty('og:image:alt', title)
+      setMetaProperty('og:locale', lang === 'ru' ? 'ru_RU' : 'en_US')
+      setMetaName('twitter:title', title)
+      setMetaName('twitter:description', description)
+      setMetaName('twitter:image', ogImage)
+      setMetaName('twitter:image:alt', title)
       setMetaName('twitter:card', 'summary_large_image')
       setLinkHref('link[rel="canonical"]', canonical, 'canonical')
       setLinkHref('link[rel="alternate"][hreflang="ru"]', canonical, 'alternate', 'ru')
       setLinkHref('link[rel="alternate"][hreflang="x-default"]', siteUrl, 'alternate', 'x-default')
-      setJsonLd(tab)
+      setJsonLd(tab, lang)
     }
 
     applySeo()
     window.addEventListener('popstate', applySeo)
 
     return () => window.removeEventListener('popstate', applySeo)
-  }, [])
+  }, [lang, t])
 
   const handleTabChange = (tab: Tab) => {
     setActive(tab)
@@ -234,7 +255,7 @@ export default function App() {
       <div className="cosmicNoise" />
       <TopNavigation active={active} onChange={handleTabChange} />
       <main>
-        <Suspense fallback={<div className="page pageLoader glass">Загрузка раздела…</div>}>
+        <Suspense fallback={<div className="page pageLoader glass">{t(ui.loader)}</div>}>
           {active === 'home' && <HomeSlides />}
           {active === 'examples' && <ExamplesLab />}
           {active === 'act' && <ActBalansisPage />}

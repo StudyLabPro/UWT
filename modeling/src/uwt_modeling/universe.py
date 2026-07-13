@@ -56,7 +56,22 @@ class RelationalUniverse:
         return check_metric_axioms(self.distances())
 
     def entropy(self, d: np.ndarray) -> float:
+        """Энтропия распределения попарных расстояний.
+
+        ``raw`` (историческое поведение) — гистограмма с адаптивным числом
+        бинов без сглаживания; оценка шумная на малых выборках.
+        ``smoothed`` (MODEL) — фиксированные 32 бина на всём диапазоне метрики
+        [0, ell0·√dim·N/2] плюс псевдоотсчёты Лапласа: оценка стабильнее между
+        прогонами и не вырождается на концентрированных распределениях, ценой
+        небольшого систематического смещения вверх.
+        """
         vals = d[~np.eye(self.cfg.n_parts, dtype=bool)]
+        if self.cfg.entropy_estimator == "smoothed":
+            bins = 32
+            d_max = self.cfg.ell0 * np.sqrt(self.cfg.dim) * (self.cfg.modulus / 2.0)
+            hist, _ = np.histogram(vals, bins=bins, range=(0.0, d_max), density=False)
+            probs = (hist + 1.0) / (hist.sum() + bins)
+            return float(-(probs * np.log(probs)).sum() * self.cfg.entropy_weight)
         bins = min(32, max(4, int(np.sqrt(vals.size))))
         hist, _ = np.histogram(vals, bins=bins, density=False)
         probs = hist[hist > 0] / hist.sum()

@@ -1,7 +1,13 @@
+import crypto from 'node:crypto'
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs'
 import http from 'node:http'
+import { dirname } from 'node:path'
 
 const port = Number(process.env.PORT || 8080)
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ''
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
+const donationsLogPath = process.env.DONATIONS_LOG_PATH || 'data/donations.jsonl'
+const webhookToleranceSeconds = 300
 const stripeApiVersion = process.env.STRIPE_API_VERSION || ''
 const currency = (process.env.UWT_DONATION_CURRENCY || 'usd').trim().toLowerCase()
 const minDonationMinor = readPositiveInteger(process.env.UWT_DONATION_MIN_MINOR, 100)
@@ -234,11 +240,215 @@ async function createCheckoutSession(payload, request) {
   return { url: stripePayload.url }
 }
 
+// ---------------------------------------------------------------------------
+// Учёт донатов: JSONL-журнал + идемпотентность по Stripe event.id.
+// Приватность: имя/сумма/валюта; email и текст сообщения в журнал не пишутся.
+// ---------------------------------------------------------------------------
+
+const seenEventIds = new Set()
+const donationTotals = new Map() // currency -> { count, totalMinor }
+
+function registerDonationRecord(record) {
+  if (!record?.event_id || seenEventIds.has(record.event_id)) {
+    return false
+  }
+  seenEventIds.add(record.event_id)
+  const key = String(record.currency || 'usd').toLowerCase()
+  const bucket = donationTotals.get(key) || { count: 0, totalMinor: 0 }
+  bucket.count += 1
+  bucket.totalMinor += Number(record.amount_total) || 0
+  donationTotals.set(key, bucket)
+  return true
+}
+
+function loadDonationsLog() {
+  try {
+    if (!existsSync(donationsLogPath)) {
+      return
+    }
+    for (const line of readFileSync(donationsLogPath, 'utf8').split('\n')) {
+      if (!line.trim()) {
+        continue
+      }
+      try {
+        registerDonationRecord(JSON.parse(line))
+      } catch {
+        // Повреждённая строка журнала не должна ронять сервис.
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load donations log', error)
+  }
+}
+
+loadDonationsLog()
+
+function appendDonationRecord(record) {
+  if (!registerDonationRecord(record)) {
+    return false
+  }
+  try {
+    mkdirSync(dirname(donationsLogPath), { recursive: true })
+    appendFileSync(donationsLogPath, `${JSON.stringify(record)}\n`)
+  } catch (error) {
+    console.error('Failed to append donations log', error)
+  }
+  return true
+}
+
+function readRawBody(request) {
+  return new Promise((resolve, reject) => {
+    const chunks = []
+    let size = 0
+
+    request.on('data', (chunk) => {
+      size += chunk.length
+      if (size > 16_384) {
+        reject(new Error('REQUEST_TOO_LARGE'))
+        request.destroy()
+        return
+      }
+      chunks.push(chunk)
+    })
+    request.on('end', () => resolve(Buffer.concat(chunks)))
+    request.on('error', reject)
+  })
+}
+
+/**
+ * Проверка подписи Stripe webhook: HMAC-SHA256 от `${t}.${rawBody}` с
+ * signing secret, сравнение через timingSafeEqual, допуск по времени 5 минут.
+ * https://docs.stripe.com/webhooks/signature
+ */
+function verifyStripeSignature(rawBody, signatureHeader) {
+  if (!signatureHeader || typeof signatureHeader !== 'string') {
+    return false
+  }
+  let timestamp = ''
+  const candidateSignatures = []
+  for (const part of signatureHeader.split(',')) {
+    const [key, value] = part.split('=', 2)
+    if (key?.trim() === 't') {
+      timestamp = value?.trim() || ''
+    } else if (key?.trim() === 'v1' && value) {
+      candidateSignatures.push(value.trim())
+    }
+  }
+  const timestampSeconds = Number(timestamp)
+  if (!Number.isInteger(timestampSeconds) || candidateSignatures.length === 0) {
+    return false
+  }
+  if (Math.abs(Date.now() / 1000 - timestampSeconds) > webhookToleranceSeconds) {
+    return false
+  }
+  const expected = crypto
+    .createHmac('sha256', stripeWebhookSecret)
+    .update(`${timestamp}.${rawBody}`)
+    .digest()
+  return candidateSignatures.some((candidate) => {
+    const candidateBuffer = Buffer.from(candidate, 'hex')
+    return candidateBuffer.length === expected.length && crypto.timingSafeEqual(candidateBuffer, expected)
+  })
+}
+
+async function handleStripeWebhook(request, response) {
+  if (request.method !== 'POST') {
+    jsonResponse(response, 405, { error: 'Method not allowed' }, { Allow: 'POST' })
+    return
+  }
+  if (!stripeWebhookSecret) {
+    jsonResponse(response, 503, { error: 'Stripe webhook пока не настроен на сервере.' })
+    return
+  }
+
+  let rawBody
+  try {
+    rawBody = await readRawBody(request)
+  } catch (error) {
+    jsonResponse(response, error.message === 'REQUEST_TOO_LARGE' ? 413 : 400, { error: 'Bad request' })
+    return
+  }
+
+  if (!verifyStripeSignature(rawBody, request.headers['stripe-signature'])) {
+    jsonResponse(response, 400, { error: 'Invalid signature' })
+    return
+  }
+
+  let event
+  try {
+    event = JSON.parse(rawBody.toString('utf8'))
+  } catch {
+    jsonResponse(response, 400, { error: 'Некорректный JSON.' })
+    return
+  }
+
+  if (event?.type === 'checkout.session.completed') {
+    const session = event.data?.object || {}
+    appendDonationRecord({
+      event_id: event.id,
+      session_id: session.id || '',
+      amount_total: Number(session.amount_total) || 0,
+      currency: String(session.currency || currency).toLowerCase(),
+      donor_name: sanitizeText(session.metadata?.donor_name, 80),
+      created: Number(event.created) || Math.floor(Date.now() / 1000),
+    })
+  }
+
+  jsonResponse(response, 200, { received: true })
+}
+
+function handleDonationStats(request, response, corsHeaders) {
+  if (request.method !== 'GET') {
+    jsonResponse(response, 405, { error: 'Method not allowed' }, { Allow: 'GET', ...corsHeaders })
+    return
+  }
+  const totals = {}
+  let count = 0
+  for (const [key, bucket] of donationTotals) {
+    totals[key] = { count: bucket.count, total_minor: bucket.totalMinor }
+    count += bucket.count
+  }
+  jsonResponse(
+    response,
+    200,
+    {
+      count,
+      totals,
+      total_usd: Math.round((donationTotals.get('usd')?.totalMinor || 0)) / 100,
+    },
+    corsHeaders,
+  )
+}
+
 async function handleRequest(request, response) {
   const url = new URL(request.url || '/', 'http://localhost')
 
   if (request.method === 'GET' && url.pathname === '/healthz') {
     emptyResponse(response, 204)
+    return
+  }
+
+  if (url.pathname === '/api/stripe/webhook') {
+    // Stripe шлёт server-to-server — CORS не применяется, но rate-limit оставляем.
+    if (isRateLimited(request)) {
+      jsonResponse(response, 429, { error: 'Too many requests' })
+      return
+    }
+    await handleStripeWebhook(request, response)
+    return
+  }
+
+  if (url.pathname === '/api/donations/stats') {
+    const statsCors = getCorsHeaders(request)
+    if (statsCors === null) {
+      jsonResponse(response, 403, { error: 'Origin is not allowed' })
+      return
+    }
+    if (isRateLimited(request)) {
+      jsonResponse(response, 429, { error: 'Too many requests' }, statsCors)
+      return
+    }
+    handleDonationStats(request, response, statsCors)
     return
   }
 

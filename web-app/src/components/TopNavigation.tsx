@@ -1,6 +1,10 @@
 import { navigationTabs, tabPaths, type Tab } from '../data/navigation'
+import { useLang } from '../i18n/language'
+import { ui } from '../i18n/strings'
 
 export function TopNavigation({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void }) {
+  const { lang, t, toggleLang } = useLang()
+
   const handleTabClick = (event: React.MouseEvent<HTMLAnchorElement>, tab: Tab) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
       return
@@ -15,11 +19,11 @@ export function TopNavigation({ active, onChange }: { active: Tab; onChange: (ta
       <div className="brand">
         <span className="brandMark">U</span>
         <div>
-          <strong>Unified Whole Theory</strong>
-          <small>ТЕЦ · цифровой атлас</small>
+          <strong>{t(ui.brand.name)}</strong>
+          <small>{t(ui.brand.tagline)}</small>
         </div>
       </div>
-      <nav className="tabs" aria-label="Основные вкладки">
+      <nav className="tabs" aria-label={t(ui.nav.ariaLabel)}>
         {navigationTabs.map((tab) => (
           <a
             key={tab.id}
@@ -28,18 +32,23 @@ export function TopNavigation({ active, onChange }: { active: Tab; onChange: (ta
             onClick={(event) => handleTabClick(event, tab.id)}
             aria-current={active === tab.id ? 'page' : undefined}
           >
-            <span>{tab.label}</span>
-            <small>{tab.caption}</small>
+            <span>{t(tab.label)}</span>
+            <small>{t(tab.caption)}</small>
           </a>
         ))}
-        <a
-          className="tab"
-          href="/ecosystem.html"
-          title="Живая карта экосистемы MAGIC и стека как реляционной вселенной ТЕЦ"
-        >
-          <span>Экосистема</span>
-          <small>стек · живой граф</small>
+        <a className="tab" href="/ecosystem.html" title={t(ui.nav.ecosystemTitle)}>
+          <span>{t(ui.nav.ecosystemLabel)}</span>
+          <small>{t(ui.nav.ecosystemCaption)}</small>
         </a>
+        <button
+          type="button"
+          className="tab langToggle"
+          onClick={toggleLang}
+          aria-label={t(ui.nav.langToggleLabel)}
+        >
+          <span>{lang === 'ru' ? 'EN' : 'RU'}</span>
+          <small>{lang === 'ru' ? 'English' : 'Русский'}</small>
+        </button>
       </nav>
     </header>
   )

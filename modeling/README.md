@@ -21,8 +21,8 @@ U -> A -> Disc -> R -> V -> S -> Time -> d -> v,a -> m,p,F,E,L,H -> psi
 
 Все вычисления ψ идут через Balansis — теорию абсолютной компенсации (АКТ):
 
-- накопления (суммы по истории, суперпозиция, ДПФ, нормировки, проверки) — через ACT-GEMM с компенсацией Неймайера и суммирование Кахана (`Operations.sequence_sum`);
-- поэлементные функции (exp, cos, sin, sqrt, log, деления) — через `Operations.compensated_*`;
+- накопления (суммы по истории, суперпозиция, ДПФ, нормировки, проверки) — через векторизованный `balansis.numpy_integration`: EFT-суммы (TwoSum), ACT-GEMM, компенсированные поэлементные сложение и умножение;
+- поэлементные exp, cos, sin, sqrt, log и деление — **raw numpy без компенсации** (компенсированных float-векторных версий этих операций в Balansis нет; честная карта компенсации — в docstring `balansis_adapter.py`, закреплена тестами);
 - решётка и смещения целочисленные, то есть точные;
 - сырых numpy-редукций (`np.sum`, FFT, `@`, `np.dot`) в модуле нет — это закреплено статическим тестом по исходнику и runtime-тестом, запрещающим numpy-редукции во время вычисления;
 - компенсационные члены каждого этапа возвращаются в результате и в разделе `numerics` отчёта проверок.
@@ -57,6 +57,36 @@ uwt-model --steps 200 --parts 24 --out results/run.json
 ```powershell
 python -m uwt_modeling.cli --steps 200 --parts 24 --out results/run.json
 ```
+
+## Реестр экспериментов
+
+Именованные воспроизводимые эксперименты с маркерами достоверности
+(THEORY/HYPOTHESIS/MODEL/VERIFIED) живут в `uwt_modeling.experiments_registry`:
+
+```powershell
+uwt-model --list-experiments
+uwt-model --experiment condensation --parts 12 --steps 100 --out results/condensation.json
+```
+
+- `psi_evolution` [MODEL] — снимки ψ по растущему префиксу истории (унитарная динамика ψ — открытая задача);
+- `condensation` [MODEL] — отжиг спускает конфигурационную энергию и сужает пакеты ψ при `stability_width_gamma=-0.5`;
+- `quantized_distance` [MODEL] — минимальный квант расстояния и зазоры спектра (различающее предсказание монографии);
+- `speed_bound_invariance` [MODEL] — максимальная скорость ограничена инвариантом конфигурации на скане параметров;
+- `dimensional_reduction` [HYPOTHESIS] — эффективная размерность по скейлингу `N(<r) ~ r^D`.
+
+## Прогноз и энтропия
+
+`forecast_observables` помимо линейной экстраполяции возвращает раздел `models`
+с выбором модели по SSE: линейный тренд против экспоненциальной релаксации
+`x(t) = x_inf + (x0 − x_inf)·exp(−t/τ)` (numpy-only подбор). Оценка энтропии
+переключается флагом `--entropy-estimator {raw,smoothed}` — `smoothed` использует
+фиксированные бины и псевдоотсчёты Лапласа (стабильнее между прогонами, MODEL).
+
+## Бенчмарк векторизации
+
+Реальные измерения ускорения АКТ-векторизации (суммы, GEMM) против наивного
+цикла по `AbsoluteValue`: `benchmarks/RESULTS.md` (генерируется
+`python benchmarks/bench_vectorization.py --full --out benchmarks/RESULTS.md`).
 
 ## Проверки
 
