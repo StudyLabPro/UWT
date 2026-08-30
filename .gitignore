@@ -33,3 +33,11 @@ UnifiedWholeTheory/
 *.njsproj
 *.sln
 *.sw?
+
+# --- slp-hardening ---
+.env
+.env.*
+!.env.example
+.trae/
+.claude/
+.codex/
