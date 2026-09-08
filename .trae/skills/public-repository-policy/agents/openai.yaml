@@ -1,0 +1,3 @@
+interface:
+  display_name: "Public Repository Policy"
+  short_description: "Gate public dual-licensed repositories safely"

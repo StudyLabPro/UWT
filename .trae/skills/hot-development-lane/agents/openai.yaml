@@ -1,0 +1,3 @@
+interface:
+  display_name: "Hot Development Lane"
+  short_description: "Synchronize, integrate, preview, and promote hot work"
