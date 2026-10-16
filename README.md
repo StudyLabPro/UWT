@@ -18,6 +18,7 @@ relations, проверяемые вычислительные эксперим�
 | `papers/` | arXiv drafts, problem-solution papers, and patent-gated publication materials. |
 | `modeling/` | Python package `uwt-modeling` for relational simulation, verification, and forecasting experiments. |
 | `web-app/` | React/Vite web atlas served in the ecosystem as `uwt-web`. |
+| `docs/` | Development reference, product requirements, and original web-app plans. |
 | `donations-api/` | Lightweight Node.js API for donation/checkout integration. |
 | `archive/simple_explanation.md` | Public-friendly explanation layer (archived). |
 

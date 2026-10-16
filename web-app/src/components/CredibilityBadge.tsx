@@ -1,7 +1,7 @@
 import { loc, useLang, type Localized } from '../i18n/language'
 
 /**
- * Credibility markers used across the UWT atlas (see SKILL.md, section "Уровень достоверности"):
+ * Credibility markers used across the UWT atlas (see docs/product-design.md, section "Научная достоверность"):
  * THEORY / HYPOTHESIS / DEMO / MODEL / VERIFIED / EXPERIMENT / INTERPRETATION.
  * Every interactive or interpretive block should carry one so readers know how much
  * epistemic weight to put on it.
