@@ -1,23 +1,23 @@
-# CLAUDE.md
+# UWT development reference
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This reference preserves the earlier modeling and web-atlas design context. It is not a current runtime inventory: use the root README, package manifests, and source code for the current layout, commands, versions, and integrations.
 
 ## Repository Overview
 
 Research monorepo for the **Unified Whole Theory** (UWT; Russian: ТЕЦ — Теория Единого Целого), a relational physics theory. Most documentation, paper content, UI text, and comments are in **Russian** — keep new user-facing text and docs in Russian unless asked otherwise.
 
-Everything lives under the top-level directory `Unified Whole Theory/` (note the spaces — always quote paths in shell commands):
+The main source directories are relative to the repository root:
 
 - `theory/`, `papers/` — LaTeX/Markdown monograph and papers. Compiled PDFs are committed alongside the `.tex` sources.
 - `modeling/` — Python package `uwt_modeling`: computational model, theory verification, and forecasting. The only part with tests.
-- `web-app/` — static Vite + React 18 + TypeScript SPA presenting the theory (no backend, no router). Scaffolded by TRAE; PRD and architecture docs are in `.trae/documents/`.
+- `web-app/` — static Vite + React 18 + TypeScript SPA presenting the theory (no backend, no router). The original PRD and architecture plans are in `docs/plans/`.
 - `simple_explanation.md` — popular-science slide source that `web-app/src/data/slides.ts` is derived from.
 
 ## Commands
 
-### Python modeling (run from `Unified Whole Theory/modeling`)
+### Python modeling (run from `modeling/`)
 
-There is a `.venv` (Python 3.11) at the repo root. Requires Python >= 3.10.
+Requires Python >= 3.10; use an isolated local environment.
 
 ```powershell
 python -m pip install -e .[test]   # editable install with pytest
@@ -28,7 +28,7 @@ uwt-model --steps 200 --parts 24 --out results/run.json           # CLI entry po
 python -m uwt_modeling.cli --steps 200 --parts 24 --out results/run.json  # equivalent
 ```
 
-### Web app (run from `Unified Whole Theory/web-app`)
+### Web app (run from `web-app/`)
 
 ```powershell
 npm install
@@ -70,4 +70,4 @@ Public API (`__init__.py`): `UWTConfig`, `RelationalUniverse`, `run_experiment`.
 
 ### Web app (`web-app/src/`)
 
-Static SPA with tab-based navigation held as state in `App.tsx` (tabs: `home`, `examples`, `act`, `bridge`) — deliberately no react-router usage despite it being in dependencies. All content is embedded locally in `src/data/` (no API calls). Simulations (`MiniUniverseCanvas`, `ElectronInteractionSimulation`, etc.) are Canvas/SVG components animated with `requestAnimationFrame`; keep scenes to tens of nodes and avoid heavy 3D libraries (per `.trae/documents/uwt_web_app_architecture.md`).
+Static SPA with tab-based navigation held as state in `App.tsx` (tabs: `home`, `examples`, `act`, `bridge`) — deliberately no react-router usage despite it being in dependencies. All content is embedded locally in `src/data/` (no API calls). Simulations (`MiniUniverseCanvas`, `ElectronInteractionSimulation`, etc.) are Canvas/SVG components animated with `requestAnimationFrame`; keep scenes to tens of nodes and avoid heavy 3D libraries (per `docs/plans/uwt_web_app_architecture.md`).
